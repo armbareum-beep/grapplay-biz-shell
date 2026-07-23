@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
+import { useBizData } from '../lib/useBizData'
+import { isSupabaseConfigured } from '../lib/supabase'
 
 // pudufu식 2줄 헤더 — (1줄) 로고/주문결제/로그인/검색, (2줄) 상단 메뉴바
 const MENU = [
@@ -21,7 +23,10 @@ export default function AcademyLayout({ children }: { children: React.ReactNode 
   const { pathname } = useLocation()
   const navigate = useNavigate()
   const { profile } = useAuth()
+  const { live, loading: dataLoading } = useBizData()
   const [search, setSearch] = useState('')
+  // Supabase 연결은 됐는데 조회가 실패해 목업으로 폴백된 상태(장애를 감추지 않도록 안내)
+  const dataDegraded = isSupabaseConfigured && !dataLoading && !live
 
   // 역할별 대시보드 메뉴를 상단 메뉴에 추가
   const menu = [
@@ -95,6 +100,12 @@ export default function AcademyLayout({ children }: { children: React.ReactNode 
           </nav>
         </div>
       </header>
+
+      {dataDegraded && (
+        <div className="bg-amber-50 px-4 py-2 text-center text-xs font-medium text-amber-800">
+          일시적으로 최신 정보를 불러오지 못했어요. 잠시 후 새로고침해 주세요.
+        </div>
+      )}
 
       <main className="flex-1">{children}</main>
 
