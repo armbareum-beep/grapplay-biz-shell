@@ -118,8 +118,8 @@ export default function AcademyExpertDashboard() {
       <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard label="총 강의" value={`${stats.courseCount}개`} icon="📚" />
         <StatCard
-          label="총 수강생"
-          value={revenue ? `${revenue.students.toLocaleString()}명` : '—'}
+          label="총 구매자"
+          value={revenue ? `${revenue.buyers.toLocaleString()}명` : '—'}
           icon="👥"
         />
         <StatCard
@@ -154,7 +154,7 @@ export default function AcademyExpertDashboard() {
 
       <div className="mt-8">
         {tab === '내 강의' && (
-          <MyCoursesTab expertId={expertId} studentsByCourse={revenue?.studentsByCourse ?? {}} />
+          <MyCoursesTab expertId={expertId} buyersByItem={revenue?.buyersByItem ?? {}} />
         )}
         {tab === '내 전자책' && <MyEbooksTab expertId={expertId} />}
         {tab === '리뷰 관리' && <ReviewsTab expertId={expertId} />}
@@ -198,10 +198,10 @@ function StatCard({
 /* ── 내 강의 탭 ── */
 function MyCoursesTab({
   expertId,
-  studentsByCourse,
+  buyersByItem,
 }: {
   expertId: string
-  studentsByCourse: Record<string, number>
+  buyersByItem: Record<string, number>
 }) {
   const { getCoursesByExpert, getCourseRating } = useBizData()
   const courses = getCoursesByExpert(expertId)
@@ -210,7 +210,7 @@ function MyCoursesTab({
     <div className="space-y-3">
       {courses.map((c) => {
         const { rating, count } = getCourseRating(c.id)
-        const students = studentsByCourse[c.id] ?? 0
+        const students = buyersByItem[`course:${c.id}`] ?? 0
         return (
         <div
           key={c.id}
@@ -425,14 +425,14 @@ function ReviewsTab({ expertId }: { expertId: string }) {
 }
 
 /* ── 수익 분석 탭 ── */
-type ConversionMode = '강의별' | '일별' | '월별'
+type ConversionMode = '상품별' | '일별' | '월별'
 
 function RevenueTab({ revenue, expertId }: { revenue: ExpertRevenue | null; expertId: string }) {
-  const { getCoursesByExpert } = useBizData()
+  const { getCoursesByExpert, getEbooksByExpert } = useBizData()
   const [views, setViews] = useState<Record<string, number> | null>(null)
   const [daily, setDaily] = useState<PageViewDailyRow[] | null>(null)
-  const [mode, setMode] = useState<ConversionMode>('강의별')
-  const [courseFilter, setCourseFilter] = useState('all')
+  const [mode, setMode] = useState<ConversionMode>('상품별')
+  const [itemFilter, setItemFilter] = useState('all') // 'all' | `${type}:${id}`
 
   useEffect(() => {
     if (!expertId) return
@@ -440,13 +440,25 @@ function RevenueTab({ revenue, expertId }: { revenue: ExpertRevenue | null; expe
     getPageViewDaily(expertId).then(setDaily)
   }, [expertId])
 
-  const courses = getCoursesByExpert(expertId)
+  // 전환율 대상 상품: 강의 + 전자책
+  const items = [
+    ...getCoursesByExpert(expertId).map((c) => ({
+      key: `course:${c.id}`,
+      label: '강의',
+      title: c.title,
+    })),
+    ...getEbooksByExpert(expertId).map((e) => ({
+      key: `ebook:${e.id}`,
+      label: '전자책',
+      title: e.title,
+    })),
+  ]
 
   // 일별/월별 기간 행: 조회수(page_view_daily) + 구매 건수(orders)를 같은 기간 키로 합산
   const periodRows = useMemo(() => {
-    if (mode === '강의별' || !daily || !revenue) return []
+    if (mode === '상품별' || !daily || !revenue) return []
     const keyOf = (d: string) => (mode === '일별' ? d : d.slice(0, 7))
-    const inCourse = (id: string) => courseFilter === 'all' || id === courseFilter
+    const inScope = (key: string) => itemFilter === 'all' || key === itemFilter
     const map = new Map<string, { views: number; buys: number }>()
     const at = (k: string) => {
       let v = map.get(k)
@@ -454,15 +466,15 @@ function RevenueTab({ revenue, expertId }: { revenue: ExpertRevenue | null; expe
       return v
     }
     for (const r of daily) {
-      if (r.item_type === 'course' && inCourse(r.item_id)) at(keyOf(r.day)).views += r.views
+      if (inScope(`${r.item_type}:${r.item_id}`)) at(keyOf(r.day)).views += r.views
     }
     for (const p of revenue.purchases) {
-      if (inCourse(p.courseId)) at(keyOf(p.date)).buys += 1
+      if (inScope(`${p.itemType}:${p.itemId}`)) at(keyOf(p.date)).buys += 1
     }
     return [...map.entries()]
       .sort((a, b) => (a[0] < b[0] ? 1 : -1)) // 최신 기간부터
       .map(([period, v]) => ({ period, ...v }))
-  }, [mode, daily, revenue, courseFilter])
+  }, [mode, daily, revenue, itemFilter])
 
   if (!revenue) {
     return <div className="h-48 animate-pulse rounded-2xl bg-stone-100" />
@@ -503,7 +515,7 @@ function RevenueTab({ revenue, expertId }: { revenue: ExpertRevenue | null; expe
         <p className="mt-4 text-xs text-stone-400">* 정산 비율 80:20 적용</p>
       </div>
 
-      {/* 전환율 (상세페이지 조회 → 구매) — 강의별 / 일별 / 월별 */}
+      {/* 전환율 (상세페이지 조회 → 구매) — 상품별 / 일별 / 월별 */}
       <div className="rounded-2xl border border-stone-200 bg-white p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -513,7 +525,7 @@ function RevenueTab({ revenue, expertId }: { revenue: ExpertRevenue | null; expe
             </p>
           </div>
           <div className="flex rounded-lg border border-stone-200 p-0.5">
-            {(['강의별', '일별', '월별'] as ConversionMode[]).map((m) => (
+            {(['상품별', '일별', '월별'] as ConversionMode[]).map((m) => (
               <button
                 key={m}
                 onClick={() => setMode(m)}
@@ -527,16 +539,16 @@ function RevenueTab({ revenue, expertId }: { revenue: ExpertRevenue | null; expe
           </div>
         </div>
 
-        {mode !== '강의별' && courses.length > 1 && (
+        {mode !== '상품별' && items.length > 1 && (
           <select
-            value={courseFilter}
-            onChange={(e) => setCourseFilter(e.target.value)}
+            value={itemFilter}
+            onChange={(e) => setItemFilter(e.target.value)}
             className="mt-4 w-full max-w-xs rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm font-medium text-stone-700 outline-none focus:border-amber-400"
           >
-            <option value="all">전체 강의</option>
-            {courses.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.title}
+            <option value="all">전체 상품</option>
+            {items.map((it) => (
+              <option key={it.key} value={it.key}>
+                [{it.label}] {it.title}
               </option>
             ))}
           </select>
@@ -544,28 +556,37 @@ function RevenueTab({ revenue, expertId }: { revenue: ExpertRevenue | null; expe
 
         {views === null || daily === null ? (
           <div className="mt-4 h-24 animate-pulse rounded-xl bg-stone-100" />
-        ) : courses.length === 0 ? (
-          <p className="mt-4 py-8 text-center text-sm text-stone-400">등록된 강의가 없어요.</p>
-        ) : mode === '강의별' ? (
+        ) : items.length === 0 ? (
+          <p className="mt-4 py-8 text-center text-sm text-stone-400">등록된 상품이 없어요.</p>
+        ) : mode === '상품별' ? (
           <div className="mt-4 overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="border-b border-stone-200 text-left text-xs text-stone-500">
                 <tr>
-                  <th className="py-2 pr-4">강의</th>
+                  <th className="py-2 pr-4">상품</th>
                   <th className="py-2 pr-4 text-right">조회수</th>
                   <th className="py-2 pr-4 text-right">구매</th>
                   <th className="py-2 text-right">전환율</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-stone-100">
-                {courses.map((c) => {
-                  const v = views[`course:${c.id}`] ?? 0
-                  const buyers = revenue.studentsByCourse[c.id] ?? 0
+                {items.map((it) => {
+                  const v = views[it.key] ?? 0
+                  const buyers = revenue.buyersByItem[it.key] ?? 0
                   const rate = v > 0 ? (buyers / v) * 100 : null
                   return (
-                    <tr key={c.id}>
-                      <td className="max-w-[240px] truncate py-3 pr-4 font-medium text-stone-800">
-                        {c.title}
+                    <tr key={it.key}>
+                      <td className="max-w-[280px] py-3 pr-4">
+                        <span
+                          className={`mr-1.5 rounded px-1.5 py-0.5 text-[11px] font-bold ${
+                            it.label === '강의'
+                              ? 'bg-amber-100 text-amber-700'
+                              : 'bg-violet-100 text-violet-700'
+                          }`}
+                        >
+                          {it.label}
+                        </span>
+                        <span className="font-medium text-stone-800">{it.title}</span>
                       </td>
                       <td className="py-3 pr-4 text-right text-stone-600">{v.toLocaleString()}</td>
                       <td className="py-3 pr-4 text-right text-stone-600">
@@ -619,7 +640,7 @@ function RevenueTab({ revenue, expertId }: { revenue: ExpertRevenue | null; expe
         )}
         <p className="mt-4 text-xs text-stone-400">
           * 조회수는 2026년 8월 5일부터 집계를 시작했어요. 지도자 본인·관리자의 조회는 제외됩니다.
-          {mode !== '강의별' && ' 일별/월별 구매는 결제 건수 기준이에요.'}
+          {mode !== '상품별' && ' 일별/월별 구매는 결제 건수 기준이에요.'}
         </p>
       </div>
     </div>
