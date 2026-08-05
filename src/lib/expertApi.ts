@@ -264,11 +264,19 @@ export interface ExpertRevenue {
   students: number // 실제 수강생 수 (결제 완료 강의 주문의 고유 구매자)
   studentsByCourse: Record<string, number> // 강의별 고유 구매자 수
   byMonth: { month: string; amount: number }[]
+  purchases: { courseId: string; date: string }[] // 결제 건별 (KST 날짜 YYYY-MM-DD) — 기간별 전환율용
 }
 
 // 소유 강의의 결제 완료(paid) 주문 합계 — orders RLS가 전문가 본인 강의만 노출
 export async function getExpertRevenue(expertId: string): Promise<ExpertRevenue> {
-  const empty: ExpertRevenue = { total: 0, count: 0, students: 0, studentsByCourse: {}, byMonth: [] }
+  const empty: ExpertRevenue = {
+    total: 0,
+    count: 0,
+    students: 0,
+    studentsByCourse: {},
+    byMonth: [],
+    purchases: [],
+  }
   if (!supabase) return empty
 
   const { data: courses } = await supabase
@@ -311,13 +319,49 @@ export async function getExpertRevenue(expertId: string): Promise<ExpertRevenue>
     if (m) m.amount += o.amount ?? 0
   }
 
+  // 결제 건별 KST 날짜 (일별/월별 전환율 계산용)
+  const purchases = (orders as any[]).map((o) => ({
+    courseId: o.item_id as string,
+    date: new Date(o.paid_at ?? o.created_at).toLocaleDateString('sv-SE', {
+      timeZone: 'Asia/Seoul',
+    }),
+  }))
+
   return {
     total,
     count: orders.length,
     students,
     studentsByCourse,
     byMonth: months.map(({ month, amount }) => ({ month, amount })),
+    purchases,
   }
+}
+
+// 아이템별 상세페이지 조회수 — page_view_counts RPC (본인 또는 관리자만 집계 반환)
+export async function getPageViewCounts(
+  expertId: string,
+): Promise<Record<string, number>> {
+  if (!supabase) return {}
+  const { data } = await supabase.rpc('page_view_counts', { p_expert_id: expertId })
+  const map: Record<string, number> = {}
+  for (const r of (data ?? []) as { item_type: string; item_id: string; views: number }[]) {
+    map[`${r.item_type}:${r.item_id}`] = Number(r.views)
+  }
+  return map
+}
+
+// 아이템별 · 일별(KST) 조회수 — page_view_daily RPC (본인 또는 관리자만)
+export interface PageViewDailyRow {
+  day: string // YYYY-MM-DD (KST)
+  item_type: string
+  item_id: string
+  views: number
+}
+
+export async function getPageViewDaily(expertId: string): Promise<PageViewDailyRow[]> {
+  if (!supabase) return []
+  const { data } = await supabase.rpc('page_view_daily', { p_expert_id: expertId })
+  return ((data ?? []) as PageViewDailyRow[]).map((r) => ({ ...r, views: Number(r.views) }))
 }
 
 // ── 정산 (전문가 80% / 플랫폼 20%) ──

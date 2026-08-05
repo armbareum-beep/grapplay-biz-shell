@@ -6,6 +6,7 @@ import { useAuth } from '../lib/auth'
 import { blockClass, blockStyle } from '../lib/detailBlocks'
 import { supabase } from '../lib/supabase'
 import { enrollFree, addEbookReview } from '../lib/userData'
+import { trackPageView } from '../lib/pageViews'
 import { EXPERT_CREDENTIALS } from '../data/mockMarketplace'
 import { ebookDiscountPct } from '../data/mockEbooks'
 import EbookCard from '../components/EbookCard'
@@ -29,11 +30,19 @@ const TABS = [
 export default function AcademyEbookDetail() {
   const { id } = useParams()
   const { experts, ebooks, getEbook, getEbookReviews, getEbookRating, refetch } = useBizData()
-  const { user, profile } = useAuth()
+  const { user, profile, loading: authLoading } = useAuth()
   const navigate = useNavigate()
   const ebook = getEbook(id ?? '')
   const [enrolled, setEnrolled] = useState(false)
   const [busy, setBusy] = useState(false)
+
+  // 상세페이지 조회 기록 (소유 지도자·관리자 본인 조회는 집계에서 제외)
+  useEffect(() => {
+    if (!ebook || authLoading) return
+    if (profile?.role === 'admin' || (profile?.expert_id && profile.expert_id === ebook.expertId)) return
+    trackPageView('ebook', ebook.id)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ebook?.id, authLoading, profile?.expert_id, profile?.role])
 
   // 구매(수강) 여부
   useEffect(() => {
