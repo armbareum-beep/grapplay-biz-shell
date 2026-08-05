@@ -32,6 +32,7 @@
 | 6 | [06-course-player-and-ebook-editor.md](./06-course-player-and-ebook-editor.md) | 판매/수강 분리 + 영상 플레이어 + 전자책 에디터 | 00, 03 | ✅ |
 | 7 | [07-vimeo-upload.md](./07-vimeo-upload.md) | 강의 영상 Vimeo 업로드 (tus + Edge Function) | 03, 06 | ✅ |
 | 8 | [08-admin-dashboard.md](./08-admin-dashboard.md) | 관리자 대시보드 (개요/정산/회원/전문가/콘텐츠/주문/리뷰) | 00, 01, 03, 05 | ✅ |
+| 9 | [09-page-view-conversion.md](./09-page-view-conversion.md) | 상세페이지 조회 추적 + 전환율 (강의별/일별/월별) | 03, 04 | ✅ |
 
 > **현재 스키마는 [DB-SCHEMA.md](./DB-SCHEMA.md)가 단일 진실(single source of truth).**
 > Phase 문서는 "왜/어떻게", DB-SCHEMA는 "지금 무엇이 있는지".
