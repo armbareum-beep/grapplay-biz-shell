@@ -9,6 +9,7 @@ import {
   setReviewHidden,
   incrementPdfSent,
   getExpertRevenue,
+  getPageViewCounts,
   getSettlementSummary,
   getSettlements,
   getPayoutAccount,
@@ -155,7 +156,7 @@ export default function AcademyExpertDashboard() {
         )}
         {tab === '내 전자책' && <MyEbooksTab expertId={expertId} />}
         {tab === '리뷰 관리' && <ReviewsTab expertId={expertId} />}
-        {tab === '수익 분석' && <RevenueTab revenue={revenue} />}
+        {tab === '수익 분석' && <RevenueTab revenue={revenue} expertId={expertId} />}
         {tab === '정산' && <PayoutTab expertId={expertId} expertName={expert.name} />}
         {tab === '프로필' && (
           <div className="max-w-2xl">
@@ -422,10 +423,18 @@ function ReviewsTab({ expertId }: { expertId: string }) {
 }
 
 /* ── 수익 분석 탭 ── */
-function RevenueTab({ revenue }: { revenue: ExpertRevenue | null }) {
+function RevenueTab({ revenue, expertId }: { revenue: ExpertRevenue | null; expertId: string }) {
+  const { getCoursesByExpert } = useBizData()
+  const [views, setViews] = useState<Record<string, number> | null>(null)
+
+  useEffect(() => {
+    if (expertId) getPageViewCounts(expertId).then(setViews)
+  }, [expertId])
+
   if (!revenue) {
     return <div className="h-48 animate-pulse rounded-2xl bg-stone-100" />
   }
+  const courses = getCoursesByExpert(expertId)
   const max = Math.max(1, ...revenue.byMonth.map((m) => m.amount))
   const thisMonth = revenue.byMonth[revenue.byMonth.length - 1]?.amount ?? 0
   const hasData = revenue.total > 0
@@ -457,6 +466,56 @@ function RevenueTab({ revenue }: { revenue: ExpertRevenue | null }) {
           </p>
         )}
         <p className="mt-4 text-xs text-stone-400">* 정산 비율 80:20 적용</p>
+      </div>
+
+      {/* 강의별 전환율 (상세페이지 조회 → 구매) */}
+      <div className="rounded-2xl border border-stone-200 bg-white p-6">
+        <h3 className="font-bold text-stone-900">강의별 전환율</h3>
+        <p className="mt-1 text-sm text-stone-500">
+          상세페이지 조회수 대비 구매자 수를 보여줘요.
+        </p>
+        {views === null ? (
+          <div className="mt-4 h-24 animate-pulse rounded-xl bg-stone-100" />
+        ) : courses.length === 0 ? (
+          <p className="mt-4 py-8 text-center text-sm text-stone-400">등록된 강의가 없어요.</p>
+        ) : (
+          <div className="mt-4 overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="border-b border-stone-200 text-left text-xs text-stone-500">
+                <tr>
+                  <th className="py-2 pr-4">강의</th>
+                  <th className="py-2 pr-4 text-right">조회수</th>
+                  <th className="py-2 pr-4 text-right">구매</th>
+                  <th className="py-2 text-right">전환율</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-stone-100">
+                {courses.map((c) => {
+                  const v = views[`course:${c.id}`] ?? 0
+                  const buyers = revenue.studentsByCourse[c.id] ?? 0
+                  const rate = v > 0 ? (buyers / v) * 100 : null
+                  return (
+                    <tr key={c.id}>
+                      <td className="max-w-[240px] truncate py-3 pr-4 font-medium text-stone-800">
+                        {c.title}
+                      </td>
+                      <td className="py-3 pr-4 text-right text-stone-600">{v.toLocaleString()}</td>
+                      <td className="py-3 pr-4 text-right text-stone-600">
+                        {buyers.toLocaleString()}
+                      </td>
+                      <td className="py-3 text-right font-semibold text-stone-900">
+                        {rate === null ? '—' : `${rate.toFixed(1)}%`}
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+        <p className="mt-4 text-xs text-stone-400">
+          * 조회수는 2026년 8월 5일부터 집계를 시작했어요. 지도자 본인·관리자의 조회는 제외됩니다.
+        </p>
       </div>
     </div>
   )

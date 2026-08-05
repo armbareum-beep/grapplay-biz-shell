@@ -7,6 +7,7 @@ import { useWishlist } from '../lib/wishlist'
 import { blockClass, blockStyle } from '../lib/detailBlocks'
 import { supabase } from '../lib/supabase'
 import { enrollFree, addCourseReview } from '../lib/userData'
+import { trackPageView } from '../lib/pageViews'
 import { toEmbedUrl, fetchVimeoPortrait } from '../lib/video'
 import CourseCard from '../components/CourseCard'
 import PurchaseBar from '../components/PurchaseBar'
@@ -36,7 +37,7 @@ export default function AcademyCourseDetail() {
   const { id } = useParams()
   const { getCourse, getExpert, getCoursesByExpert, getCourseReviews, getCourseRating, refetch, loading } =
     useBizData()
-  const { user, profile } = useAuth()
+  const { user, profile, loading: authLoading } = useAuth()
   const course = getCourse(id ?? '')
   const [enrolled, setEnrolled] = useState(false)
   // 상단 하이라이트 플레이어가 보여줄 레슨 (미리보기 클릭 시 전환)
@@ -48,6 +49,14 @@ export default function AcademyCourseDetail() {
     const firstPreview = course.curriculum.findIndex((l) => l.preview)
     setActiveIdx(firstPreview >= 0 ? firstPreview : 0)
   }, [course?.id])
+
+  // 상세페이지 조회 기록 (소유 지도자·관리자 본인 조회는 집계에서 제외)
+  useEffect(() => {
+    if (!course || authLoading) return
+    if (profile?.role === 'admin' || (profile?.expert_id && profile.expert_id === course.expertId)) return
+    trackPageView('course', course.id)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [course?.id, authLoading, profile?.expert_id, profile?.role])
 
   // 수강 여부 (영상 잠금 해제용)
   useEffect(() => {

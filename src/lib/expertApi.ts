@@ -320,6 +320,19 @@ export async function getExpertRevenue(expertId: string): Promise<ExpertRevenue>
   }
 }
 
+// 아이템별 상세페이지 조회수 — page_view_counts RPC (본인 또는 관리자만 집계 반환)
+export async function getPageViewCounts(
+  expertId: string,
+): Promise<Record<string, number>> {
+  if (!supabase) return {}
+  const { data } = await supabase.rpc('page_view_counts', { p_expert_id: expertId })
+  const map: Record<string, number> = {}
+  for (const r of (data ?? []) as { item_type: string; item_id: string; views: number }[]) {
+    map[`${r.item_type}:${r.item_id}`] = Number(r.views)
+  }
+  return map
+}
+
 // ── 정산 (전문가 80% / 플랫폼 20%) ──
 export const EXPERT_SHARE = 0.8
 
