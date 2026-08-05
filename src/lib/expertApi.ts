@@ -261,49 +261,57 @@ export async function deleteEbook(id: string) {
 export interface ExpertRevenue {
   total: number
   count: number
-  students: number // 실제 수강생 수 (결제 완료 강의 주문의 고유 구매자)
-  studentsByCourse: Record<string, number> // 강의별 고유 구매자 수
+  buyers: number // 고유 구매자 수 (강의+전자책, 같은 사람 중복 제거)
+  buyersByItem: Record<string, number> // `${item_type}:${item_id}` → 고유 구매자 수
   byMonth: { month: string; amount: number }[]
-  purchases: { courseId: string; date: string }[] // 결제 건별 (KST 날짜 YYYY-MM-DD) — 기간별 전환율용
+  // 결제 건별 (KST 날짜 YYYY-MM-DD) — 기간별 전환율용
+  purchases: { itemType: 'course' | 'ebook'; itemId: string; date: string }[]
 }
 
-// 소유 강의의 결제 완료(paid) 주문 합계 — orders RLS가 전문가 본인 강의만 노출
+// 소유 강의+전자책의 결제 완료(paid) 주문 합계 — orders RLS가 전문가 본인 상품만 노출
 export async function getExpertRevenue(expertId: string): Promise<ExpertRevenue> {
   const empty: ExpertRevenue = {
     total: 0,
     count: 0,
-    students: 0,
-    studentsByCourse: {},
+    buyers: 0,
+    buyersByItem: {},
     byMonth: [],
     purchases: [],
   }
   if (!supabase) return empty
 
-  const { data: courses } = await supabase
-    .from('courses')
-    .select('id')
-    .eq('expert_id', expertId)
-  const ids = (courses ?? []).map((c: any) => c.id)
+  const [{ data: courseRows }, { data: ebookRows }] = await Promise.all([
+    supabase.from('courses').select('id').eq('expert_id', expertId),
+    supabase.from('ebooks').select('id').eq('expert_id', expertId),
+  ])
+  const courseIds = new Set((courseRows ?? []).map((c: any) => c.id))
+  const ebookIds = new Set((ebookRows ?? []).map((e: any) => e.id))
+  const ids = [...courseIds, ...ebookIds]
   if (ids.length === 0) return empty
 
-  const { data: orders, error } = await supabase
+  const { data, error } = await supabase
     .from('orders')
-    .select('amount, paid_at, created_at, user_id, item_id')
+    .select('amount, paid_at, created_at, user_id, item_id, item_type')
     .eq('status', 'paid')
-    .eq('item_type', 'course')
     .in('item_id', ids)
-  if (error || !orders) return empty
+  if (error || !data) return empty
+  // item_id는 다형 참조라 타입까지 맞는 주문만 집계 (삭제된 상품의 주문은 ids에 없어 자동 제외)
+  const orders = (data as any[]).filter(
+    (o) =>
+      (o.item_type === 'course' && courseIds.has(o.item_id)) ||
+      (o.item_type === 'ebook' && ebookIds.has(o.item_id)),
+  )
 
   const total = orders.reduce((s: number, o: any) => s + (o.amount ?? 0), 0)
-  // 고유 구매자 수 = 실제 수강생 수 (한 사람이 여러 강의를 사도 1명으로 집계)
-  const students = new Set(orders.map((o: any) => o.user_id)).size
-  // 강의별 고유 구매자 수
-  const buyersByCourse: Record<string, Set<string>> = {}
-  for (const o of orders as any[]) {
-    ;(buyersByCourse[o.item_id] ??= new Set()).add(o.user_id)
+  // 고유 구매자 수 (한 사람이 여러 상품을 사도 1명으로 집계)
+  const buyers = new Set(orders.map((o: any) => o.user_id)).size
+  // 상품별 고유 구매자 수
+  const buyerSets: Record<string, Set<string>> = {}
+  for (const o of orders) {
+    ;(buyerSets[`${o.item_type}:${o.item_id}`] ??= new Set()).add(o.user_id)
   }
-  const studentsByCourse: Record<string, number> = {}
-  for (const [cid, set] of Object.entries(buyersByCourse)) studentsByCourse[cid] = set.size
+  const buyersByItem: Record<string, number> = {}
+  for (const [k, set] of Object.entries(buyerSets)) buyersByItem[k] = set.size
 
   // 최근 6개월 집계
   const now = new Date()
@@ -320,8 +328,9 @@ export async function getExpertRevenue(expertId: string): Promise<ExpertRevenue>
   }
 
   // 결제 건별 KST 날짜 (일별/월별 전환율 계산용)
-  const purchases = (orders as any[]).map((o) => ({
-    courseId: o.item_id as string,
+  const purchases = orders.map((o) => ({
+    itemType: o.item_type as 'course' | 'ebook',
+    itemId: o.item_id as string,
     date: new Date(o.paid_at ?? o.created_at).toLocaleDateString('sv-SE', {
       timeZone: 'Asia/Seoul',
     }),
@@ -330,8 +339,8 @@ export async function getExpertRevenue(expertId: string): Promise<ExpertRevenue>
   return {
     total,
     count: orders.length,
-    students,
-    studentsByCourse,
+    buyers,
+    buyersByItem,
     byMonth: months.map(({ month, amount }) => ({ month, amount })),
     purchases,
   }
