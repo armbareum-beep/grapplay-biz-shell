@@ -2,7 +2,7 @@
 
 > **이 문서가 DB 구조의 단일 진실(single source of truth)입니다.**
 > Phase 문서(00~08)는 "왜/어떻게" 바꿨는지, 이 문서는 "지금 무엇이 있는지"를 담습니다.
-> 스키마를 바꾸면 **반드시 이 문서도 같이 갱신**하세요. (마지막 갱신: 2026-06-09 — 관리자 대시보드)
+> 스키마를 바꾸면 **반드시 이 문서도 같이 갱신**하세요. (마지막 갱신: 2026-08-05 — 페이지뷰/전환율)
 
 ## 기본 정보
 - **별도 프로젝트**: 그래플레이 운영 DB와 완전히 분리된 비즈 전용 Supabase 프로젝트
@@ -25,6 +25,9 @@
 | 10 | `20260614000100_admin_set_role.sql` | `admin_set_user_role()` RPC — 회원 역할 변경(승격/강등/관리자 지정) |
 | 11 | `20260615000000_category_rename_ebook_category.sql` | 카테고리 "체육관 운영"→"경영" rename + ebooks에 category 컬럼 + 시드 카테고리 |
 | 12 | `20260616000000_expert_category.sql` | experts에 category 컬럼 (관리자 지정 전문분야) + 시드 |
+| 13~22 | `20260617`~`20260624` 시리즈 | 강의 할인, 배너, 전문가 카테고리/아바타/삭제/자격, 전자책 리뷰, 리뷰 별점, 리뷰 관리자 삭제, 레슨 진도, 리뷰 작성자 트리거 (각 파일명 참조 — 이 표에 상세 미반영) |
+| 23 | `20260805000000_page_views.sql` | page_views 테이블 + `track_page_view()`/`page_view_counts()` RPC (RLS 정책 없음 = RPC로만 접근) |
+| 24 | `20260805100000_page_view_daily.sql` | `page_view_daily()` RPC — KST 일별 조회수 집계 |
 
 ---
 
@@ -134,6 +137,14 @@
 - 상태 변경은 이제 **관리자 대시보드 정산 탭**(`/admin`)에서 처리. 실제 송금 후 `status='paid', paid_at`을
   갱신(`updateSettlementStatus`). 자동 송금(지급대행)은 향후 과제. 자세히는 [08-admin-dashboard.md](./08-admin-dashboard.md).
 
+### 분석 (RPC로만 접근)
+
+**page_views** — 상세페이지 조회 로그 (전환율 분석용, 2026-08-05부터)
+| id uuid PK | item_type('course'\|'ebook') | item_id text(다형 참조) | viewer_id uuid(익명 null) | created_at |
+- RLS 활성화 + **정책 없음** → 클라이언트 직접 read/write 불가. 아래 RPC로만 접근.
+- 세션당 1회 기록은 클라이언트(sessionStorage) 책임. 소유 지도자·관리자 본인 조회는 클라이언트에서 제외.
+- 자세히는 [09-page-view-conversion.md](./09-page-view-conversion.md).
+
 ---
 
 ## Enum / 함수 / 트리거
@@ -145,6 +156,12 @@
 - `admin_set_user_role(target_user uuid, new_role user_role, new_expert_id text) → profiles`
   (security definer): 관리자만 회원 역할 변경(승격/강등/관리자 지정). `is_admin()` 가드 +
   expert 승격 시 `expert_id` 무결성 검증. `profiles.update`의 자기승격 잠금을 우회하는 유일한 경로.
+- `track_page_view(p_item_type, p_item_id)` (security definer, anon 실행 가능): 존재하는
+  강의/전자책만 page_views에 insert.
+- `page_view_counts(p_expert_id) → (item_type, item_id, views)` (security definer):
+  아이템별 누적 조회수. 본인(`current_expert_id()`) 또는 admin이 아니면 빈 결과.
+- `page_view_daily(p_expert_id) → (day, item_type, item_id, views)` (security definer):
+  KST 일별 조회수. 가드 동일. 월별은 클라이언트 합산.
 - (헬퍼·RPC는 RLS 정책 재귀를 막고 권한을 한정하기 위해 security definer로 작성)
 
 ## RLS 정책 요약
@@ -162,6 +179,7 @@
 | expert_reviews | 공개 | — | **delete** |
 | settlements | 본인 + admin | 본인 insert(requested), 상태변경 admin | (이미 admin) |
 | payout_accounts | 본인 + admin | 본인 + admin | (이미 admin) |
+| page_views | **직접 접근 불가** (집계는 `page_view_counts`/`page_view_daily` RPC) | **직접 접근 불가** (기록은 `track_page_view` RPC) | RPC 가드에 포함 |
 
 ## 스토리지 버킷
 - **`covers`** (공개): 전자책 표지 이미지 + PDF 파일.
