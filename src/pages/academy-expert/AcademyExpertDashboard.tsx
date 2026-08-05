@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { formatPrice, type CourseReview } from '../../data/mock'
 import { useBizData, invalidateBizData } from '../../lib/useBizData'
@@ -10,6 +10,8 @@ import {
   incrementPdfSent,
   getExpertRevenue,
   getPageViewCounts,
+  getPageViewDaily,
+  type PageViewDailyRow,
   getSettlementSummary,
   getSettlements,
   getPayoutAccount,
@@ -423,18 +425,48 @@ function ReviewsTab({ expertId }: { expertId: string }) {
 }
 
 /* ── 수익 분석 탭 ── */
+type ConversionMode = '강의별' | '일별' | '월별'
+
 function RevenueTab({ revenue, expertId }: { revenue: ExpertRevenue | null; expertId: string }) {
   const { getCoursesByExpert } = useBizData()
   const [views, setViews] = useState<Record<string, number> | null>(null)
+  const [daily, setDaily] = useState<PageViewDailyRow[] | null>(null)
+  const [mode, setMode] = useState<ConversionMode>('강의별')
+  const [courseFilter, setCourseFilter] = useState('all')
 
   useEffect(() => {
-    if (expertId) getPageViewCounts(expertId).then(setViews)
+    if (!expertId) return
+    getPageViewCounts(expertId).then(setViews)
+    getPageViewDaily(expertId).then(setDaily)
   }, [expertId])
+
+  const courses = getCoursesByExpert(expertId)
+
+  // 일별/월별 기간 행: 조회수(page_view_daily) + 구매 건수(orders)를 같은 기간 키로 합산
+  const periodRows = useMemo(() => {
+    if (mode === '강의별' || !daily || !revenue) return []
+    const keyOf = (d: string) => (mode === '일별' ? d : d.slice(0, 7))
+    const inCourse = (id: string) => courseFilter === 'all' || id === courseFilter
+    const map = new Map<string, { views: number; buys: number }>()
+    const at = (k: string) => {
+      let v = map.get(k)
+      if (!v) map.set(k, (v = { views: 0, buys: 0 }))
+      return v
+    }
+    for (const r of daily) {
+      if (r.item_type === 'course' && inCourse(r.item_id)) at(keyOf(r.day)).views += r.views
+    }
+    for (const p of revenue.purchases) {
+      if (inCourse(p.courseId)) at(keyOf(p.date)).buys += 1
+    }
+    return [...map.entries()]
+      .sort((a, b) => (a[0] < b[0] ? 1 : -1)) // 최신 기간부터
+      .map(([period, v]) => ({ period, ...v }))
+  }, [mode, daily, revenue, courseFilter])
 
   if (!revenue) {
     return <div className="h-48 animate-pulse rounded-2xl bg-stone-100" />
   }
-  const courses = getCoursesByExpert(expertId)
   const max = Math.max(1, ...revenue.byMonth.map((m) => m.amount))
   const thisMonth = revenue.byMonth[revenue.byMonth.length - 1]?.amount ?? 0
   const hasData = revenue.total > 0
@@ -468,17 +500,50 @@ function RevenueTab({ revenue, expertId }: { revenue: ExpertRevenue | null; expe
         <p className="mt-4 text-xs text-stone-400">* 정산 비율 80:20 적용</p>
       </div>
 
-      {/* 강의별 전환율 (상세페이지 조회 → 구매) */}
+      {/* 전환율 (상세페이지 조회 → 구매) — 강의별 / 일별 / 월별 */}
       <div className="rounded-2xl border border-stone-200 bg-white p-6">
-        <h3 className="font-bold text-stone-900">강의별 전환율</h3>
-        <p className="mt-1 text-sm text-stone-500">
-          상세페이지 조회수 대비 구매자 수를 보여줘요.
-        </p>
-        {views === null ? (
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h3 className="font-bold text-stone-900">전환율</h3>
+            <p className="mt-1 text-sm text-stone-500">
+              상세페이지 조회수 대비 구매를 보여줘요.
+            </p>
+          </div>
+          <div className="flex rounded-lg border border-stone-200 p-0.5">
+            {(['강의별', '일별', '월별'] as ConversionMode[]).map((m) => (
+              <button
+                key={m}
+                onClick={() => setMode(m)}
+                className={`rounded-md px-3 py-1.5 text-xs font-semibold transition ${
+                  mode === m ? 'bg-stone-900 text-white' : 'text-stone-500 hover:text-stone-800'
+                }`}
+              >
+                {m}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {mode !== '강의별' && courses.length > 1 && (
+          <select
+            value={courseFilter}
+            onChange={(e) => setCourseFilter(e.target.value)}
+            className="mt-4 w-full max-w-xs rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm font-medium text-stone-700 outline-none focus:border-amber-400"
+          >
+            <option value="all">전체 강의</option>
+            {courses.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.title}
+              </option>
+            ))}
+          </select>
+        )}
+
+        {views === null || daily === null ? (
           <div className="mt-4 h-24 animate-pulse rounded-xl bg-stone-100" />
         ) : courses.length === 0 ? (
           <p className="mt-4 py-8 text-center text-sm text-stone-400">등록된 강의가 없어요.</p>
-        ) : (
+        ) : mode === '강의별' ? (
           <div className="mt-4 overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="border-b border-stone-200 text-left text-xs text-stone-500">
@@ -512,9 +577,46 @@ function RevenueTab({ revenue, expertId }: { revenue: ExpertRevenue | null; expe
               </tbody>
             </table>
           </div>
+        ) : periodRows.length === 0 ? (
+          <p className="mt-4 py-8 text-center text-sm text-stone-400">
+            아직 집계된 조회·구매 데이터가 없어요.
+          </p>
+        ) : (
+          <div className="mt-4 max-h-96 overflow-x-auto overflow-y-auto">
+            <table className="w-full text-sm">
+              <thead className="sticky top-0 border-b border-stone-200 bg-white text-left text-xs text-stone-500">
+                <tr>
+                  <th className="py-2 pr-4">{mode === '일별' ? '날짜' : '월'}</th>
+                  <th className="py-2 pr-4 text-right">조회수</th>
+                  <th className="py-2 pr-4 text-right">구매</th>
+                  <th className="py-2 text-right">전환율</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-stone-100">
+                {periodRows.map((r) => {
+                  const rate = r.views > 0 ? (r.buys / r.views) * 100 : null
+                  return (
+                    <tr key={r.period}>
+                      <td className="py-3 pr-4 font-medium text-stone-800">{r.period}</td>
+                      <td className="py-3 pr-4 text-right text-stone-600">
+                        {r.views.toLocaleString()}
+                      </td>
+                      <td className="py-3 pr-4 text-right text-stone-600">
+                        {r.buys.toLocaleString()}
+                      </td>
+                      <td className="py-3 text-right font-semibold text-stone-900">
+                        {rate === null ? '—' : `${rate.toFixed(1)}%`}
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
         )}
         <p className="mt-4 text-xs text-stone-400">
           * 조회수는 2026년 8월 5일부터 집계를 시작했어요. 지도자 본인·관리자의 조회는 제외됩니다.
+          {mode !== '강의별' && ' 일별/월별 구매는 결제 건수 기준이에요.'}
         </p>
       </div>
     </div>
