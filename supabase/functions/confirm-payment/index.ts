@@ -9,6 +9,22 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 }
 
+// 결제 완료 텔레그램 알림 (best-effort — 실패해도 결제 흐름에 영향 없음)
+async function notifyTelegram(text: string) {
+  const token = Deno.env.get('TELEGRAM_BOT_TOKEN')
+  const chatId = Deno.env.get('TELEGRAM_CHAT_ID')
+  if (!token || !chatId) return
+  try {
+    await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: chatId, text }),
+    })
+  } catch (e) {
+    console.error('telegram notify failed:', e)
+  }
+}
+
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
@@ -53,7 +69,11 @@ Deno.serve(async (req) => {
 
     // 4) 가격 서버 재검증
     const table = itemType === 'course' ? 'courses' : 'ebooks'
-    const { data: itemRow } = await admin.from(table).select('price').eq('id', itemId).maybeSingle()
+    const { data: itemRow } = await admin
+      .from(table)
+      .select('price, title')
+      .eq('id', itemId)
+      .maybeSingle()
     if (!itemRow) return json({ ok: false, message: '상품을 찾을 수 없습니다.' }, 404)
     if (Number(itemRow.price) !== Number(amount)) {
       return json({ ok: false, message: '결제 금액이 일치하지 않습니다.' }, 400)
@@ -113,6 +133,16 @@ Deno.serve(async (req) => {
         order_id: order?.id ?? null,
       },
       { onConflict: 'user_id,item_type,item_id' },
+    )
+
+    await notifyTelegram(
+      [
+        '💰 결제 완료',
+        `상품: [${itemType === 'course' ? '강의' : '전자책'}] ${itemRow.title}`,
+        `금액: ${Number(amount).toLocaleString('ko-KR')}원`,
+        `구매자: ${user.email ?? user.id}`,
+        `결제수단: ${pay.method ?? '-'}`,
+      ].join('\n'),
     )
 
     return json({ ok: true })
