@@ -484,9 +484,12 @@ function RevenueTab({ revenue, expertId }: { revenue: ExpertRevenue | null; expe
           <div className="mt-6 flex h-48 items-end justify-between gap-3">
             {revenue.byMonth.map((m, i) => (
               <div key={i} className="flex flex-1 flex-col items-center gap-2">
+                {/* 부모(flex column) 높이가 auto라 % 높이는 0으로 계산됨 → px로 지정 */}
                 <div
                   className="w-full rounded-t-lg bg-gradient-to-t from-amber-400 to-orange-400"
-                  style={{ height: `${Math.max(2, (m.amount / max) * 100)}%` }}
+                  style={{
+                    height: `${m.amount > 0 ? Math.max(8, Math.round((m.amount / max) * 150)) : 2}px`,
+                  }}
                 />
                 <span className="text-xs text-stone-400">{m.month}</span>
               </div>
