@@ -56,7 +56,9 @@ export async function listAllSettlements(): Promise<AdminSettlement[]> {
   if (!supabase) return []
   const { data } = await supabase
     .from('settlements')
-    .select('id, expert_id, amount, gross_amount, fee_rate, status, requested_at, paid_at, note')
+    .select(
+      'id, expert_id, amount, gross_amount, fee_rate, withholding_amount, net_amount, status, requested_at, paid_at, note',
+    )
     .order('requested_at', { ascending: false })
   return (data as AdminSettlement[]) ?? []
 }

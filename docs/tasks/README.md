@@ -16,6 +16,7 @@
 | 8 | [08-content-hub.md](./08-content-hub.md) | ⑨ **컨텐츠 허브** `/content`: 강의+전자책 통합(카테고리·타입·정렬, pudufu 식) — **모바일 하단 "컨텐츠"** 진입 | 신규 페이지 |
 | 9 | [09-admin-upload-pdf-discount.md](./09-admin-upload-pdf-discount.md) | (2026-06-10) 관리자 영상 업로드 권한(엣지 함수), 강의 리뷰리워드 **PDF 실제 업로드**, 강의 **할인가(original_price)** 설정·표시 | 버그수정·기능 |
 | 10 | [10-reading-watching-progress.md](./10-reading-watching-progress.md) | (2026-06-11) **전자책 읽기 진도**(이어읽기) + **영상강의 정밀 진도**(Vimeo SDK 회차별 이어보기·목차 ✓). `enrollments.progress` 재활용 + `lesson_progress` jsonb 신규 | 기능 |
+| 11 | [11-withholding-tax.md](./11-withholding-tax.md) | (2026-08-06) 정산 **원천징수 3.3%**(지급총액·원천징수액·실지급액 기록) + 정산 계좌 **주민등록번호** 수집(신고용, 미등록 시 출금 신청 차단) | 기능·정산 |
 
 ### 확정된 결정
 - 작업 ①: 카테고리 **"체육관 운영" → "경영"**, DB 컬럼/시드/기존 행까지 변경(A안).

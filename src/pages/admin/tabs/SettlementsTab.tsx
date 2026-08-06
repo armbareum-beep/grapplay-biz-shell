@@ -29,7 +29,11 @@ export default function SettlementsTab() {
   ) => {
     const labels = { approved: '승인', paid: '지급완료 처리', rejected: '반려' }
     if (status === 'rejected' && !confirm('이 정산 신청을 반려할까요?')) return
-    if (status === 'paid' && !confirm('실제 송금을 완료했나요? 지급완료로 처리합니다.')) return
+    if (
+      status === 'paid' &&
+      !confirm(`실지급액 ${formatPrice(s.net_amount)} 송금을 완료했나요? 지급완료로 처리합니다.`)
+    )
+      return
     setBusyId(s.id)
     const { error } = await updateSettlementStatus(s.id, status)
     setBusyId(null)
@@ -69,15 +73,18 @@ export default function SettlementsTab() {
     <div className="space-y-4">
       <p className="text-sm text-stone-500">
         처리 대기 중인 신청 <span className="font-bold text-violet-600">{pending}건</span>. 계좌를
-        확인한 뒤 승인 → 송금 → 지급완료 처리하세요.
+        확인한 뒤 승인 → <span className="font-semibold text-stone-700">실지급액</span> 송금 →
+        지급완료 처리하세요. 원천징수(3.3%)분은 다음 달 10일까지 홈택스 신고·납부해야 합니다.
       </p>
       <div className="overflow-x-auto rounded-2xl border border-stone-200">
-        <table className="w-full min-w-[720px] text-sm">
+        <table className="w-full min-w-[880px] text-sm">
           <thead className="bg-stone-50 text-left text-xs text-stone-500">
             <tr>
               <th className="px-4 py-3">신청일</th>
               <th className="px-4 py-3">전문가</th>
               <th className="px-4 py-3">정산액(80%)</th>
+              <th className="px-4 py-3">원천징수(3.3%)</th>
+              <th className="px-4 py-3">실지급액</th>
               <th className="px-4 py-3">기준 매출</th>
               <th className="px-4 py-3">상태</th>
               <th className="px-4 py-3">계좌</th>
@@ -97,8 +104,12 @@ export default function SettlementsTab() {
                     <td className="px-4 py-3 font-medium text-stone-800">
                       {expert?.name ?? s.expert_id}
                     </td>
-                    <td className="px-4 py-3 font-semibold text-stone-900">
-                      {formatPrice(s.amount)}
+                    <td className="px-4 py-3 text-stone-600">{formatPrice(s.amount)}</td>
+                    <td className="px-4 py-3 text-stone-500">
+                      −{formatPrice(s.withholding_amount)}
+                    </td>
+                    <td className="px-4 py-3 font-bold text-stone-900">
+                      {formatPrice(s.net_amount)}
                     </td>
                     <td className="px-4 py-3 text-stone-500">{formatPrice(s.gross_amount)}</td>
                     <td className="px-4 py-3">
@@ -149,13 +160,20 @@ export default function SettlementsTab() {
                   </tr>
                   {showAcc && (
                     <tr className="bg-stone-50">
-                      <td colSpan={7} className="px-4 py-3 text-xs text-stone-600">
+                      <td colSpan={9} className="px-4 py-3 text-xs text-stone-600">
                         {acc === undefined ? (
                           '계좌 정보를 불러오는 중…'
                         ) : acc ? (
                           <span>
                             <span className="font-semibold text-stone-800">{acc.bank}</span>{' '}
-                            {acc.account_no} · 예금주 {acc.holder}
+                            {acc.account_no} · 예금주 {acc.holder} · 주민등록번호{' '}
+                            {acc.resident_id ? (
+                              <span className="font-semibold text-stone-800">
+                                {acc.resident_id}
+                              </span>
+                            ) : (
+                              <span className="text-rose-500">미등록 (원천징수 신고 불가)</span>
+                            )}
                           </span>
                         ) : (
                           <span className="text-rose-500">정산 계좌가 등록되지 않았습니다.</span>
