@@ -706,7 +706,7 @@ function PayoutTab({ expertId, expertName }: { expertId: string; expertName: str
     if (!account.resident_id)
       return alert('원천징수(3.3%) 신고를 위해 정산 계좌에 주민등록번호를 먼저 등록해 주세요.')
     setBusy(true)
-    const { error } = await requestSettlement()
+    const { error } = await requestSettlement(expertId)
     setBusy(false)
     if (error) return alert(error)
     reload()

@@ -35,10 +35,14 @@
   - `net_amount` integer — 실지급액(= amount − withholding_amount)
 - **기존 정산 이력 보존**: 이미 있던 행은 원천징수 없이 지급됐으므로
   `withholding_rate=0, net_amount=amount`로 백필. 이력 재작성 없음.
-- `request_settlement()` RPC(security definer)가 서버에서 재계산:
+- `request_settlement(p_expert_id default null)` RPC(security definer)가 서버에서 재계산:
   1. `payout_accounts.resident_id` 미등록이면 `no resident id` 예외로 **신청 차단**
   2. `amount = floor((총매출 − 기정산 매출) × 0.8)`
   3. `withholding = floor(amount × 0.033)`, `net = amount − withholding`
+- **관리자 대리 신청**: 관리자 프로필엔 `expert_id`가 없어 `current_expert_id()`가 null →
+  'not an expert'가 났었다. `is_admin() && p_expert_id`면 지정 지도자로 신청하도록 확장
+  ([20260806010000_admin_request_settlement.sql](../../supabase/migrations/20260806010000_admin_request_settlement.sql)).
+  시그니처가 바뀌므로 기존 무인자 함수는 drop(남기면 rpc 호출 모호성 오류).
 
 ## 프론트
 

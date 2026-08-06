@@ -494,9 +494,12 @@ export async function upsertPayoutAccount(expertId: string, acc: PayoutAccount) 
   return { error: error?.message ?? null }
 }
 
-export async function requestSettlement() {
+// expertId는 관리자가 지도자 대신 신청할 때만 서버에서 사용됨 (일반 지도자는 본인 계정 기준)
+export async function requestSettlement(expertId?: string) {
   if (!supabase) return { error: '연결이 설정되지 않았습니다.' }
-  const { error } = await supabase.rpc('request_settlement')
+  const { error } = await supabase.rpc('request_settlement', {
+    p_expert_id: expertId ?? null,
+  })
   if (error) {
     if (error.message.includes('no balance')) return { error: '출금 가능한 금액이 없습니다.' }
     if (error.message.includes('no resident id'))
