@@ -17,6 +17,8 @@ import {
   getPayoutAccount,
   upsertPayoutAccount,
   requestSettlement,
+  withholdingFor,
+  maskResidentId,
   type ExpertRevenue,
   type SettlementSummary,
   type SettlementRow,
@@ -647,7 +649,7 @@ function RevenueTab({ revenue, expertId }: { revenue: ExpertRevenue | null; expe
   )
 }
 
-/* ── 정산 탭 (전문가 80% / 플랫폼 20%) ── */
+/* ── 정산 탭 (전문가 80% / 플랫폼 20%, 지급 시 원천징수 3.3%) ── */
 function PayoutTab({ expertId, expertName }: { expertId: string; expertName: string }) {
   const [summary, setSummary] = useState<SettlementSummary | null>(null)
   const [list, setList] = useState<SettlementRow[]>([])
@@ -659,6 +661,7 @@ function PayoutTab({ expertId, expertName }: { expertId: string; expertName: str
   const [bank, setBank] = useState('')
   const [accountNo, setAccountNo] = useState('')
   const [holder, setHolder] = useState(expertName)
+  const [residentId, setResidentId] = useState('')
 
   const reload = () => {
     Promise.all([
@@ -673,6 +676,7 @@ function PayoutTab({ expertId, expertName }: { expertId: string; expertName: str
         setBank(a.bank)
         setAccountNo(a.account_no)
         setHolder(a.holder)
+        setResidentId(a.resident_id ?? '')
       }
     })
   }
@@ -689,6 +693,7 @@ function PayoutTab({ expertId, expertName }: { expertId: string; expertName: str
       bank: bank.trim(),
       account_no: accountNo.trim(),
       holder: holder.trim(),
+      resident_id: residentId.trim() || null,
     })
     setBusy(false)
     if (error) return alert('저장 실패: ' + error)
@@ -698,6 +703,8 @@ function PayoutTab({ expertId, expertName }: { expertId: string; expertName: str
 
   const onRequest = async () => {
     if (!account) return alert('먼저 정산 계좌를 등록해 주세요.')
+    if (!account.resident_id)
+      return alert('원천징수(3.3%) 신고를 위해 정산 계좌에 주민등록번호를 먼저 등록해 주세요.')
     setBusy(true)
     const { error } = await requestSettlement()
     setBusy(false)
@@ -717,6 +724,12 @@ function PayoutTab({ expertId, expertName }: { expertId: string; expertName: str
         <div className="mt-1 text-3xl font-black text-stone-900">
           {formatPrice(summary.available)}
         </div>
+        {summary.available > 0 && (
+          <div className="mt-1 text-sm font-semibold text-stone-700">
+            원천징수 3.3% −{formatPrice(withholdingFor(summary.available))} → 실수령 예상{' '}
+            {formatPrice(summary.available - withholdingFor(summary.available))}
+          </div>
+        )}
         <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-stone-500">
           <span>총매출 {formatPrice(summary.gross)}</span>
           <span>· 신청 대기 {formatPrice(summary.requested)}</span>
@@ -768,6 +781,15 @@ function PayoutTab({ expertId, expertName }: { expertId: string; expertName: str
               placeholder="예금주"
               className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm outline-none focus:border-amber-400"
             />
+            <input
+              value={residentId}
+              onChange={(e) => setResidentId(e.target.value)}
+              placeholder="주민등록번호 (예: 900101-1234567)"
+              className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm outline-none focus:border-amber-400"
+            />
+            <p className="text-xs text-stone-400">
+              주민등록번호는 사업소득 원천징수(3.3%) 신고 목적으로만 수집·이용됩니다.
+            </p>
             <div className="flex gap-2">
               <button
                 onClick={onSaveAccount}
@@ -802,6 +824,16 @@ function PayoutTab({ expertId, expertName }: { expertId: string; expertName: str
                 {account?.account_no ?? '미등록'}
               </dd>
             </div>
+            <div className="flex justify-between">
+              <dt className="text-stone-500">주민등록번호</dt>
+              <dd
+                className={account?.resident_id ? 'font-medium text-stone-800' : 'text-rose-500'}
+              >
+                {account?.resident_id
+                  ? maskResidentId(account.resident_id)
+                  : '미등록 (원천징수 신고에 필요)'}
+              </dd>
+            </div>
           </dl>
         )}
       </div>
@@ -820,6 +852,8 @@ function PayoutTab({ expertId, expertName }: { expertId: string; expertName: str
                 <tr>
                   <th className="px-4 py-3">신청일</th>
                   <th className="px-4 py-3">정산액(80%)</th>
+                  <th className="px-4 py-3">원천징수(3.3%)</th>
+                  <th className="px-4 py-3">실지급액</th>
                   <th className="px-4 py-3">상태</th>
                 </tr>
               </thead>
@@ -827,8 +861,12 @@ function PayoutTab({ expertId, expertName }: { expertId: string; expertName: str
                 {list.map((s) => (
                   <tr key={s.id}>
                     <td className="px-4 py-3 text-stone-500">{s.requested_at?.slice(0, 10)}</td>
-                    <td className="px-4 py-3 font-semibold text-stone-800">
-                      {formatPrice(s.amount)}
+                    <td className="px-4 py-3 text-stone-600">{formatPrice(s.amount)}</td>
+                    <td className="px-4 py-3 text-stone-500">
+                      −{formatPrice(s.withholding_amount)}
+                    </td>
+                    <td className="px-4 py-3 font-semibold text-stone-900">
+                      {formatPrice(s.net_amount)}
                     </td>
                     <td className="px-4 py-3">
                       <SettlementStatus status={s.status} />

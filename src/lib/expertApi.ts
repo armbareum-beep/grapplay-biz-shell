@@ -373,8 +373,21 @@ export async function getPageViewDaily(expertId: string): Promise<PageViewDailyR
   return ((data ?? []) as PageViewDailyRow[]).map((r) => ({ ...r, views: Number(r.views) }))
 }
 
-// ── 정산 (전문가 80% / 플랫폼 20%) ──
+// ── 정산 (전문가 80% / 플랫폼 20%, 지급 시 원천징수 3.3%) ──
 export const EXPERT_SHARE = 0.8
+export const WITHHOLDING_RATE = 0.033 // 사업소득 원천징수 (소득세 3% + 지방소득세 0.3%)
+
+// 정산액(80%)에 대한 원천징수액
+export function withholdingFor(amount: number) {
+  return Math.floor(amount * WITHHOLDING_RATE)
+}
+
+// 주민등록번호 마스킹 (뒷자리 첫 글자까지만 표시)
+export function maskResidentId(rid: string) {
+  const digits = rid.replace(/\D/g, '')
+  if (digits.length < 7) return rid
+  return `${digits.slice(0, 6)}-${digits[6]}******`
+}
 
 export interface SettlementSummary {
   gross: number // 총매출(차감 전)
@@ -388,6 +401,8 @@ export interface SettlementRow {
   amount: number
   gross_amount: number
   fee_rate: number
+  withholding_amount: number // 원천징수액 (3.3%)
+  net_amount: number // 실지급액 = amount − withholding_amount
   status: 'requested' | 'approved' | 'paid' | 'rejected'
   requested_at: string
   paid_at: string | null
@@ -397,6 +412,7 @@ export interface PayoutAccount {
   bank: string
   account_no: string
   holder: string
+  resident_id: string | null // 주민등록번호 (원천징수 신고용)
 }
 
 export async function getSettlementSummary(expertId: string): Promise<SettlementSummary> {
@@ -449,7 +465,9 @@ export async function getSettlements(expertId: string): Promise<SettlementRow[]>
   if (!supabase) return []
   const { data } = await supabase
     .from('settlements')
-    .select('id, amount, gross_amount, fee_rate, status, requested_at, paid_at')
+    .select(
+      'id, amount, gross_amount, fee_rate, withholding_amount, net_amount, status, requested_at, paid_at',
+    )
     .eq('expert_id', expertId)
     .order('requested_at', { ascending: false })
   return (data as SettlementRow[]) ?? []
@@ -459,7 +477,7 @@ export async function getPayoutAccount(expertId: string): Promise<PayoutAccount 
   if (!supabase) return null
   const { data } = await supabase
     .from('payout_accounts')
-    .select('bank, account_no, holder')
+    .select('bank, account_no, holder, resident_id')
     .eq('expert_id', expertId)
     .maybeSingle()
   return (data as PayoutAccount) ?? null
@@ -481,6 +499,8 @@ export async function requestSettlement() {
   const { error } = await supabase.rpc('request_settlement')
   if (error) {
     if (error.message.includes('no balance')) return { error: '출금 가능한 금액이 없습니다.' }
+    if (error.message.includes('no resident id'))
+      return { error: '원천징수(3.3%) 신고를 위해 정산 계좌에 주민등록번호를 먼저 등록해 주세요.' }
     return { error: error.message }
   }
   return { error: null }
