@@ -18,6 +18,7 @@ import {
   upsertPayoutAccount,
   requestSettlement,
   withholdingFor,
+  settlementBreakdown,
   maskResidentId,
   type ExpertRevenue,
   type SettlementSummary,
@@ -490,7 +491,11 @@ function RevenueTab({ revenue, expertId }: { revenue: ExpertRevenue | null; expe
       <div className="grid gap-4 sm:grid-cols-3">
         <StatCard label="이번 달 매출" value={formatPrice(thisMonth)} icon="📈" accent />
         <StatCard label="누적 판매" value={`${revenue.count}건`} icon="🛒" />
-        <StatCard label="정산 예정액(80%)" value={formatPrice(Math.round(revenue.total * 0.8))} icon="💸" />
+        <StatCard
+          label="정산 예정액(부가세 제외 80%)"
+          value={formatPrice(settlementBreakdown(revenue.total).amount)}
+          icon="💸"
+        />
       </div>
       <div className="rounded-2xl border border-stone-200 bg-white p-6">
         <h3 className="font-bold text-stone-900">월별 매출 추이</h3>
@@ -514,7 +519,9 @@ function RevenueTab({ revenue, expertId }: { revenue: ExpertRevenue | null; expe
             아직 결제된 매출이 없어요. 강의가 판매되면 여기에 표시됩니다.
           </p>
         )}
-        <p className="mt-4 text-xs text-stone-400">* 정산 비율 80:20 적용</p>
+        <p className="mt-4 text-xs text-stone-400">
+          * 매출에서 부가세 10%를 뺀 공급가액 기준으로 80:20 정산, 지급 시 원천징수 3.3% 차감
+        </p>
       </div>
 
       {/* 전환율 (상세페이지 조회 → 구매) — 상품별 / 일별 / 월별 */}
@@ -720,15 +727,34 @@ function PayoutTab({ expertId, expertName }: { expertId: string; expertName: str
     <div className="space-y-6">
       {/* 출금 가능 금액 */}
       <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6">
-        <div className="text-sm text-stone-600">출금 가능 금액 (전문가 정산 80%)</div>
+        <div className="text-sm text-stone-600">출금 가능 금액 (부가세 제외 후 80%)</div>
         <div className="mt-1 text-3xl font-black text-stone-900">
           {formatPrice(summary.available)}
         </div>
         {summary.available > 0 && (
-          <div className="mt-1 text-sm font-semibold text-stone-700">
-            원천징수 3.3% −{formatPrice(withholdingFor(summary.available))} → 실수령 예상{' '}
-            {formatPrice(summary.available - withholdingFor(summary.available))}
-          </div>
+          /* 매출 → 부가세 → 80% → 원천징수 → 실수령 (서버 계산과 동일한 순서) */
+          <dl className="mt-3 space-y-1 border-t border-amber-200 pt-3 text-sm">
+            <div className="flex justify-between">
+              <dt className="text-stone-500">정산 대상 매출</dt>
+              <dd className="text-stone-700">{formatPrice(summary.supply + summary.vat)}</dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-stone-500">부가세 10%</dt>
+              <dd className="text-stone-700">−{formatPrice(summary.vat)}</dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-stone-500">지도자 정산 80% (공급가액 {formatPrice(summary.supply)})</dt>
+              <dd className="text-stone-700">{formatPrice(summary.available)}</dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-stone-500">원천징수 3.3%</dt>
+              <dd className="text-stone-700">−{formatPrice(withholdingFor(summary.available))}</dd>
+            </div>
+            <div className="flex justify-between border-t border-amber-200 pt-1 font-bold text-stone-900">
+              <dt>실수령 예상</dt>
+              <dd>{formatPrice(summary.available - withholdingFor(summary.available))}</dd>
+            </div>
+          </dl>
         )}
         <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-stone-500">
           <span>총매출 {formatPrice(summary.gross)}</span>
@@ -851,6 +877,9 @@ function PayoutTab({ expertId, expertName }: { expertId: string; expertName: str
               <thead className="bg-stone-50 text-left text-xs text-stone-500">
                 <tr>
                   <th className="px-4 py-3">신청일</th>
+                  <th className="px-4 py-3">매출</th>
+                  <th className="px-4 py-3">부가세(10%)</th>
+                  <th className="px-4 py-3">공급가액</th>
                   <th className="px-4 py-3">정산액(80%)</th>
                   <th className="px-4 py-3">원천징수(3.3%)</th>
                   <th className="px-4 py-3">실지급액</th>
@@ -861,6 +890,9 @@ function PayoutTab({ expertId, expertName }: { expertId: string; expertName: str
                 {list.map((s) => (
                   <tr key={s.id}>
                     <td className="px-4 py-3 text-stone-500">{s.requested_at?.slice(0, 10)}</td>
+                    <td className="px-4 py-3 text-stone-500">{formatPrice(s.gross_amount)}</td>
+                    <td className="px-4 py-3 text-stone-500">−{formatPrice(s.vat_amount)}</td>
+                    <td className="px-4 py-3 text-stone-500">{formatPrice(s.supply_amount)}</td>
                     <td className="px-4 py-3 text-stone-600">{formatPrice(s.amount)}</td>
                     <td className="px-4 py-3 text-stone-500">
                       −{formatPrice(s.withholding_amount)}
