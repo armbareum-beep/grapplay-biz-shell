@@ -3,7 +3,12 @@ import { useParams, useNavigate, useLocation, Link } from 'react-router-dom'
 import { CATEGORIES, Category, type Course } from '../../data/mock'
 import { useBizData, invalidateBizData } from '../../lib/useBizData'
 import { useAuth } from '../../lib/auth'
-import { createCourse, updateCourse, type CourseInput } from '../../lib/expertApi'
+import {
+  createCourse,
+  updateCourse,
+  settlementBreakdown,
+  type CourseInput,
+} from '../../lib/expertApi'
 import { uploadVideoToVimeo } from '../../lib/vimeo'
 import { fetchVimeoDuration } from '../../lib/video'
 import { supabase } from '../../lib/supabase'
@@ -380,9 +385,9 @@ function EditorForm({ existing, isEdit }: { existing?: Course; isEdit: boolean }
           </div>
           {Number(price) > 0 ? (
             <p className="text-xs text-stone-500">
-              정산 예상액(80%):{' '}
+              정산 예상액(부가세 제외 80%):{' '}
               <span className="font-semibold text-stone-700">
-                ₩{Math.round(Number(price) * 0.8).toLocaleString()}
+                ₩{settlementBreakdown(Number(price)).amount.toLocaleString()}
               </span>{' '}
               · 판매가 ₩{Number(price).toLocaleString()}
               {Number(originalPrice) > Number(price) && (

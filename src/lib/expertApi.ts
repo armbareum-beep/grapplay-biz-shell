@@ -373,13 +373,40 @@ export async function getPageViewDaily(expertId: string): Promise<PageViewDailyR
   return ((data ?? []) as PageViewDailyRow[]).map((r) => ({ ...r, views: Number(r.views) }))
 }
 
-// ── 정산 (전문가 80% / 플랫폼 20%, 지급 시 원천징수 3.3%) ──
+// ── 정산 (매출 → 부가세 10% → 전문가 80%/플랫폼 20% → 원천징수 3.3%) ──
+export const VAT_RATE = 0.1 // 부가가치세 (결제금액은 부가세 포함가)
 export const EXPERT_SHARE = 0.8
 export const WITHHOLDING_RATE = 0.033 // 사업소득 원천징수 (소득세 3% + 지방소득세 0.3%)
+
+// 부가세 포함 결제금액 → 공급가액.
+// gross / 1.1은 부동소수 오차가 난다(Math.floor(110000 / 1.1) === 99999).
+// SQL의 (v_base * 10) / 11과 똑같이 정수 연산으로 계산한다.
+export function supplyFor(gross: number) {
+  return Math.floor((gross * 10) / 11)
+}
 
 // 정산액(80%)에 대한 원천징수액
 export function withholdingFor(amount: number) {
   return Math.floor(amount * WITHHOLDING_RATE)
+}
+
+export interface SettlementBreakdown {
+  gross: number // 결제금액 (부가세 포함)
+  vat: number // 부가세 10%
+  supply: number // 공급가액 = gross − vat
+  amount: number // 지도자 몫 80% (공급가액 기준) = 세무상 사업소득 지급액
+  withholding: number // 원천징수 3.3%
+  net: number // 실지급액 = amount − withholding
+}
+
+// 서버 RPC request_settlement와 1:1 대응하는 유일한 계산 함수.
+// 금액을 보여주는 모든 화면은 자체 계산 대신 이걸 쓴다.
+export function settlementBreakdown(gross: number): SettlementBreakdown {
+  const base = Math.max(0, gross)
+  const supply = supplyFor(base)
+  const amount = Math.floor(supply * EXPERT_SHARE)
+  const withholding = withholdingFor(amount)
+  return { gross: base, vat: base - supply, supply, amount, withholding, net: amount - withholding }
 }
 
 // 주민등록번호 마스킹 (뒷자리 첫 글자까지만 표시)
@@ -390,8 +417,10 @@ export function maskResidentId(rid: string) {
 }
 
 export interface SettlementSummary {
-  gross: number // 총매출(차감 전)
-  available: number // 출금 가능액 (전문가 80% 기준, 기신청분 제외)
+  gross: number // 총매출(차감 전, 부가세 포함)
+  vat: number // 이번 회차 부가세 10%
+  supply: number // 이번 회차 공급가액 (부가세 제외)
+  available: number // 출금 가능액 (공급가액의 80%, 기신청분 제외)
   paidOut: number // 지급 완료액
   requested: number // 신청/승인 대기 중 금액
 }
@@ -399,8 +428,11 @@ export interface SettlementSummary {
 export interface SettlementRow {
   id: string
   amount: number
-  gross_amount: number
+  gross_amount: number // 결제금액 기준 (부가세 포함)
   fee_rate: number
+  vat_rate: number
+  vat_amount: number // 부가세 (10%)
+  supply_amount: number // 공급가액 = gross_amount − vat_amount
   withholding_amount: number // 원천징수액 (3.3%)
   net_amount: number // 실지급액 = amount − withholding_amount
   status: 'requested' | 'approved' | 'paid' | 'rejected'
@@ -416,7 +448,14 @@ export interface PayoutAccount {
 }
 
 export async function getSettlementSummary(expertId: string): Promise<SettlementSummary> {
-  const empty: SettlementSummary = { gross: 0, available: 0, paidOut: 0, requested: 0 }
+  const empty: SettlementSummary = {
+    gross: 0,
+    vat: 0,
+    supply: 0,
+    available: 0,
+    paidOut: 0,
+    requested: 0,
+  }
   if (!supabase) return empty
 
   const [{ data: courses }, { data: ebooks }] = await Promise.all([
@@ -453,9 +492,14 @@ export async function getSettlementSummary(expertId: string): Promise<Settlement
     .filter((s: any) => ['requested', 'approved'].includes(s.status))
     .reduce((a: number, s: any) => a + s.amount, 0)
 
+  // 이번 회차 정산 대상(기신청분 제외)에 서버 RPC와 같은 순서로 부가세 → 80%를 적용
+  const b = settlementBreakdown(gross - alreadyGross)
+
   return {
     gross,
-    available: Math.max(0, Math.floor((gross - alreadyGross) * EXPERT_SHARE)),
+    vat: b.vat,
+    supply: b.supply,
+    available: b.amount,
     paidOut,
     requested,
   }
@@ -466,7 +510,7 @@ export async function getSettlements(expertId: string): Promise<SettlementRow[]>
   const { data } = await supabase
     .from('settlements')
     .select(
-      'id, amount, gross_amount, fee_rate, withholding_amount, net_amount, status, requested_at, paid_at',
+      'id, amount, gross_amount, fee_rate, vat_rate, vat_amount, supply_amount, withholding_amount, net_amount, status, requested_at, paid_at',
     )
     .eq('expert_id', expertId)
     .order('requested_at', { ascending: false })
