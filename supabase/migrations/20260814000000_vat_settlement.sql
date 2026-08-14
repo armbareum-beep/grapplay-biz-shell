@@ -82,5 +82,28 @@ end $$;
 -- 정산 행 생성은 security definer RPC로만 허용한다.
 -- 기존 insert 정책은 금액을 전혀 제약하지 않아, 지도자가 PostgREST로 직접 insert하면
 -- 서버 재계산(부가세·원천징수)을 통째로 우회할 수 있었다.
--- (RPC는 테이블 소유자 권한으로 도므로 정책 없이도 insert 가능)
-drop policy if exists "expert requests settlement" on settlements;
+--
+-- 단 RPC가 RLS를 우회하려면 함수 소유자가 테이블 소유자이거나 bypassrls 권한이 있어야 한다.
+-- 그렇지 않은 환경에서 정책만 지우면 출금 신청이 전부 RLS 위반으로 실패하므로,
+-- 안전할 때만 지우고 아니면 정책을 남긴다.
+do $$
+declare
+  v_fn_owner  oid;
+  v_tbl_owner oid;
+  v_bypass    boolean;
+begin
+  select p.proowner into v_fn_owner from pg_proc p
+   where p.proname = 'request_settlement' and p.pronamespace = 'public'::regnamespace
+   limit 1;
+  select c.relowner into v_tbl_owner from pg_class c
+   where c.relname = 'settlements' and c.relnamespace = 'public'::regnamespace;
+  select (r.rolsuper or r.rolbypassrls) into v_bypass from pg_roles r where r.oid = v_fn_owner;
+
+  if v_fn_owner = v_tbl_owner or coalesce(v_bypass, false) then
+    execute 'drop policy if exists "expert requests settlement" on settlements';
+    raise notice 'insert 정책 제거 — 정산 행 생성은 RPC로만 가능합니다.';
+  else
+    raise notice 'insert 정책 유지 — RPC 소유자(%)와 테이블 소유자(%)가 다릅니다. 우회 구멍은 별도 처리 필요.',
+      pg_get_userbyid(v_fn_owner), pg_get_userbyid(v_tbl_owner);
+  end if;
+end $$;
