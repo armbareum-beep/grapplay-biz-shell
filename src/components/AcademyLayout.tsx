@@ -24,20 +24,13 @@ const MOBILE_TABS: { to: string; label: string; icon: IconName }[] = [
 export default function AcademyLayout({ children }: { children: React.ReactNode }) {
   const { pathname } = useLocation()
   const navigate = useNavigate()
-  const { profile } = useAuth()
   const { live, loading: dataLoading } = useBizData()
   const [search, setSearch] = useState('')
   // Supabase 연결은 됐는데 조회가 실패해 목업으로 폴백된 상태(장애를 감추지 않도록 안내)
   const dataDegraded = isSupabaseConfigured && !dataLoading && !live
 
-  // 역할별 대시보드 메뉴를 상단 메뉴에 추가
-  const menu = [
-    ...MENU,
-    ...((profile?.role === 'expert' && profile.expert_id) || profile?.role === 'admin'
-      ? [{ to: '/expert/dashboard', label: '지도자 대시보드' }]
-      : []),
-    ...(profile?.role === 'admin' ? [{ to: '/admin', label: '관리자 대시보드' }] : []),
-  ]
+  // 역할별 대시보드(전문가·관리자)는 공개 메뉴줄에 넣지 않는다.
+  // 우측 프로필 드롭다운에 이미 있고, 메뉴줄에 붙이면 모바일에서 가로로 넘쳐 잘린다.
   // 강의/전자책 상세에서는 하단 고정 구매바와 겹치지 않도록 모바일 하단탭 숨김
   const isReaderDetail = /^\/(courses|ebooks)\//.test(pathname)
   // 결제 페이지: 모바일 하단탭 숨김 + 모바일에서도 푸터 노출
@@ -80,7 +73,7 @@ export default function AcademyLayout({ children }: { children: React.ReactNode 
         {/* 2줄: 상단 카테고리 메뉴바 (모바일·데스크톱 모두) — 큰 언더라인 탭 */}
         <div className="border-b border-slate-200">
           <nav className="no-scrollbar mx-auto flex max-w-6xl items-center justify-start gap-5 overflow-x-auto px-4 sm:gap-6 sm:px-6">
-            {menu.map((m, i) => (
+            {MENU.map((m, i) => (
               <NavLink
                 key={i}
                 to={m.to}
@@ -246,7 +239,7 @@ function HeaderUtil() {
             {((profile?.role === 'expert' && profile.expert_id) ||
               profile?.role === 'admin') && (
               <MenuLink to="/expert/dashboard" onClick={() => setOpen(false)}>
-                지도자 대시보드
+                전문가 대시보드
               </MenuLink>
             )}
             {profile?.role === 'admin' && (

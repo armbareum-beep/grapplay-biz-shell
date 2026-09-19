@@ -5,7 +5,7 @@ export default function ExpertAvatar({
   size = 32,
   className = '',
   rounded = 'rounded-full',
-  fallbackBg = 'bg-amber-100',
+  fallbackBg = 'bg-slate-100',
 }: {
   emoji?: string | null
   src?: string | null
