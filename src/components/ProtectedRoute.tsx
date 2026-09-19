@@ -19,7 +19,7 @@ export default function ProtectedRoute({
   if (loading) {
     return (
       <div className="grid min-h-[60vh] place-items-center">
-        <span className="h-6 w-6 animate-spin rounded-full border-2 border-violet-500 border-t-transparent" />
+        <span className="h-6 w-6 animate-spin rounded-full border-2 border-brand-500 border-t-transparent" />
       </div>
     )
   }

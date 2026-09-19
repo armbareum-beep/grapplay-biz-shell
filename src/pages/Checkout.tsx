@@ -27,7 +27,7 @@ export default function Checkout() {
   if (loading) {
     return (
       <div className="grid min-h-[50vh] place-items-center">
-        <span className="h-6 w-6 animate-spin rounded-full border-2 border-violet-500 border-t-transparent" />
+        <span className="h-6 w-6 animate-spin rounded-full border-2 border-brand-500 border-t-transparent" />
       </div>
     )
   }
@@ -36,7 +36,7 @@ export default function Checkout() {
     return (
       <div className="mx-auto max-w-md px-4 py-24 text-center">
         <p className="text-slate-600">결제할 상품을 찾을 수 없어요.</p>
-        <Link to="/" className="mt-4 inline-block text-violet-600">
+        <Link to="/" className="mt-4 inline-block text-brand-600">
           홈으로
         </Link>
       </div>
@@ -49,7 +49,7 @@ export default function Checkout() {
         <p className="text-slate-600">무료 상품입니다. 상세 페이지에서 바로 받을 수 있어요.</p>
         <Link
           to={type === 'course' ? `/courses/${id}` : `/ebooks/${id}`}
-          className="mt-4 inline-block text-violet-600"
+          className="mt-4 inline-block text-brand-600"
         >
           상세로 돌아가기
         </Link>
@@ -93,11 +93,11 @@ export default function Checkout() {
 
       {/* 주문 요약 */}
       <div className="mt-6 flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-4">
-        <div className="grid h-16 w-24 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-violet-400 to-purple-500 text-2xl text-white">
+        <div className="grid h-16 w-24 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-brand-400 to-brand-500 text-2xl text-white">
           {type === 'course' ? '🎬' : '📘'}
         </div>
         <div className="min-w-0 flex-1">
-          <div className="text-xs font-medium text-violet-600">
+          <div className="text-xs font-medium text-brand-600">
             {type === 'course' ? '강의' : '전자책'}
           </div>
           <h2 className="truncate font-bold text-slate-900">{title}</h2>
@@ -120,7 +120,7 @@ export default function Checkout() {
       <button
         onClick={onPay}
         disabled={paying}
-        className="mt-6 w-full rounded-xl bg-violet-600 py-4 text-lg font-bold text-white hover:bg-violet-700 disabled:opacity-50"
+        className="mt-6 w-full rounded-xl bg-brand-600 py-4 text-lg font-bold text-white hover:bg-brand-700 disabled:opacity-50"
       >
         {paying ? '결제 진행 중…' : `${formatPrice(price)} 결제하기`}
       </button>

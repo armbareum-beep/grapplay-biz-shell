@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import Icon, { EmptyIcon } from '../components/Icon'
 import { Link, useSearchParams, useNavigate } from 'react-router-dom'
 import { useBizData } from '../lib/useBizData'
 import CourseCard from '../components/CourseCard'
@@ -28,13 +29,13 @@ export default function SearchResults() {
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
       {/* 검색 입력 */}
       <form onSubmit={onSearch} className="relative mx-auto max-w-2xl">
-        <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">🔍</span>
+        <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><Icon name="search" size={16} /></span>
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="강의·전자책·전문가 검색"
           autoFocus
-          className="w-full rounded-full border border-slate-300 bg-slate-50 py-3 pl-11 pr-4 text-sm outline-none focus:border-violet-400 focus:bg-white focus:ring-2 focus:ring-violet-100"
+          className="w-full rounded-full border border-slate-300 bg-slate-50 py-3 pl-11 pr-4 text-sm outline-none focus:border-brand-400 focus:bg-white focus:ring-2 focus:ring-brand-100"
         />
       </form>
 
@@ -48,7 +49,7 @@ export default function SearchResults() {
         </div>
       ) : total === 0 ? (
         <div className="mt-16 text-center">
-          <div className="text-5xl">🔍</div>
+          <EmptyIcon name="search" />
           <p className="mt-4 font-bold text-slate-800">'{q}' 검색 결과가 없어요</p>
           <p className="mt-1 text-sm text-slate-500">다른 키워드로 검색해 보세요.</p>
         </div>
@@ -98,7 +99,7 @@ export default function SearchResults() {
                       <div className="min-w-0">
                         <h3 className="truncate font-bold text-slate-900">{e.name}</h3>
                         <p className="truncate text-sm text-amber-600">{e.title}</p>
-                        <p className="mt-1 text-xs text-slate-400">⭐ {s.rating.toFixed(1)} · 강의 {s.courseCount}</p>
+                        <p className="mt-1 text-xs text-slate-400">★ {s.rating.toFixed(1)} · 강의 {s.courseCount}</p>
                       </div>
                     </Link>
                   )
@@ -116,7 +117,7 @@ function SectionHeader({ title, count }: { title: string; count: number }) {
   return (
     <div className="flex items-baseline gap-2 border-b border-slate-200 pb-2">
       <h2 className="text-lg font-black text-slate-900">{title}</h2>
-      <span className="text-sm font-semibold text-violet-600">{count}</span>
+      <span className="text-sm font-semibold text-brand-600">{count}</span>
     </div>
   )
 }

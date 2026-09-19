@@ -33,7 +33,7 @@ export const ALIGN_OPTIONS: { key: BlockAlign; label: string }[] = [
 export const COLOR_SWATCHES = [
   '#0f172a', // slate-900
   '#475569', // slate-600
-  '#7c3aed', // violet-600
+  '#7c3aed', // brand-600
   '#db2777', // pink-600
   '#dc2626', // red-600
   '#ea580c', // orange-600

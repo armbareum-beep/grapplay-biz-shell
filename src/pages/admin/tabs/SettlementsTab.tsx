@@ -77,7 +77,7 @@ export default function SettlementsTab() {
   return (
     <div className="space-y-4">
       <p className="text-sm text-stone-500">
-        처리 대기 중인 신청 <span className="font-bold text-violet-600">{pending}건</span>. 계좌를
+        처리 대기 중인 신청 <span className="font-bold text-brand-600">{pending}건</span>. 계좌를
         확인한 뒤 승인 → <span className="font-semibold text-stone-700">실지급액</span> 송금 →
         지급완료 처리하세요. 원천징수(3.3%)분은 다음 달 10일까지 홈택스 신고·납부,
         부가세(10%)분은 다음 분기 25일까지 부가가치세 신고·납부해야 합니다.

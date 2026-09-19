@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import Icon from '../components/Icon'
 import BrandLogo from '../components/BrandLogo'
 import { useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
@@ -73,7 +74,7 @@ export default function AuthPage() {
           disabled={!configured}
           className="mt-8 flex w-full items-center justify-center gap-2 rounded-xl bg-[#FEE500] px-4 py-4 font-bold text-[#191600] transition hover:brightness-95 disabled:opacity-50"
         >
-          <span>💬</span> 카카오로 3초만에 시작하기
+          <Icon name="message-circle" size={18} filled /> 카카오로 3초만에 시작하기
         </button>
         {error && !showEmail && <p className="mt-3 text-center text-sm text-rose-600">{error}</p>}
 
@@ -101,7 +102,7 @@ export default function AuthPage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="이름"
-                  className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-violet-400 focus:bg-white focus:ring-2 focus:ring-violet-100"
+                  className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-brand-400 focus:bg-white focus:ring-2 focus:ring-brand-100"
                 />
               )}
               <input
@@ -110,7 +111,7 @@ export default function AuthPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="이메일"
-                className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-violet-400 focus:bg-white focus:ring-2 focus:ring-violet-100"
+                className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-brand-400 focus:bg-white focus:ring-2 focus:ring-brand-100"
               />
               <input
                 type="password"
@@ -119,7 +120,7 @@ export default function AuthPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="비밀번호 (6자 이상)"
-                className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-violet-400 focus:bg-white focus:ring-2 focus:ring-violet-100"
+                className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-brand-400 focus:bg-white focus:ring-2 focus:ring-brand-100"
               />
 
               {error && <p className="text-sm text-rose-600">{error}</p>}
@@ -128,7 +129,7 @@ export default function AuthPage() {
               <button
                 type="submit"
                 disabled={busy || !configured}
-                className="w-full rounded-xl bg-violet-600 px-4 py-3 font-semibold text-white hover:bg-violet-700 disabled:opacity-50"
+                className="w-full rounded-xl bg-brand-600 px-4 py-3 font-semibold text-white hover:bg-brand-700 disabled:opacity-50"
               >
                 {busy ? '처리 중…' : mode === 'login' ? '로그인' : '회원가입'}
               </button>
@@ -142,7 +143,7 @@ export default function AuthPage() {
                   setError(null)
                   setInfo(null)
                 }}
-                className="font-semibold text-violet-600 hover:underline"
+                className="font-semibold text-brand-600 hover:underline"
               >
                 {mode === 'login' ? '회원가입' : '로그인'}
               </button>

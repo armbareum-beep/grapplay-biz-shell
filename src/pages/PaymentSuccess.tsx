@@ -66,7 +66,7 @@ export default function PaymentSuccess() {
     <div className="mx-auto max-w-md px-4 py-24 text-center">
       {state === 'confirming' && (
         <>
-          <span className="mx-auto block h-8 w-8 animate-spin rounded-full border-2 border-violet-500 border-t-transparent" />
+          <span className="mx-auto block h-8 w-8 animate-spin rounded-full border-2 border-brand-500 border-t-transparent" />
           <p className="mt-4 text-slate-600">결제를 확인하고 있어요…</p>
         </>
       )}
@@ -79,7 +79,7 @@ export default function PaymentSuccess() {
           <div className="mt-8 flex flex-col gap-2">
             <Link
               to={readUrl}
-              className="rounded-xl bg-violet-600 px-6 py-3 font-bold text-white hover:bg-violet-700"
+              className="rounded-xl bg-brand-600 px-6 py-3 font-bold text-white hover:bg-brand-700"
             >
               {type === 'course' ? '바로 수강하기' : '바로 읽기'}
             </Link>

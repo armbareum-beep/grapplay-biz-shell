@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { EmptyIcon } from '../components/Icon'
 import { useSearchParams } from 'react-router-dom'
 import { CATEGORIES, Category, resolveCategory } from '../data/mock'
 import { useBizData } from '../lib/useBizData'
@@ -89,7 +90,7 @@ export default function AcademyLibrary() {
         </div>
       ) : list.length === 0 ? (
         <div className="mt-10 rounded-2xl border border-dashed border-stone-300 bg-white py-20 text-center">
-          <div className="text-4xl">🔍</div>
+          <EmptyIcon name="search" />
           <p className="mt-4 font-semibold text-stone-700">강의가 없어요</p>
           <p className="mt-1 text-sm text-stone-500">다른 카테고리로 찾아보세요.</p>
         </div>

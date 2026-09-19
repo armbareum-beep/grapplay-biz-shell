@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
-import { Course, formatPrice } from '../data/mock'
+import Icon from './Icon'
+import { Course, formatPrice, COVER_BY_CATEGORY, COVER_DEFAULT } from '../data/mock'
 import { getCourseMeta, discountPct } from '../data/mockMarketplace'
 import { useWishlist } from '../lib/wishlist'
 import { useBizData } from '../lib/useBizData'
@@ -19,31 +20,35 @@ export default function CourseCard({ course }: { course: Course }) {
   return (
     <Link
       to={`/courses/${course.id}`}
-      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white transition hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-200/60"
+      className="group flex h-full flex-col overflow-hidden rounded-lg border border-slate-200 bg-white transition hover:border-brand-600"
     >
-      {/* 썸네일 (이미지 있으면 이미지, 없으면 그라데이션+이모지) */}
+      {/* 표지 — 이미지 위 어두운 오버레이 또는 카테고리별 다크 그라데이션. 제목은 표지 안에 흰색으로 */}
       <div
-        className={`relative aspect-[16/10] ${course.coverImage ? 'bg-slate-100' : `bg-gradient-to-br ${course.cover}`}`}
+        className={`relative aspect-[16/10] bg-gradient-to-br ${COVER_BY_CATEGORY[course.category] ?? COVER_DEFAULT}`}
       >
-        {course.coverImage ? (
-          <img
-            src={course.coverImage}
-            alt={course.title}
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-        ) : (
-          <span className="absolute inset-0 grid place-items-center text-5xl">
-            {course.thumbEmoji}
-          </span>
+        {course.coverImage && (
+          <>
+            <img
+              src={course.coverImage}
+              alt=""
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/30 to-slate-950/10" />
+          </>
         )}
-        <span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-xs font-semibold text-slate-700">
-          {course.category}
-        </span>
-        {meta.isNew && (
-          <span className="absolute left-3 bottom-3 rounded-full bg-violet-600 px-2 py-0.5 text-[11px] font-bold text-white">
-            NEW
+        <div className="absolute left-3 top-3 flex items-center gap-1.5">
+          <span className="rounded-full bg-white/15 px-2.5 py-1 text-[11px] font-semibold tracking-wider text-white backdrop-blur">
+            {course.category}
           </span>
-        )}
+          {meta.isNew && (
+            <span className="rounded-full bg-gold-500 px-2 py-1 text-[10px] font-bold tracking-wider text-white">
+              NEW
+            </span>
+          )}
+        </div>
+        <h3 className="absolute inset-x-4 bottom-4 line-clamp-2 text-lg font-bold leading-snug text-white">
+          {course.title}
+        </h3>
         {/* 찜 하트 */}
         <button
           onClick={(e) => {
@@ -53,19 +58,15 @@ export default function CourseCard({ course }: { course: Course }) {
           className="absolute right-3 top-3 grid h-8 w-8 place-items-center rounded-full bg-white/90 text-sm shadow-sm transition hover:scale-110"
           aria-label="찜하기"
         >
-          {wished ? '❤️' : '🤍'}
+          <Icon name="heart" size={15} filled={wished} className={wished ? 'text-rose-500' : 'text-slate-500'} />
         </button>
       </div>
 
       {/* 본문 */}
       <div className="flex flex-1 flex-col p-4">
-        <h3 className="line-clamp-2 font-bold leading-snug text-slate-900 group-hover:text-violet-700">
-          {course.title}
-        </h3>
-
         {/* 작성자(전문가) — 전자책 카드와 통일 */}
         {expert && (
-          <div className="mt-2 flex items-center gap-1.5 text-xs text-slate-500">
+          <div className="flex items-center gap-1.5 text-xs text-slate-500">
             <ExpertAvatar emoji={expert.avatar} src={expert.avatarUrl} size={18} />
             <span className="truncate">{expert.name}</span>
           </div>
@@ -93,13 +94,13 @@ export default function CourseCard({ course }: { course: Course }) {
             )}
             <span
               className={`text-lg font-black ${
-                isPaid ? 'text-slate-900' : 'text-emerald-600'
+                isPaid ? 'text-slate-900' : 'text-gold-600'
               }`}
             >
               {formatPrice(course.price)}
             </span>
           </div>
-          <span className="text-sm font-semibold text-violet-600 group-hover:underline">
+          <span className="text-sm font-semibold text-brand-600 group-hover:underline">
             자세히 →
           </span>
         </div>

@@ -1,3 +1,4 @@
+import Icon from '../components/Icon'
 // 문의하기 — 이메일·전화 안내 + 사업자 정보 (그래플레이 Contact 참고)
 export default function Contact() {
   return (
@@ -10,20 +11,20 @@ export default function Contact() {
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
         <a
           href="mailto:grapplay.com@gmail.com"
-          className="rounded-2xl border border-stone-200 bg-white p-6 transition hover:border-violet-300 hover:shadow-md"
+          className="rounded-2xl border border-stone-200 bg-white p-6 transition hover:border-brand-300 hover:shadow-md"
         >
-          <div className="text-3xl">✉️</div>
+          <div className="grid h-11 w-11 place-items-center rounded-xl bg-brand-50 text-brand-700"><Icon name="mail" size={22} /></div>
           <h2 className="mt-3 font-bold text-stone-900">이메일 문의</h2>
-          <p className="mt-1 text-sm text-violet-600">grapplay.com@gmail.com</p>
+          <p className="mt-1 text-sm text-brand-600">grapplay.com@gmail.com</p>
           <p className="mt-1 text-xs text-stone-400">평일 영업일 기준 1~2일 내 답변</p>
         </a>
         <a
           href="tel:02-599-6315"
-          className="rounded-2xl border border-stone-200 bg-white p-6 transition hover:border-violet-300 hover:shadow-md"
+          className="rounded-2xl border border-stone-200 bg-white p-6 transition hover:border-brand-300 hover:shadow-md"
         >
-          <div className="text-3xl">📞</div>
+          <div className="grid h-11 w-11 place-items-center rounded-xl bg-brand-50 text-brand-700"><Icon name="phone" size={22} /></div>
           <h2 className="mt-3 font-bold text-stone-900">전화 문의</h2>
-          <p className="mt-1 text-sm text-violet-600">02-599-6315</p>
+          <p className="mt-1 text-sm text-brand-600">02-599-6315</p>
           <p className="mt-1 text-xs text-stone-400">평일 10:00 ~ 18:00 (점심 12~13시 제외)</p>
         </a>
       </div>

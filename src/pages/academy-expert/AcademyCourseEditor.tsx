@@ -287,7 +287,7 @@ function EditorForm({ existing, isEdit }: { existing?: Course; isEdit: boolean }
             <input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="예) 첫 100명 고객 만들기"
+              placeholder="예) 회원이 늘지 않는 이유 — 강의 제목은 고객이 겪는 문제로"
               className="w-full rounded-xl border border-stone-300 px-4 py-2.5 outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100"
             />
           </Field>
@@ -311,7 +311,7 @@ function EditorForm({ existing, isEdit }: { existing?: Course; isEdit: boolean }
                       : 'border border-stone-300 bg-white text-stone-600 hover:bg-stone-100'
                   }`}
                 >
-                  {c.emoji} {c.key}
+                  {c.key}
                 </button>
               ))}
             </div>

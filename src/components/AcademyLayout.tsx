@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import Icon, { type IconName } from './Icon'
 import BrandLogo from './BrandLogo'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
@@ -13,11 +14,11 @@ const MENU = [
 ]
 
 // 모바일 하단 메뉴 (별도) — 홈/검색/컨텐츠/내강의
-const MOBILE_TABS = [
-  { to: '/', label: '홈', icon: '🏠' },
-  { to: '/search', label: '검색', icon: '🔍' },
-  { to: '/content', label: '컨텐츠', icon: '📚' },
-  { to: '/my', label: '내강의', icon: '🎒' },
+const MOBILE_TABS: { to: string; label: string; icon: IconName }[] = [
+  { to: '/', label: '홈', icon: 'home' },
+  { to: '/search', label: '검색', icon: 'search' },
+  { to: '/content', label: '컨텐츠', icon: 'layers' },
+  { to: '/my', label: '내강의', icon: 'play-circle' },
 ]
 
 export default function AcademyLayout({ children }: { children: React.ReactNode }) {
@@ -62,13 +63,13 @@ export default function AcademyLayout({ children }: { children: React.ReactNode 
             {/* 검색창 (데스크톱 중앙) — 통합검색으로 이동 */}
             <form onSubmit={onSearch} className="relative hidden min-w-0 md:block md:w-64 lg:w-80">
               <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
-                🔍
+                <Icon name="search" size={16} />
               </span>
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="강의·전자책·전문가 검색"
-                className="w-full rounded-full border border-slate-300 bg-slate-50 py-2.5 pl-11 pr-4 text-sm outline-none focus:border-violet-400 focus:bg-white focus:ring-2 focus:ring-violet-100"
+                className="w-full rounded-full border border-slate-300 bg-slate-50 py-2.5 pl-11 pr-4 text-sm outline-none focus:border-brand-400 focus:bg-white focus:ring-2 focus:ring-brand-100"
               />
             </form>
 
@@ -87,8 +88,8 @@ export default function AcademyLayout({ children }: { children: React.ReactNode 
                 className={({ isActive }) =>
                   `-mb-px whitespace-nowrap border-b-2 px-1 py-3 text-sm font-bold tracking-tight transition sm:py-3.5 sm:text-[15px] ${
                     isActive
-                      ? 'border-violet-600 text-violet-700'
-                      : 'border-transparent text-slate-600 hover:text-violet-600'
+                      ? 'border-brand-600 text-brand-700'
+                      : 'border-transparent text-slate-600 hover:text-brand-600'
                   }`
                 }
               >
@@ -118,10 +119,10 @@ export default function AcademyLayout({ children }: { children: React.ReactNode 
                 key={t.to}
                 to={t.to}
                 className={`flex flex-col items-center gap-0.5 py-2 text-xs ${
-                  active ? 'text-violet-600' : 'text-slate-500'
+                  active ? 'text-brand-600' : 'text-slate-500'
                 }`}
               >
-                <span className="text-base">{t.icon}</span>
+                <Icon name={t.icon} size={20} strokeWidth={active ? 2 : 1.75} />
                 {t.label}
               </Link>
             )
@@ -130,14 +131,12 @@ export default function AcademyLayout({ children }: { children: React.ReactNode 
       )}
 
       {/* 푸터 — 모바일에선 기본 숨김, 결제 페이지에서만 노출 */}
-      <footer
-        className={`border-t border-slate-200 bg-slate-50 ${isCheckout ? '' : 'hidden md:block'}`}
-      >
-        <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-          <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+      <footer className={`bg-brand-950 text-brand-300 ${isCheckout ? '' : 'hidden md:block'}`}>
+        <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
+          <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
             <div>
-              <BrandLogo size="sm" />
-              <p className="mt-3 max-w-xs text-sm text-slate-500">
+              <BrandLogo size="sm" tone="light" />
+              <p className="mt-4 max-w-xs text-sm text-brand-300">
                 전문가를 위한 비즈니스 교육 플랫폼.
               </p>
             </div>
@@ -161,26 +160,26 @@ export default function AcademyLayout({ children }: { children: React.ReactNode 
           </div>
 
           {/* 사업자 정보 — 운영 법인 그래플레이 (서비스명과 무관하게 유지) */}
-          <div className="mt-10 space-y-1.5 border-t border-slate-200 pt-8 text-[11px] leading-relaxed text-slate-400">
+          <div className="mt-12 space-y-1.5 border-t border-white/10 pt-6 text-[11px] leading-relaxed text-brand-400">
             <p>
-              <strong className="text-slate-500">상호명:</strong> 그래플레이 |{' '}
-              <strong className="text-slate-500">대표자:</strong> 이바름
+              <strong className="text-brand-300">상호명:</strong> 그래플레이 |{' '}
+              <strong className="text-brand-300">대표자:</strong> 이바름
             </p>
             <p>
-              <strong className="text-slate-500">사업자등록번호:</strong> 111-39-34149 |{' '}
-              <strong className="text-slate-500">통신판매업 신고번호:</strong> 2026-서울동작-0405
+              <strong className="text-brand-300">사업자등록번호:</strong> 111-39-34149 |{' '}
+              <strong className="text-brand-300">통신판매업 신고번호:</strong> 2026-서울동작-0405
             </p>
             <p>
-              <strong className="text-slate-500">주소:</strong> 서울 동작구 동작대로29길 119,
+              <strong className="text-brand-300">주소:</strong> 서울 동작구 동작대로29길 119,
               102-1207
             </p>
             <p>
-              <strong className="text-slate-500">이메일:</strong> grapplay.com@gmail.com |{' '}
-              <strong className="text-slate-500">전화번호:</strong> 02-599-6315
+              <strong className="text-brand-300">이메일:</strong> grapplay.com@gmail.com |{' '}
+              <strong className="text-brand-300">전화번호:</strong> 02-599-6315
             </p>
           </div>
 
-          <div className="mt-6 text-xs text-slate-400">
+          <div className="mt-6 text-xs text-brand-400">
             © 2026 PHYNESIS. Operated by 그래플레이. All rights reserved.
           </div>
         </div>
@@ -199,7 +198,7 @@ function HeaderUtil() {
       <div className="ml-auto flex items-center gap-1 text-sm">
         <Link
           to="/auth"
-          className="rounded-lg bg-violet-600 px-4 py-2 font-semibold text-white hover:bg-violet-700"
+          className="rounded-lg bg-brand-600 px-4 py-2 font-semibold text-white hover:bg-brand-700"
         >
           로그인
         </Link>
@@ -224,7 +223,7 @@ function HeaderUtil() {
             className="h-8 w-8 shrink-0 rounded-full object-cover"
           />
         ) : (
-          <span className="grid h-8 w-8 place-items-center rounded-full bg-violet-100 font-bold text-violet-700">
+          <span className="grid h-8 w-8 place-items-center rounded-full bg-brand-100 font-bold text-brand-700">
             {initial}
           </span>
         )}
@@ -294,11 +293,11 @@ function MenuLink({
 function FooterCol({ title, items }: { title: string; items: { label: string; to: string }[] }) {
   return (
     <div>
-      <h4 className="mb-3 font-semibold text-slate-900">{title}</h4>
+      <h4 className="mb-3 font-semibold text-white">{title}</h4>
       <ul className="space-y-2">
         {items.map((i) => (
           <li key={i.to}>
-            <Link to={i.to} className="text-slate-500 hover:text-violet-600">
+            <Link to={i.to} className="text-brand-300 hover:text-white">
               {i.label}
             </Link>
           </li>

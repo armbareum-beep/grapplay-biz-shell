@@ -59,7 +59,7 @@ const DEFAULT_COVERS = [
   'from-emerald-400 to-teal-500',
   'from-sky-400 to-indigo-500',
   'from-rose-400 to-pink-500',
-  'from-violet-400 to-purple-500',
+  'from-brand-400 to-brand-500',
 ]
 
 function genCourseId() {
@@ -222,7 +222,7 @@ function ebookRow(input: EbookInput) {
     original_price: input.originalPrice ?? null,
     page_count: input.pageCount,
     preview_pages: input.previewPages ?? 3,
-    cover: input.cover || 'from-violet-500 to-fuchsia-500',
+    cover: input.cover || 'from-brand-500 to-fuchsia-500',
     cover_image: input.coverImage ?? null,
     emoji: input.emoji || '📕',
     avatar: input.avatar || '📘',

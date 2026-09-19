@@ -58,7 +58,7 @@ export default function ReviewSection({
 
       {/* 작성 폼 (구매자만, 아직 안 썼을 때) */}
       {canWrite && !alreadyWrote && (
-        <div className="mt-4 rounded-2xl border border-violet-200 bg-violet-50 p-5">
+        <div className="mt-4 rounded-2xl border border-brand-200 bg-brand-50 p-5">
           <div className="font-semibold text-stone-800">후기 작성</div>
           <div className="mt-2">
             <StarInput value={rating} onChange={setRating} />
@@ -68,12 +68,12 @@ export default function ReviewSection({
             onChange={(e) => setContent(e.target.value)}
             rows={3}
             placeholder="수강 후기를 남겨주세요"
-            className="mt-3 w-full resize-none rounded-lg border border-stone-300 px-3 py-2 text-sm outline-none focus:border-violet-400"
+            className="mt-3 w-full resize-none rounded-lg border border-stone-300 px-3 py-2 text-sm outline-none focus:border-brand-400"
           />
           <button
             onClick={submit}
             disabled={busy}
-            className="mt-3 rounded-lg bg-violet-600 px-5 py-2 text-sm font-bold text-white hover:bg-violet-700 disabled:opacity-50"
+            className="mt-3 rounded-lg bg-brand-600 px-5 py-2 text-sm font-bold text-white hover:bg-brand-700 disabled:opacity-50"
           >
             후기 등록
           </button>

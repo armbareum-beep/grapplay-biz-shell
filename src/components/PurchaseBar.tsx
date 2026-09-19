@@ -105,7 +105,7 @@ export default function PurchaseBar({ course }: { course: Course }) {
           <button
             onClick={onPrimary}
             disabled={busy}
-            className="h-11 rounded-xl bg-violet-600 px-6 font-bold text-white hover:bg-violet-700 disabled:opacity-50"
+            className="h-11 rounded-xl bg-brand-600 px-6 font-bold text-white hover:bg-brand-700 disabled:opacity-50"
           >
             {enrolled ? '이어보기' : isPaid ? '구매하기' : busy ? '등록 중…' : '무료로 시청하기'}
           </button>

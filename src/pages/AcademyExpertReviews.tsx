@@ -90,7 +90,7 @@ export default function AcademyExpertReviews() {
         <ul className="mt-6 grid gap-2 rounded-2xl border border-stone-200 bg-white p-5 sm:grid-cols-2">
           {expert.credentials.map((c) => (
             <li key={c} className="flex items-center gap-2 text-sm text-stone-600">
-              <span className="text-violet-500">✓</span> {c}
+              <span className="text-brand-500">✓</span> {c}
             </li>
           ))}
         </ul>

@@ -22,13 +22,13 @@ export default function AdminDashboard() {
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
       {/* 헤더 */}
       <div className="flex items-center gap-4">
-        <div className="grid h-14 w-14 place-items-center rounded-full bg-violet-100 text-3xl">
+        <div className="grid h-14 w-14 place-items-center rounded-full bg-brand-100 text-3xl">
           🛠️
         </div>
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-2xl font-black text-stone-900">관리자 대시보드</h1>
-            <span className="rounded-full bg-violet-100 px-2.5 py-0.5 text-xs font-bold text-violet-700">
+            <span className="rounded-full bg-brand-100 px-2.5 py-0.5 text-xs font-bold text-brand-700">
               ADMIN
             </span>
           </div>
@@ -46,7 +46,7 @@ export default function AdminDashboard() {
             onClick={() => setTab(t)}
             className={`-mb-px whitespace-nowrap border-b-2 px-4 py-3 text-sm font-semibold transition ${
               tab === t
-                ? 'border-violet-500 text-violet-600'
+                ? 'border-brand-500 text-brand-600'
                 : 'border-transparent text-stone-500 hover:text-stone-800'
             }`}
           >

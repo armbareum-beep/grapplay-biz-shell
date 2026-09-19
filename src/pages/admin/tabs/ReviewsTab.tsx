@@ -85,7 +85,7 @@ export default function ReviewsTab() {
             onClick={() => setKind(k)}
             className={`rounded-full px-4 py-1.5 text-sm font-bold transition ${
               kind === k
-                ? 'bg-violet-600 text-white'
+                ? 'bg-brand-600 text-white'
                 : 'border border-stone-300 bg-white text-stone-600 hover:bg-stone-100'
             }`}
           >
@@ -129,7 +129,7 @@ export default function ReviewsTab() {
                   <span className="text-xs text-stone-400">{r.createdAt}</span>
                 </div>
                 <div className="mt-1 flex items-center gap-2">
-                  <span className="text-xs font-medium text-violet-600">{r.title}</span>
+                  <span className="text-xs font-medium text-brand-600">{r.title}</span>
                   {typeof r.rating === 'number' && (
                     <span className="text-xs">
                       <Stars n={r.rating} /> <span className="text-stone-400">{r.rating}.0</span>

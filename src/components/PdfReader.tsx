@@ -148,7 +148,7 @@ export default function PdfReader({
     >
       {loading && (
         <div className="grid h-64 place-items-center text-sm text-white/50">
-          <span className="h-6 w-6 animate-spin rounded-full border-2 border-violet-400 border-t-transparent" />
+          <span className="h-6 w-6 animate-spin rounded-full border-2 border-brand-400 border-t-transparent" />
         </div>
       )}
       {error && (

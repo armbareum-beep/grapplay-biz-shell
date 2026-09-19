@@ -11,38 +11,32 @@
   unicode-range: U+D30C, U+C774, U+B124, U+C2DC, U+C2A4, U+0050, U+0048, U+0059, U+004E, U+0045, U+0053, U+0049;
 }
 
-/* 브랜드 보라(grapplay 톤앤매너) — 단일 포인트 컬러.
-   화이트 미니멀 UI 위에 grapplay 계열 보라 하나만 액센트로 쓴다. 600(#6D28D9)이
-   1차 버튼/링크/활성 상태의 기준색. 화이트 배경에서 너무 쨍하지 않도록 기본 violet-600(#7c3aed)
-   보다 한 톤 깊게 잡았다. 그라데이션 없이 단색으로만 사용.
+/* 브랜드 포인트 컬러 — 딥 네이비 단일 액센트 (docs/plan/10-rebrand-phynesis.md D8).
+   흑백 워드마크(SUIT Bold)와 충돌하지 않으면서 버튼·링크·활성 상태가 본문과 구분되도록
+   600(#2b436f)을 기준색으로 잡았다. 그라데이션 없이 단색으로만 쓴다. 유틸은 bg-brand-600 처럼 brand-* 로 사용.
    주의: @theme 블록 안에는 커스텀 속성만 허용되므로 설명 주석은 블록 밖에 둔다. */
 @theme {
   --font-sans: "Noto Sans KR", ui-sans-serif, system-ui, sans-serif;
   --font-wordmark: "Wordmark", "SUIT", "Pretendard", "Noto Sans KR", ui-sans-serif, system-ui, sans-serif;
 
-  --color-violet-50: #f5f3ff;
-  --color-violet-100: #ede9fe;
-  --color-violet-200: #ddd6fe;
-  --color-violet-300: #c4b5fd;
-  --color-violet-400: #a78bfa;
-  --color-violet-500: #8b5cf6;
-  --color-violet-600: #6d28d9;
-  --color-violet-700: #5b21b6;
-  --color-violet-800: #4c1d95;
-  --color-violet-900: #3b1378;
-  --color-violet-950: #2e1065;
+  --color-brand-50: #f3f5f9;
+  --color-brand-100: #e4e9f2;
+  --color-brand-200: #c9d3e6;
+  --color-brand-300: #a3b3d1;
+  --color-brand-400: #6f88b3;
+  --color-brand-500: #46608f;
+  --color-brand-600: #2b436f;
+  --color-brand-700: #223559;
+  --color-brand-800: #1b2a47;
+  --color-brand-900: #152238;
+  --color-brand-950: #0d1526;
 
-  --color-purple-50: #f5f3ff;
-  --color-purple-100: #ede9fe;
-  --color-purple-200: #ddd6fe;
-  --color-purple-300: #c4b5fd;
-  --color-purple-400: #a78bfa;
-  --color-purple-500: #8b5cf6;
-  --color-purple-600: #6d28d9;
-  --color-purple-700: #5b21b6;
-  --color-purple-800: #4c1d95;
-  --color-purple-900: #3b1378;
-  --color-purple-950: #2e1065;
+  /* 2차 액센트 골드 — 섹션 번호·라벨·무료 표시 등 소량. 버튼에는 쓰지 않는다 */
+  --color-gold-400: #d4a84b;
+  --color-gold-500: #b8892b;
+  --color-gold-600: #9a7020;
+  /* 섹션 리듬용 따뜻한 오프화이트 */
+  --color-paper: #f6f4ef;
 }
 
 html {

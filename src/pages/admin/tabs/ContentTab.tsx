@@ -30,7 +30,7 @@ export default function ContentTab() {
             key={k}
             onClick={() => setKind(k)}
             className={`rounded-lg px-4 py-2 text-sm font-semibold transition ${
-              kind === k ? 'bg-violet-600 text-white' : 'border border-stone-300 text-stone-600 hover:bg-stone-50'
+              kind === k ? 'bg-brand-600 text-white' : 'border border-stone-300 text-stone-600 hover:bg-stone-50'
             }`}
           >
             {k} ({k === '강의' ? courses.length : ebooks.length})

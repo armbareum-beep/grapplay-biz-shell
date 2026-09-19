@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { resolveGradient } from '../../../data/mockMarketplace'
 import {
   listBanners,
   createBanner,
@@ -11,9 +12,9 @@ import { invalidateBizData } from '../../../lib/useBizData'
 
 // 그라데이션 프리셋 (배너 배경)
 const GRADIENTS = [
-  'from-violet-600 to-purple-500',
-  'from-fuchsia-600 to-violet-600',
-  'from-indigo-600 to-purple-600',
+  'from-brand-600 to-brand-500',
+  'from-fuchsia-600 to-brand-600',
+  'from-indigo-600 to-brand-600',
   'from-rose-500 to-orange-500',
   'from-emerald-500 to-teal-500',
   'from-sky-500 to-indigo-500',
@@ -60,7 +61,7 @@ export default function BannerTab() {
         </p>
         <button
           onClick={() => setEditing('new')}
-          className="rounded-xl bg-violet-600 px-4 py-2 text-sm font-bold text-white hover:bg-violet-700"
+          className="rounded-xl bg-brand-600 px-4 py-2 text-sm font-bold text-white hover:bg-brand-700"
         >
           + 새 배너
         </button>
@@ -82,7 +83,7 @@ export default function BannerTab() {
             className="flex items-center gap-4 rounded-2xl border border-stone-200 bg-white p-3"
           >
             <div
-              className={`grid h-16 w-28 shrink-0 place-items-center rounded-xl bg-gradient-to-br ${b.gradient} px-2 text-center text-[11px] font-bold text-white`}
+              className={`grid h-16 w-28 shrink-0 place-items-center rounded-xl bg-gradient-to-br ${resolveGradient(b.gradient)} px-2 text-center text-[11px] font-bold text-white`}
             >
               {b.title}
             </div>
@@ -96,7 +97,7 @@ export default function BannerTab() {
                 )}
               </div>
               <p className="truncate text-xs text-stone-500">{b.subtitle}</p>
-              <p className="truncate font-mono text-[11px] text-violet-500">
+              <p className="truncate font-mono text-[11px] text-brand-500">
                 {b.link || '링크 없음'} · 순서 {b.sort_order}
               </p>
             </div>
@@ -137,7 +138,7 @@ function BannerForm({
 }) {
   const [title, setTitle] = useState(banner?.title ?? '')
   const [subtitle, setSubtitle] = useState(banner?.subtitle ?? '')
-  const [gradient, setGradient] = useState(banner?.gradient ?? GRADIENTS[0])
+  const [gradient, setGradient] = useState(resolveGradient(banner?.gradient ?? GRADIENTS[0]))
   const [cta, setCta] = useState(banner?.cta ?? '')
   const [link, setLink] = useState(banner?.link ?? '')
   const [sortOrder, setSortOrder] = useState(banner?.sort_order ?? nextOrder)
@@ -163,10 +164,10 @@ function BannerForm({
   }
 
   const input =
-    'w-full rounded-lg border border-stone-300 px-3 py-2 text-sm outline-none focus:border-violet-400'
+    'w-full rounded-lg border border-stone-300 px-3 py-2 text-sm outline-none focus:border-brand-400'
 
   return (
-    <div className="space-y-3 rounded-2xl border border-violet-200 bg-violet-50 p-5">
+    <div className="space-y-3 rounded-2xl border border-brand-200 bg-brand-50 p-5">
       <h3 className="font-bold text-stone-900">{banner ? '배너 편집' : '새 배너'}</h3>
 
       {/* 미리보기 */}
@@ -226,7 +227,7 @@ function BannerForm({
         <button
           onClick={save}
           disabled={busy}
-          className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-700 disabled:opacity-50"
+          className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-50"
         >
           저장
         </button>
