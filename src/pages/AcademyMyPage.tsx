@@ -60,7 +60,7 @@ export default function AcademyMyPage() {
     }
   }, [user])
 
-  const name = profile?.display_name || '관장님'
+  const name = profile?.display_name || '회원님'
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">

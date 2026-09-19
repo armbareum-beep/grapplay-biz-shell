@@ -84,7 +84,7 @@ function EditorForm({ existing, isEdit }: { existing?: Course; isEdit: boolean }
       ? (existing!.detailBlocks as Block[])
       : [
           { id: 1, type: 'heading', value: '왜 이 강의가 필요할까요?' },
-          { id: 2, type: 'text', value: '체육관 운영의 현실적인 고민을 풀어드립니다.' },
+          { id: 2, type: 'text', value: '현장의 현실적인 고민을 풀어드립니다.' },
           { id: 3, type: 'image', value: '' },
         ],
   )
@@ -287,7 +287,7 @@ function EditorForm({ existing, isEdit }: { existing?: Course; isEdit: boolean }
             <input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="예) 체육관 첫 100명 회원 만들기"
+              placeholder="예) 첫 100명 고객 만들기"
               className="w-full rounded-xl border border-stone-300 px-4 py-2.5 outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100"
             />
           </Field>

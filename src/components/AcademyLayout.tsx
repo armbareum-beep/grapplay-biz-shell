@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import BrandLogo from './BrandLogo'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
 import { useBizData } from '../lib/useBizData'
@@ -55,10 +56,7 @@ export default function AcademyLayout({ children }: { children: React.ReactNode 
         <div className="border-b border-slate-200 md:border-b-0">
           <div className="mx-auto flex h-16 max-w-6xl items-center gap-4 px-4 sm:px-6">
             <Link to="/" className="shrink-0">
-              <span className="text-xl font-bold tracking-tighter sm:text-2xl">
-                <span className="font-brand">Grapplay</span>
-                <span className="font-brand text-violet-600">-biz</span>
-              </span>
+              <BrandLogo size="md" />
             </Link>
 
             {/* 검색창 (데스크톱 중앙) — 통합검색으로 이동 */}
@@ -138,12 +136,9 @@ export default function AcademyLayout({ children }: { children: React.ReactNode 
         <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
           <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
             <div>
-              <span className="text-xl font-bold tracking-tighter">
-                <span className="font-brand">Grapplay</span>
-                <span className="font-brand text-violet-600">-biz</span>
-              </span>
+              <BrandLogo size="sm" />
               <p className="mt-3 max-w-xs text-sm text-slate-500">
-                체육관 경영자와 지도자를 위한 비즈니스 교육 플랫폼.
+                전문가를 위한 비즈니스 교육 플랫폼.
               </p>
             </div>
             <div className="grid grid-cols-2 gap-8 text-sm">
@@ -165,7 +160,7 @@ export default function AcademyLayout({ children }: { children: React.ReactNode 
             </div>
           </div>
 
-          {/* 사업자 정보 (그래플레이 본사이트와 동일) */}
+          {/* 사업자 정보 — 운영 법인 그래플레이 (서비스명과 무관하게 유지) */}
           <div className="mt-10 space-y-1.5 border-t border-slate-200 pt-8 text-[11px] leading-relaxed text-slate-400">
             <p>
               <strong className="text-slate-500">상호명:</strong> 그래플레이 |{' '}
@@ -186,7 +181,7 @@ export default function AcademyLayout({ children }: { children: React.ReactNode 
           </div>
 
           <div className="mt-6 text-xs text-slate-400">
-            © 2026 Grapplay. All rights reserved.
+            © 2026 PHYNESIS. Operated by 그래플레이. All rights reserved.
           </div>
         </div>
       </footer>

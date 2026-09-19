@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 
-// 문서형 페이지 공용 레이아웃 (약관/개인정보 등) — 비즈 라이트 테마
+// 문서형 페이지 공용 레이아웃 (약관/개인정보 등) — 파이네시스 라이트 테마
 export default function StaticPage({
   title,
   updated,

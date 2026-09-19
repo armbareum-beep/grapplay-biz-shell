@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import BrandLogo from '../components/BrandLogo'
 import { useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
 
@@ -51,14 +52,11 @@ export default function AuthPage() {
     <div className="mx-auto flex min-h-[70vh] max-w-md flex-col justify-center px-4 py-12">
       <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-xl shadow-slate-200/50 sm:p-10">
         {/* 로고 */}
-        <span className="text-2xl font-bold tracking-tighter">
-          <span className="font-brand">Grapplay</span>
-          <span className="font-brand text-violet-600">-biz</span>
-        </span>
+        <BrandLogo size="lg" />
 
         {/* 태그라인 */}
         <h1 className="mt-6 text-2xl font-bold leading-snug text-slate-900">
-          혼자 고민하던 체육관 경영,
+          혼자 고민하던 내 사업,
           <br />
           이제 전문가에게 배우세요
         </h1>

@@ -31,7 +31,7 @@ export default function AcademyLibrary() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
       <h1 className="text-3xl font-black text-stone-900">강의 둘러보기</h1>
-      <p className="mt-2 text-stone-500">체육관 경영에 필요한 모든 강의를 한곳에서</p>
+      <p className="mt-2 text-stone-500">사업 운영에 필요한 모든 강의를 한곳에서</p>
 
       {/* 카테고리 칩 */}
       <div className="mt-6 flex flex-wrap gap-2">

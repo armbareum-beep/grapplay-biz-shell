@@ -7,8 +7,6 @@
    주의: @theme 블록 안에는 커스텀 속성만 허용되므로 설명 주석은 블록 밖에 둔다. */
 @theme {
   --font-sans: "Noto Sans KR", ui-sans-serif, system-ui, sans-serif;
-  /* 로고 워드마크 전용 — grapplay.com과 동일하게 Inter 사용(라틴). font-brand 유틸로 적용 */
-  --font-brand: "Inter", ui-sans-serif, system-ui, sans-serif;
 
   --color-violet-50: #f5f3ff;
   --color-violet-100: #ede9fe;

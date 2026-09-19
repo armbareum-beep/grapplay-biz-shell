@@ -1,12 +1,12 @@
 import StaticPage, { Section, OL, UL } from './StaticPage'
 
-// 개인정보처리방침 — 그래플레이 본 방침(Privacy.tsx) 차용, 비즈로 조정
+// 개인정보처리방침 — 그래플레이 본 방침(Privacy.tsx) 차용, 파이네시스로 조정
 export default function Privacy() {
   return (
-    <StaticPage title="개인정보처리방침" updated="2026년 6월 9일">
+    <StaticPage title="개인정보처리방침" updated="2026년 9월 19일">
       <p className="text-sm text-stone-600">
-        그래플레이 비즈(이하 "회사")는 정보통신망 이용촉진 및 정보보호 등에 관한 법률, 개인정보보호법 등
-        관련 법령에 따라 이용자의 개인정보를 보호하고 이와 관련한 고충을 신속하고 원활하게 처리할 수
+        그래플레이(이하 "회사")는 파이네시스(PHYNESIS) 서비스 운영과 관련하여 정보통신망 이용촉진 및
+        정보보호 등에 관한 법률, 개인정보보호법 등 관련 법령에 따라 이용자의 개인정보를 보호하고 이와 관련한 고충을 신속하고 원활하게 처리할 수
         있도록 다음과 같이 개인정보처리방침을 수립·공개합니다.
       </p>
 

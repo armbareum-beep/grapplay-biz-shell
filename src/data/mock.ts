@@ -1,14 +1,14 @@
-// 그래플레이 비즈 — 타입 정의 + 카테고리(앱 설정) + 공용 헬퍼.
+// 파이네시스 — 타입 정의 + 카테고리(앱 설정) + 공용 헬퍼.
 // 목업(가짜) 데이터는 모두 제거됨. 실제 데이터는 Supabase(src/lib/api.ts)에서만 온다.
 // 카테고리 4종: 마케팅 · 상권분석 · 연금 · 경영
 
 export type Category = '마케팅' | '상권분석' | '연금' | '경영'
 
 export const CATEGORIES: { key: Category; emoji: string; desc: string }[] = [
-  { key: '마케팅', emoji: '📣', desc: '신규 회원 모집과 브랜딩 전략' },
+  { key: '마케팅', emoji: '📣', desc: '신규 고객 확보와 브랜딩 전략' },
   { key: '상권분석', emoji: '📍', desc: '입지 선정과 상권 데이터 읽는 법' },
-  { key: '연금', emoji: '💰', desc: '관장을 위한 노후·자산 설계' },
-  { key: '경영', emoji: '🏋️', desc: '운영 효율과 수익 구조 설계' },
+  { key: '연금', emoji: '💰', desc: '자영 전문가를 위한 노후·자산 설계' },
+  { key: '경영', emoji: '📈', desc: '운영 효율과 수익 구조 설계' },
 ]
 
 export interface Expert {
