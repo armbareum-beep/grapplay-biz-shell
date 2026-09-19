@@ -13,6 +13,8 @@ import {
   type OrderRow,
 } from '../lib/userData'
 import { uploadToCovers } from '../lib/storage'
+import { COVER_BY_CATEGORY, COVER_DEFAULT } from '../data/mock'
+import ExpertAvatar from '../components/ExpertAvatar'
 import { formatPrice } from '../data/mock'
 import ExpertProfileEditor from '../components/ExpertProfileEditor'
 
@@ -74,7 +76,7 @@ export default function AcademyMyPage() {
             className="h-16 w-16 shrink-0 rounded-full object-cover"
           />
         ) : (
-          <div className="grid h-16 w-16 shrink-0 place-items-center rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-2xl font-black text-white">
+          <div className="grid h-16 w-16 shrink-0 place-items-center rounded-full bg-brand-100 text-2xl font-black text-brand-700">
             {name.charAt(0)}
           </div>
         )}
@@ -102,7 +104,7 @@ export default function AcademyMyPage() {
             onClick={() => setTab(t)}
             className={`-mb-px border-b-2 px-4 py-3 text-sm font-semibold transition ${
               tab === t
-                ? 'border-amber-500 text-amber-600'
+                ? 'border-brand-600 text-brand-700'
                 : 'border-transparent text-stone-500 hover:text-stone-800'
             }`}
           >
@@ -175,6 +177,7 @@ function ItemsTab({
         if (row.item_type === 'ebook') {
           const eb = getEbook(row.item_id)
           if (!eb) return null
+          const ebExpert = eb.expertId ? getExpert(eb.expertId) : undefined
           const progress = 'progress' in row ? row.progress : 0
           return (
             <Link
@@ -182,16 +185,30 @@ function ItemsTab({
               to={showProgress ? `/read/${eb.id}` : `/ebooks/${eb.id}`}
               className="flex gap-4 rounded-2xl border border-stone-200 bg-white p-4 transition hover:shadow-md sm:items-center"
             >
+              {/* 표지 — 업로드 이미지 우선, 없으면 카테고리별 다크 그라데이션 (카드와 동일 규칙) */}
               <div
-                className={`grid h-20 w-28 shrink-0 place-items-center rounded-xl bg-gradient-to-br ${eb.cover} text-3xl`}
+                className={`relative h-20 w-28 shrink-0 overflow-hidden rounded-xl bg-gradient-to-br ${
+                  (eb.category && COVER_BY_CATEGORY[eb.category]) || COVER_DEFAULT
+                }`}
               >
-                {eb.emoji}
+                {eb.coverImage && (
+                  <img
+                    src={eb.coverImage}
+                    alt=""
+                    className="absolute inset-0 h-full w-full object-cover"
+                  />
+                )}
               </div>
               <div className="flex-1">
                 <div className="text-xs font-medium text-brand-600">전자책</div>
                 <h3 className="mt-0.5 font-bold text-stone-900">{eb.title}</h3>
-                <p className="text-xs text-stone-500">
-                  {eb.avatar} {eb.author}
+                <p className="flex items-center gap-1.5 text-xs text-stone-500">
+                  <ExpertAvatar
+                    emoji={ebExpert?.avatar ?? eb.avatar}
+                    src={ebExpert?.avatarUrl}
+                    size={16}
+                  />
+                  {eb.author}
                 </p>
                 {showProgress && (
                   <div className="mt-3 flex items-center gap-3">
@@ -224,22 +241,32 @@ function ItemsTab({
             to={showProgress ? `/learn/${c.id}` : `/courses/${c.id}`}
             className="flex gap-4 rounded-2xl border border-stone-200 bg-white p-4 transition hover:shadow-md sm:items-center"
           >
+            {/* 표지 — 업로드 이미지 우선, 없으면 카테고리별 다크 그라데이션 (카드와 동일 규칙) */}
             <div
-              className={`grid h-20 w-28 shrink-0 place-items-center rounded-xl bg-gradient-to-br ${c.cover} text-3xl`}
+              className={`relative h-20 w-28 shrink-0 overflow-hidden rounded-xl bg-gradient-to-br ${
+                COVER_BY_CATEGORY[c.category] ?? COVER_DEFAULT
+              }`}
             >
-              {c.thumbEmoji}
+              {c.coverImage && (
+                <img
+                  src={c.coverImage}
+                  alt=""
+                  className="absolute inset-0 h-full w-full object-cover"
+                />
+              )}
             </div>
             <div className="flex-1">
-              <div className="text-xs font-medium text-amber-600">{c.category}</div>
+              <div className="text-xs font-medium text-brand-600">{c.category}</div>
               <h3 className="mt-0.5 font-bold text-stone-900">{c.title}</h3>
-              <p className="text-xs text-stone-500">
-                {expert?.avatar} {expert?.name}
+              <p className="flex items-center gap-1.5 text-xs text-stone-500">
+                <ExpertAvatar emoji={expert?.avatar} src={expert?.avatarUrl} size={16} />
+                {expert?.name}
               </p>
               {showProgress && (
                 <div className="mt-3 flex items-center gap-3">
                   <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-stone-100">
                     <div
-                      className="h-full rounded-full bg-gradient-to-r from-amber-400 to-orange-500"
+                      className="h-full rounded-full bg-brand-600"
                       style={{ width: `${progress}%` }}
                     />
                   </div>
@@ -349,7 +376,7 @@ function ProfileTab() {
     alert('프로필을 저장했어요.')
   }
 
-  const field = 'w-full rounded-lg border border-stone-300 px-3 py-2 text-sm outline-none focus:border-amber-400'
+  const field = 'w-full rounded-lg border border-stone-300 px-3 py-2 text-sm outline-none focus:border-brand-400'
 
   return (
     <div className="mt-8 max-w-2xl space-y-8">
@@ -360,7 +387,7 @@ function ProfileTab() {
           {avatarUrl ? (
             <img src={avatarUrl} alt="" className="h-16 w-16 shrink-0 rounded-full object-cover" />
           ) : (
-            <div className="grid h-16 w-16 shrink-0 place-items-center rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-2xl font-black text-white">
+            <div className="grid h-16 w-16 shrink-0 place-items-center rounded-full bg-brand-100 text-2xl font-black text-brand-700">
               {(displayName || '관').charAt(0)}
             </div>
           )}
@@ -395,7 +422,7 @@ function ProfileTab() {
         <button
           onClick={saveUser}
           disabled={savingUser}
-          className="rounded-lg bg-amber-500 px-5 py-2 text-sm font-bold text-white hover:bg-amber-600 disabled:opacity-50"
+          className="rounded-lg bg-brand-600 px-5 py-2 text-sm font-bold text-white hover:bg-brand-700 disabled:opacity-50"
         >
           프로필 저장
         </button>

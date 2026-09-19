@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { CATEGORIES, type Category } from '../data/mock'
+import { type Category } from '../data/mock'
 import { useBizData } from '../lib/useBizData'
-import { useAuth } from '../lib/auth'
 import CourseCard from '../components/CourseCard'
 import CourseCarousel from '../components/CourseCarousel'
 import EbookCard from '../components/EbookCard'
 import ExpertAvatar from '../components/ExpertAvatar'
+import BrandLogo from '../components/BrandLogo'
 import Icon from '../components/Icon'
 import { COVER_BY_CATEGORY, COVER_DEFAULT, formatPrice, type Course } from '../data/mock'
 import { maskName } from '../data/mockMarketplace'
@@ -27,10 +27,10 @@ const DECISIONS: { q: string; cat: Category }[] = [
 ]
 
 export default function AcademyLanding() {
-  const { session } = useAuth()
   const { courses, getCourse, courseReviews, ebooks, experts, loading } = useBizData()
-  // 시작하기: 로그인 → 컨텐츠(무료 필터), 비로그인 → 로그인 페이지
-  const startFreeTo = session ? '/content?free=1' : '/auth'
+  // 히어로 CTA는 로그인 벽을 세우지 않는다 — 가입 전에 무료 콘텐츠를 먼저 보게 한다.
+  // 결제·수강이 필요한 시점에 각 상세 화면이 알아서 로그인을 요구한다.
+  const startFreeTo = '/content?free=1'
 
   const best = [...courses].sort((a, b) => b.studentCount - a.studentCount)
   const latest = [...courses].reverse()
@@ -54,43 +54,48 @@ export default function AcademyLanding() {
   const courseCountByExpert: Record<string, number> = {}
   for (const c of courses) courseCountByExpert[c.expertId] = (courseCountByExpert[c.expertId] ?? 0) + 1
 
-  // 히어로 숫자 — 실제 DB 수치만. 0이면 항목 자체를 숨긴다 (부풀리기 금지)
-  const stats = [
-    { value: CATEGORIES.length, label: '주제' },
-    { value: courses.length, label: '강의' },
-    { value: experts.length, label: '전문가' },
-  ].filter((s) => s.value > 0)
+  // 히어로에 내세울 전문가 — 숫자(강의 3개·전문가 2명)는 규모가 작을수록 신뢰를 깎아 빼고,
+  // "누가 가르치는가"를 대신 보여준다. 단, 실제 사진이 있는 전문가만.
+  // 이모지 폴백 얼굴은 신뢰를 주기는커녕 미완성으로 보여, 사진이 없으면 줄 자체를 숨긴다.
+  const heroExperts = experts.filter((e) => e.avatarUrl).slice(0, 3)
 
   return (
     <div>
       {/* 1. 히어로 — 다크 네이비 */}
       <section className="bg-dots relative overflow-hidden bg-brand-950 text-white">
-        <div className="relative mx-auto max-w-6xl px-4 pb-20 pt-16 sm:px-6 sm:pb-24 sm:pt-20 lg:pb-28 lg:pt-24">
+        {/* 높이를 줄여 다음 섹션이 첫 화면에 살짝 걸치게 한다 — 스크롤 유인 */}
+        <div className="relative mx-auto max-w-6xl px-4 pb-14 pt-12 sm:px-6 sm:pb-20 sm:pt-16 lg:pb-24 lg:pt-20">
           <p className="text-[11px] font-semibold tracking-[0.3em] text-brand-300">BUSINESS EDUCATION</p>
-          <h1 className="mt-5 max-w-3xl text-4xl font-black leading-[1.1] tracking-tight sm:text-5xl lg:text-6xl">
+          {/* 한글에는 음수 자간(tracking-tight)을 쓰지 않는다 — 한글 음절은 이미 좌우 여백이
+              균형 잡혀 있어 음수 자간을 주면 글자 사이가 불규칙해 보인다. 행간도 1.1은 좁다. */}
+          <h1 className="mt-5 max-w-3xl text-4xl font-black leading-[1.18] sm:text-5xl lg:text-6xl">
             실력은 있는데,
             <br />
             사업이 막힐 때
           </h1>
-          <p className="mt-6 max-w-xl text-base leading-relaxed text-brand-200 sm:text-lg">
+          <p className="mt-5 max-w-xl text-base leading-relaxed text-brand-200 sm:text-lg">
             실천적 지혜를 사업에 적용하세요
           </p>
-          <div className="mt-9">
+          <div className="mt-8">
             <Link
               to={startFreeTo}
               className="rounded-lg bg-white px-6 py-3.5 text-sm font-bold text-brand-950 transition hover:bg-brand-100"
             >
-              파이네시스 시작하기 →
+              무료 강의 먼저 보기 →
             </Link>
+            <p className="mt-3 text-xs text-brand-400">가입 없이 둘러볼 수 있습니다</p>
           </div>
 
-          {/* 숫자 — 데스크톱 우측 세로, 모바일 하단 가로 */}
-          {stats.length > 0 && (
-            <div className="mt-12 flex gap-8 lg:absolute lg:right-6 lg:top-24 lg:mt-0 lg:flex-col lg:gap-6">
-              {stats.map((s) => (
-                <div key={s.label} className="border-l border-white/20 pl-4">
-                  <div className="text-2xl font-black sm:text-3xl">{s.value}</div>
-                  <div className="text-[11px] tracking-[0.15em] text-brand-300">{s.label}</div>
+          {/* 숫자 대신 "누가 가르치는가" — 얼굴·이름·직함 */}
+          {heroExperts.length > 0 && (
+            <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3">
+              {heroExperts.map((e) => (
+                <div key={e.id} className="flex items-center gap-2.5">
+                  <ExpertAvatar src={e.avatarUrl} size={34} rounded="rounded-full" />
+                  <div className="leading-tight">
+                    <div className="text-sm font-bold">{e.name}</div>
+                    <div className="text-[11px] text-brand-300">{e.title}</div>
+                  </div>
                 </div>
               ))}
             </div>
@@ -191,36 +196,61 @@ export default function AcademyLanding() {
         </Section>
       )}
 
-      {/* 5. 철학 — 다크. 브랜드가 기억되는 장면. 모바일에서도 PAIDEIA/PHRONESIS를 2열로 두고
-          여백을 좁혀 스크롤 길이를 줄인다(2026-09-19). */}
+      {/* 5. 철학 — 다크. 이름이 어디서 왔는지를 보여주는 자리.
+          한국어 표기에서 어원이 그대로 맞아떨어진다: 파이(데이아) + (프로)네시스 = 파이네시스.
+          두 낱말에서 가져온 음절을 밝게 두고 나머지를 죽여, 합쳐지는 과정을 글자로 드러낸다. */}
       <section className="bg-dots relative overflow-hidden bg-brand-950 text-white">
         <div className="relative mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-28">
           <div className="grid grid-cols-2 gap-6 sm:gap-12 lg:gap-20">
             <div>
               <p className="text-[11px] font-semibold tracking-[0.3em] text-brand-300">PAIDEIA</p>
-              <p className="mt-2 text-xl font-black sm:mt-3 sm:text-3xl">파이데이아</p>
-              <p className="mt-2 text-sm leading-relaxed text-brand-200 sm:mt-4 sm:text-base">
+              <p className="mt-2 text-xl font-black sm:mt-3 sm:text-3xl">
+                <span className="text-white">파이</span>
+                <span className="text-brand-400">데이아</span>
+              </p>
+              <p className="mt-2 min-h-[3.25rem] text-sm leading-relaxed text-brand-200 sm:mt-4 sm:min-h-0 sm:text-base">
                 사람을 성장시키는 배움
               </p>
             </div>
             <div>
               <p className="text-[11px] font-semibold tracking-[0.3em] text-brand-300">PHRONESIS</p>
-              <p className="mt-2 text-xl font-black sm:mt-3 sm:text-3xl">프로네시스</p>
-              <p className="mt-2 text-sm leading-relaxed text-brand-200 sm:mt-4 sm:text-base">
+              <p className="mt-2 text-xl font-black sm:mt-3 sm:text-3xl">
+                <span className="text-brand-400">프로</span>
+                <span className="text-white">네시스</span>
+              </p>
+              <p className="mt-2 min-h-[3.25rem] text-sm leading-relaxed text-brand-200 sm:mt-4 sm:min-h-0 sm:text-base">
                 현실에서 더 나은 결정을 내리는 실천적 지혜
               </p>
             </div>
           </div>
-          <div className="mt-10 border-t border-white/10 pt-8 sm:mt-20 sm:pt-16">
-            <p className="text-2xl font-black leading-tight tracking-tight sm:text-5xl">
-              우리는 이 둘을
+
+          {/* 합쳐지는 식 — 파이 + 네시스 = 파이네시스 */}
+          <div className="mt-10 border-t border-white/10 pt-8 sm:mt-16 sm:pt-14">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-xl font-black sm:gap-x-4 sm:text-3xl">
+              <span>파이</span>
+              <span className="text-brand-400" aria-hidden>
+                +
+              </span>
+              <span>네시스</span>
+              <span className="text-brand-400" aria-hidden>
+                =
+              </span>
+              <span className="flex items-center gap-2.5 text-white">
+                <BrandLogo size="sm" tone="light" />
+                파이네시스
+              </span>
+            </div>
+            <p className="mt-8 text-2xl font-black leading-[1.25] sm:mt-12 sm:text-5xl">
+              배움과 실천적 지혜를
               <br />
               사업에 연결합니다
             </p>
-            <div className="mt-6 flex flex-wrap items-end gap-x-6 gap-y-2 sm:mt-10">
-              <span className="font-wordmark text-4xl font-bold tracking-wide sm:text-7xl">PHYNESIS</span>
-              <span className="font-wordmark text-xl font-bold text-brand-300 sm:text-3xl">파이네시스</span>
-            </div>
+            <Link
+              to="/experts"
+              className="mt-7 inline-block border-b border-white/25 pb-1 text-sm font-semibold text-brand-200 transition hover:border-white hover:text-white"
+            >
+              이 관점으로 가르치는 전문가 보기 →
+            </Link>
           </div>
         </div>
       </section>

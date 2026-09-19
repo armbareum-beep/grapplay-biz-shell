@@ -30,11 +30,11 @@ export default function AcademyLayout({ children }: { children: React.ReactNode 
   // Supabase 연결은 됐는데 조회가 실패해 목업으로 폴백된 상태(장애를 감추지 않도록 안내)
   const dataDegraded = isSupabaseConfigured && !dataLoading && !live
 
-  // 역할별 대시보드 메뉴를 상단 메뉴에 추가
+  // 역할별 대시보드 메뉴 — 로그인한 전문가·관리자에게만 붙는다. 메뉴줄은 가로 스크롤이라 넘쳐도 잘리지 않는다.
   const menu = [
     ...MENU,
     ...((profile?.role === 'expert' && profile.expert_id) || profile?.role === 'admin'
-      ? [{ to: '/expert/dashboard', label: '지도자 대시보드' }]
+      ? [{ to: '/expert/dashboard', label: '전문가 대시보드' }]
       : []),
     ...(profile?.role === 'admin' ? [{ to: '/admin', label: '관리자 대시보드' }] : []),
   ]
@@ -246,7 +246,7 @@ function HeaderUtil() {
             {((profile?.role === 'expert' && profile.expert_id) ||
               profile?.role === 'admin') && (
               <MenuLink to="/expert/dashboard" onClick={() => setOpen(false)}>
-                지도자 대시보드
+                전문가 대시보드
               </MenuLink>
             )}
             {profile?.role === 'admin' && (
