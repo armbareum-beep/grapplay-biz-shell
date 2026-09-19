@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { CATEGORIES, type Category } from '../data/mock'
+import { CATEGORIES, type Category, resolveCategory } from '../data/mock'
 import { useBizData } from '../lib/useBizData'
 import CourseCard from '../components/CourseCard'
 import EbookCard from '../components/EbookCard'
@@ -23,8 +23,7 @@ export default function ContentHub() {
   const { courses, ebooks, loading } = useBizData()
   const [params] = useSearchParams()
   const initialCat = params.get('cat')
-  const validCat: '전체' | Category =
-    initialCat && CATEGORIES.some((c) => c.key === initialCat) ? (initialCat as Category) : '전체'
+  const validCat: '전체' | Category = resolveCategory(initialCat) ?? '전체'
 
   const [cat, setCat] = useState<'전체' | Category>(validCat)
   const [sort, setSort] = useState<Sort>('추천순')

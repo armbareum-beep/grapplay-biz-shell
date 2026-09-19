@@ -36,7 +36,7 @@ export default function AcademyLanding() {
           내 사업, 오늘은 무엇을 배워볼까요?
         </h1>
         <p className="mt-2 text-center text-slate-500">
-          마케팅·상권분석·연금·경영까지 — 현장에서 사업을 키운 전문가의 강의
+          마케팅·브랜딩·상권분석·투자·경영·인문교양 — 현장에서 사업을 키운 전문가의 강의
         </p>
         <div className="mt-7">
           <BannerCarousel banners={banners} />
@@ -45,8 +45,8 @@ export default function AcademyLanding() {
 
       {/* 2. 카테고리 */}
       <Section>
-        <SectionHeader title="무엇을 배우고 싶으세요?" desc="전문가의 사업에 꼭 필요한 4가지 주제" />
-        <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+        <SectionHeader title="무엇을 배우고 싶으세요?" desc="전문가의 사업에 꼭 필요한 6가지 주제" />
+        <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
           {CATEGORIES.map((c) => (
             <Link
               key={c.key}

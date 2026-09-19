@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { CATEGORIES, Category } from '../data/mock'
+import { CATEGORIES, Category, resolveCategory } from '../data/mock'
 import { useBizData } from '../lib/useBizData'
 import CourseCard from '../components/CourseCard'
 
@@ -12,8 +12,7 @@ export default function AcademyLibrary() {
   const { courses, loading } = useBizData()
   const [params] = useSearchParams()
   const initialCat = params.get('cat')
-  const validCat: Filter =
-    initialCat && CATEGORIES.some((c) => c.key === initialCat) ? (initialCat as Category) : '전체'
+  const validCat: Filter = resolveCategory(initialCat) ?? '전체'
   const [filter, setFilter] = useState<Filter>(validCat)
   const [sort, setSort] = useState<Sort>('추천순')
   const [freeOnly, setFreeOnly] = useState(params.get('free') === '1')

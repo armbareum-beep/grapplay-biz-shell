@@ -1,15 +1,29 @@
 // 파이네시스 — 타입 정의 + 카테고리(앱 설정) + 공용 헬퍼.
 // 목업(가짜) 데이터는 모두 제거됨. 실제 데이터는 Supabase(src/lib/api.ts)에서만 온다.
-// 카테고리 4종: 마케팅 · 상권분석 · 연금 · 경영
+// 카테고리 6종: 마케팅 · 브랜딩 · 상권분석 · 투자 · 경영 · 인문교양
+// (2026-09 리브랜딩: '연금' → '투자' rename, 브랜딩·인문교양 신설 — docs/plan/10-rebrand-phynesis.md §4)
+// 순서 = 랜딩 그리드·필터 칩 순서: 고객을 모으고 → 자리를 잡고 → 돈을 키우고 → 사람을 키운다.
 
-export type Category = '마케팅' | '상권분석' | '연금' | '경영'
+export type Category = '마케팅' | '브랜딩' | '상권분석' | '투자' | '경영' | '인문교양'
 
 export const CATEGORIES: { key: Category; emoji: string; desc: string }[] = [
-  { key: '마케팅', emoji: '📣', desc: '신규 고객 확보와 브랜딩 전략' },
+  { key: '마케팅', emoji: '📣', desc: '신규 고객 확보와 광고·홍보 전략' },
+  { key: '브랜딩', emoji: '🎨', desc: '전문가 개인 브랜드와 포지셔닝' },
   { key: '상권분석', emoji: '📍', desc: '입지 선정과 상권 데이터 읽는 법' },
-  { key: '연금', emoji: '💰', desc: '자영 전문가를 위한 노후·자산 설계' },
+  { key: '투자', emoji: '💰', desc: '사업 수익을 자산으로 키우는 투자·재무 설계' },
   { key: '경영', emoji: '📈', desc: '운영 효율과 수익 구조 설계' },
+  { key: '인문교양', emoji: '📚', desc: '사업의 안목을 넓히는 인문·교양 강의' },
 ]
+
+/** 구 카테고리 → 신 카테고리. `?cat=연금` 같은 북마크·공유 링크 호환용. */
+export const LEGACY_CATEGORY: Record<string, Category> = { 연금: '투자' }
+
+/** URL 파라미터 등 외부 문자열을 유효한 Category 로. 구 값은 매핑, 모르는 값은 null. */
+export function resolveCategory(v: string | null | undefined): Category | null {
+  if (!v) return null
+  const k = LEGACY_CATEGORY[v] ?? v
+  return CATEGORIES.some((c) => c.key === k) ? (k as Category) : null
+}
 
 export interface Expert {
   id: string
