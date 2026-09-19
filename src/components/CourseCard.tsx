@@ -41,7 +41,7 @@ export default function CourseCard({ course }: { course: Course }) {
             {course.category}
           </span>
           {meta.isNew && (
-            <span className="rounded-full bg-gold-500 px-2 py-1 text-[10px] font-bold tracking-wider text-white">
+            <span className="rounded-full bg-brand-600 px-2 py-1 text-[10px] font-bold tracking-wider text-white">
               NEW
             </span>
           )}
@@ -94,7 +94,7 @@ export default function CourseCard({ course }: { course: Course }) {
             )}
             <span
               className={`text-lg font-black ${
-                isPaid ? 'text-slate-900' : 'text-gold-600'
+                isPaid ? 'text-slate-900' : 'text-brand-600'
               }`}
             >
               {formatPrice(course.price)}

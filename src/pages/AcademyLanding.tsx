@@ -71,7 +71,7 @@ export default function AcademyLanding() {
           <h1 className="mt-5 max-w-3xl text-4xl font-black leading-[1.1] tracking-tight sm:text-5xl lg:text-6xl">
             실력은 있는데,
             <br />
-            <span className="text-gold-400">사업이 막힐 때.</span>
+            사업이 막힐 때.
           </h1>
           <p className="mt-6 max-w-xl text-base leading-relaxed text-brand-200 sm:text-lg">
             마케팅·브랜딩·상권분석·투자·경영·인문교양. 현장에서 사업을 키운 전문가가 실전 판단을
@@ -127,7 +127,7 @@ export default function AcademyLanding() {
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
           <div className="grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:gap-16">
             <div>
-              <p className="text-[11px] font-bold tracking-[0.3em] text-gold-500">01 — 매일의 판단</p>
+              <p className="text-[11px] font-bold tracking-[0.3em] text-slate-400">01 — 매일의 판단</p>
               <h2 className="mt-3 text-3xl font-black leading-tight tracking-tight text-slate-900 sm:text-4xl">
                 사업을 하다 보면
                 <br />
@@ -192,7 +192,7 @@ export default function AcademyLanding() {
                 to={`/library?cat=${encodeURIComponent(c.key)}`}
                 className="group relative border-b border-slate-300 py-7 pr-10 transition sm:px-6 sm:[&:nth-child(2n)]:border-l lg:[&:nth-child(2n)]:border-l-0 lg:[&:nth-child(3n+2)]:border-l lg:[&:nth-child(3n+2)]:border-r"
               >
-                <div className="text-xs tracking-[0.2em] text-gold-500">{String(i + 1).padStart(2, '0')}</div>
+                <div className="text-xs tracking-[0.2em] text-slate-400">{String(i + 1).padStart(2, '0')}</div>
                 <h3 className="mt-3 text-2xl font-black text-slate-900 group-hover:text-brand-600">{c.key}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-slate-500">{c.desc}</p>
                 <span className="absolute right-1 top-7 text-slate-400 transition group-hover:translate-x-1 group-hover:text-brand-600 sm:right-6">
@@ -237,12 +237,12 @@ export default function AcademyLanding() {
         <div className="relative mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-28">
           <div className="grid gap-12 lg:grid-cols-2 lg:gap-20">
             <div>
-              <p className="text-[11px] font-semibold tracking-[0.3em] text-gold-400">PAIDEIA</p>
+              <p className="text-[11px] font-semibold tracking-[0.3em] text-brand-300">PAIDEIA</p>
               <p className="mt-3 text-2xl font-black sm:text-3xl">파이데이아</p>
               <p className="mt-4 max-w-sm leading-relaxed text-brand-200">사람을 성장시키는 배움.</p>
             </div>
             <div>
-              <p className="text-[11px] font-semibold tracking-[0.3em] text-gold-400">PHRONESIS</p>
+              <p className="text-[11px] font-semibold tracking-[0.3em] text-brand-300">PHRONESIS</p>
               <p className="mt-3 text-2xl font-black sm:text-3xl">프로네시스</p>
               <p className="mt-4 max-w-sm leading-relaxed text-brand-200">
                 현실에서 더 나은 결정을 내리는 실천적 지혜.
@@ -253,7 +253,7 @@ export default function AcademyLanding() {
             <p className="text-3xl font-black leading-tight tracking-tight sm:text-5xl">
               우리는 이 둘을
               <br />
-              <span className="text-gold-400">사업에</span> 연결합니다.
+              사업에 연결합니다.
             </p>
             <div className="mt-10 flex flex-wrap items-end gap-x-6 gap-y-2">
               <span className="font-wordmark text-5xl font-bold tracking-wide sm:text-7xl">PHYNESIS</span>
@@ -282,7 +282,7 @@ export default function AcademyLanding() {
                     <ul className="mt-2 space-y-0.5 text-xs text-slate-500">
                       {e.credentials.slice(0, 2).map((c) => (
                         <li key={c} className="truncate">
-                          <span className="mr-1 text-gold-500">✓</span>
+                          <span className="mr-1 text-brand-600">✓</span>
                           {c}
                         </li>
                       ))}
@@ -310,7 +310,7 @@ export default function AcademyLanding() {
           {ratingSummary && (
             <div className="mt-6 flex items-center gap-4 text-sm">
               <span className="text-2xl font-black text-slate-900">
-                <span className="mr-1 text-gold-500">★</span>
+                <span className="mr-1 text-amber-400">★</span>
                 {ratingSummary.avg.toFixed(1)}
                 <span className="ml-1 text-sm font-medium text-slate-400">/ 5.0</span>
               </span>
@@ -324,7 +324,7 @@ export default function AcademyLanding() {
                 <div key={i} className="w-80 shrink-0 rounded-lg border border-slate-200 bg-white p-5">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-semibold text-slate-800">{r.name}</span>
-                    {r.rating > 0 && <span className="text-gold-500">{'★'.repeat(r.rating)}</span>}
+                    {r.rating > 0 && <span className="text-amber-400">{'★'.repeat(r.rating)}</span>}
                   </div>
                   {r.course && <div className="mt-1 text-xs text-brand-600">{r.course}</div>}
                   <p className="mt-2 line-clamp-2 text-sm text-slate-600">{r.text}</p>
@@ -397,7 +397,7 @@ function FeaturedCourse({ course }: { course: Course }) {
         )}
       </div>
       <div className="flex flex-col p-6 sm:p-8">
-        <p className="text-[11px] font-bold tracking-[0.3em] text-gold-500">FEATURED</p>
+        <p className="text-[11px] font-bold tracking-[0.3em] text-slate-400">FEATURED</p>
         <h3 className="mt-3 text-2xl font-black leading-snug text-slate-900 group-hover:text-brand-600 sm:text-3xl">
           {course.title}
         </h3>
@@ -412,12 +412,12 @@ function FeaturedCourse({ course }: { course: Course }) {
           <span>{course.lessonCount}강 · {course.durationMin}분</span>
           {count > 0 && (
             <span>
-              <span className="text-gold-500">★</span> {rating.toFixed(1)} ({count})
+              <span className="text-amber-400">★</span> {rating.toFixed(1)} ({count})
             </span>
           )}
         </div>
         <div className="mt-auto flex items-end justify-between pt-8">
-          <span className={`text-xl font-black ${course.price > 0 ? 'text-slate-900' : 'text-gold-600'}`}>
+          <span className={`text-xl font-black ${course.price > 0 ? 'text-slate-900' : 'text-brand-600'}`}>
             {formatPrice(course.price)}
           </span>
           <span className="text-sm font-semibold text-brand-600 group-hover:underline">
@@ -538,7 +538,7 @@ function SectionHeader({
   return (
     <div className="flex items-end justify-between">
       <div>
-        {label && <p className="text-[11px] font-bold tracking-[0.3em] text-gold-500">{label}</p>}
+        {label && <p className="text-[11px] font-bold tracking-[0.3em] text-slate-400">{label}</p>}
         <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">{title}</h2>
         <p className="mt-2 text-sm text-slate-500">{desc}</p>
       </div>

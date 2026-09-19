@@ -35,7 +35,7 @@ export default function EbookCard({ ebook }: { ebook: Ebook }) {
             전자책{ebook.category ? ` · ${ebook.category}` : ''}
           </span>
           {ebook.isNew && (
-            <span className="rounded-full bg-gold-500 px-2 py-1 text-[10px] font-bold tracking-wider text-white">
+            <span className="rounded-full bg-brand-600 px-2 py-1 text-[10px] font-bold tracking-wider text-white">
               NEW
             </span>
           )}
@@ -81,7 +81,7 @@ export default function EbookCard({ ebook }: { ebook: Ebook }) {
               </div>
             )}
             <span
-              className={`text-lg font-black ${isPaid ? 'text-slate-900' : 'text-gold-600'}`}
+              className={`text-lg font-black ${isPaid ? 'text-slate-900' : 'text-brand-600'}`}
             >
               {formatPrice(ebook.price)}
             </span>
