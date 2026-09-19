@@ -66,7 +66,8 @@ export default function AcademyLanding() {
       {/* 1. 히어로 — 다크 네이비 */}
       <section className="bg-dots relative overflow-hidden bg-brand-950 text-white">
         <div className="relative mx-auto max-w-6xl px-4 pb-20 pt-16 sm:px-6 sm:pb-24 sm:pt-20 lg:pb-28 lg:pt-24">
-          <h1 className="max-w-3xl text-4xl font-black leading-[1.1] tracking-tight sm:text-5xl lg:text-6xl">
+          <p className="text-[11px] font-semibold tracking-[0.3em] text-brand-300">BUSINESS EDUCATION</p>
+          <h1 className="mt-5 max-w-3xl text-4xl font-black leading-[1.1] tracking-tight sm:text-5xl lg:text-6xl">
             실력은 있는데,
             <br />
             사업이 막힐 때
@@ -82,10 +83,6 @@ export default function AcademyLanding() {
               파이네시스 시작하기 →
             </Link>
           </div>
-          <p className="mt-10 text-[11px] tracking-[0.2em] text-brand-400">
-            PAIDEIA × PHRONESIS
-            <span className="ml-3 tracking-normal text-brand-300">배움과 실천적 지혜를 사업으로 연결합니다</span>
-          </p>
 
           {/* 숫자 — 데스크톱 우측 세로, 모바일 하단 가로 */}
           {stats.length > 0 && (
