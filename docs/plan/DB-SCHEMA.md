@@ -25,6 +25,7 @@
 | 10 | `20260614000100_admin_set_role.sql` | `admin_set_user_role()` RPC — 회원 역할 변경(승격/강등/관리자 지정) |
 | 11 | `20260615000000_category_rename_ebook_category.sql` | 카테고리 "체육관 운영"→"경영" rename + ebooks에 category 컬럼 + 시드 카테고리 |
 | 12 | `20260616000000_expert_category.sql` | experts에 category 컬럼 (관리자 지정 전문분야) + 시드 |
+| — | `20260919000000_category_rename_invest.sql` | 카테고리 "연금"→"투자" rename (courses/ebooks/experts.category, experts.categories). 브랜딩·인문교양 신설은 앱 상수만 (check 제약 없음) |
 | 13~22 | `20260617`~`20260624` 시리즈 | 강의 할인, 배너, 전문가 카테고리/아바타/삭제/자격, 전자책 리뷰, 리뷰 별점, 리뷰 관리자 삭제, 레슨 진도, 리뷰 작성자 트리거 (각 파일명 참조 — 이 표에 상세 미반영) |
 | 23 | `20260805000000_page_views.sql` | page_views 테이블 + `track_page_view()`/`page_view_counts()` RPC (RLS 정책 없음 = RPC로만 접근) |
 | 24 | `20260805100000_page_view_daily.sql` | `page_view_daily()` RPC — KST 일별 조회수 집계 |
@@ -50,7 +51,7 @@
 | name, title | text | |
 | avatar | text | 이모지 |
 | bio | text | |
-| **category** | text | 전문분야 (마케팅/상권분석/연금/경영, 관리자 지정, nullable) |
+| **category** | text | 전문분야 (마케팅/브랜딩/상권분석/투자/경영/인문교양, 관리자 지정, nullable) |
 | created_at | timestamptz | |
 
 **courses** — 강의
@@ -81,7 +82,7 @@
 | id | text PK | |
 | expert_id | text FK→experts | on delete set null |
 | title, subtitle, author, summary | text | |
-| **category** | text | 마케팅/상권분석/연금/경영 (강의와 동일 4종, nullable) |
+| **category** | text | 마케팅/브랜딩/상권분석/투자/경영/인문교양 (강의와 동일 6종, nullable) |
 | avatar, emoji | text | 이모지 |
 | cover | text | 그라데이션 (이미지 없을 때 폴백) |
 | **cover_image** | text | 업로드 표지 이미지 URL (covers 버킷) |

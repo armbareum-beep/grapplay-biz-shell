@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { CATEGORIES, Category } from '../data/mock'
+import { CATEGORIES, Category, resolveCategory } from '../data/mock'
 import { useBizData } from '../lib/useBizData'
 import CourseCard from '../components/CourseCard'
 
@@ -12,8 +12,7 @@ export default function AcademyLibrary() {
   const { courses, loading } = useBizData()
   const [params] = useSearchParams()
   const initialCat = params.get('cat')
-  const validCat: Filter =
-    initialCat && CATEGORIES.some((c) => c.key === initialCat) ? (initialCat as Category) : '전체'
+  const validCat: Filter = resolveCategory(initialCat) ?? '전체'
   const [filter, setFilter] = useState<Filter>(validCat)
   const [sort, setSort] = useState<Sort>('추천순')
   const [freeOnly, setFreeOnly] = useState(params.get('free') === '1')
@@ -31,7 +30,7 @@ export default function AcademyLibrary() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
       <h1 className="text-3xl font-black text-stone-900">강의 둘러보기</h1>
-      <p className="mt-2 text-stone-500">체육관 경영에 필요한 모든 강의를 한곳에서</p>
+      <p className="mt-2 text-stone-500">사업 운영에 필요한 모든 강의를 한곳에서</p>
 
       {/* 카테고리 칩 */}
       <div className="mt-6 flex flex-wrap gap-2">

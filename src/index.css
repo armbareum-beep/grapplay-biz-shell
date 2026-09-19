@@ -1,5 +1,16 @@
 @import "tailwindcss";
 
+/* 워드마크 전용 서체 — SUIT Bold 를 "파이네시스PHYNESIS" 13글자만 서브셋(1.3KB).
+   원본/재생성: scripts/build-wordmark.py. 화면 워드마크는 BrandLogo.tsx 가 .font-wordmark 로 사용. */
+@font-face {
+  font-family: "Wordmark";
+  src: url("/fonts/wordmark.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+D30C, U+C774, U+B124, U+C2DC, U+C2A4, U+0050, U+0048, U+0059, U+004E, U+0045, U+0053, U+0049;
+}
+
 /* 브랜드 보라(grapplay 톤앤매너) — 단일 포인트 컬러.
    화이트 미니멀 UI 위에 grapplay 계열 보라 하나만 액센트로 쓴다. 600(#6D28D9)이
    1차 버튼/링크/활성 상태의 기준색. 화이트 배경에서 너무 쨍하지 않도록 기본 violet-600(#7c3aed)
@@ -7,8 +18,7 @@
    주의: @theme 블록 안에는 커스텀 속성만 허용되므로 설명 주석은 블록 밖에 둔다. */
 @theme {
   --font-sans: "Noto Sans KR", ui-sans-serif, system-ui, sans-serif;
-  /* 로고 워드마크 전용 — grapplay.com과 동일하게 Inter 사용(라틴). font-brand 유틸로 적용 */
-  --font-brand: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-wordmark: "Wordmark", "SUIT", "Pretendard", "Noto Sans KR", ui-sans-serif, system-ui, sans-serif;
 
   --color-violet-50: #f5f3ff;
   --color-violet-100: #ede9fe;

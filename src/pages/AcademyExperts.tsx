@@ -40,7 +40,7 @@ export default function AcademyExperts() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
       <h1 className="text-3xl font-black text-stone-900">전문가</h1>
-      <p className="mt-2 text-stone-500">현장에서 검증된 체육관 비즈니스 전문가를 만나보세요</p>
+      <p className="mt-2 text-stone-500">현장에서 검증된 비즈니스 전문가를 만나보세요</p>
 
       {/* 카테고리 다중 선택 필터 — 여러 분야를 동시에 고를 수 있어요 */}
       <div className="mt-6 flex flex-wrap gap-2">
@@ -121,7 +121,7 @@ export default function AcademyExperts() {
       {/* 전문가 진입 배너 (대시보드 진입점, md §3.6) */}
       <div className="mt-12 flex flex-col items-start justify-between gap-4 rounded-3xl border border-violet-100 bg-violet-50 px-6 py-8 sm:flex-row sm:items-center sm:px-10">
         <div>
-          <h2 className="text-xl font-black text-slate-900">체육관 비즈니스 전문가이신가요?</h2>
+          <h2 className="text-xl font-black text-slate-900">비즈니스 노하우를 가진 전문가이신가요?</h2>
           <p className="mt-1 text-sm text-slate-600">
             {isExpert
               ? '강의를 올리고 수익을 관리하는 전문가 대시보드로 이동하세요.'

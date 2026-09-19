@@ -156,7 +156,7 @@ function ExpertForm({
       <h3 className="font-bold text-stone-900">{expert ? '전문가 편집' : '새 전문가 등록'}</h3>
       <div className="grid gap-3 sm:grid-cols-2">
         <input className={input} value={name} onChange={(e) => setName(e.target.value)} placeholder="이름" />
-        <input className={input} value={title} onChange={(e) => setTitle(e.target.value)} placeholder="직함 (예: 주짓수 블랙벨트)" />
+        <input className={input} value={title} onChange={(e) => setTitle(e.target.value)} placeholder="직함 (예: 공인회계사)" />
       </div>
 
       {/* 프로필 사진 (업로드) + 이모지 폴백 */}
@@ -225,7 +225,7 @@ function ExpertForm({
                 className={input}
                 value={c}
                 onChange={(e) => setCred(i, e.target.value)}
-                placeholder="예: 체육관 경영 컨설팅 15년"
+                placeholder="예: 소규모 사업 컨설팅 15년"
               />
               <button
                 type="button"

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { CATEGORIES, type Category } from '../data/mock'
+import { CATEGORIES, type Category, resolveCategory } from '../data/mock'
 import { useBizData } from '../lib/useBizData'
 import EbookCard from '../components/EbookCard'
 
@@ -12,8 +12,7 @@ export default function AcademyEbooks() {
   const { ebooks, loading } = useBizData()
   const [params] = useSearchParams()
   const initialCat = params.get('cat')
-  const validCat: Filter =
-    initialCat && CATEGORIES.some((c) => c.key === initialCat) ? (initialCat as Category) : '전체'
+  const validCat: Filter = resolveCategory(initialCat) ?? '전체'
   const [filter, setFilter] = useState<Filter>(validCat)
   const [sort, setSort] = useState<Sort>('추천순')
   const [freeOnly, setFreeOnly] = useState(params.get('free') === '1')
@@ -30,7 +29,7 @@ export default function AcademyEbooks() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
       <h1 className="text-2xl font-black text-slate-900 sm:text-3xl">전자책</h1>
-      <p className="mt-2 text-slate-500">바로 읽는 체육관 경영 가이드 · 워크북</p>
+      <p className="mt-2 text-slate-500">바로 읽는 사업 운영 가이드 · 워크북</p>
 
       {/* 카테고리 필터 */}
       <div className="mt-6 flex flex-wrap gap-2">

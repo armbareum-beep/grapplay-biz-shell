@@ -33,10 +33,10 @@ export default function AcademyLanding() {
       {/* 1. 히어로 + 자동 슬라이드 배너 */}
       <section className="mx-auto max-w-6xl px-4 pt-8 sm:px-6">
         <h1 className="text-center text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">
-          체육관 경영, 오늘은 무엇을 배워볼까요?
+          내 사업, 오늘은 무엇을 배워볼까요?
         </h1>
         <p className="mt-2 text-center text-slate-500">
-          마케팅·상권분석·연금·경영까지 — 현장 전문가의 비즈니스 강의
+          마케팅·브랜딩·상권분석·투자·경영·인문교양 — 현장에서 사업을 키운 전문가의 강의
         </p>
         <div className="mt-7">
           <BannerCarousel banners={banners} />
@@ -45,8 +45,8 @@ export default function AcademyLanding() {
 
       {/* 2. 카테고리 */}
       <Section>
-        <SectionHeader title="무엇을 배우고 싶으세요?" desc="체육관 경영에 꼭 필요한 4가지 분야" />
-        <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+        <SectionHeader title="무엇을 배우고 싶으세요?" desc="전문가의 사업에 꼭 필요한 6가지 주제" />
+        <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
           {CATEGORIES.map((c) => (
             <Link
               key={c.key}
@@ -64,7 +64,7 @@ export default function AcademyLanding() {
       {/* 3. 실시간 베스트 */}
       {(loading || best.length > 0) && (
         <Section divider>
-          <SectionHeader title="실시간 베스트" desc="관장님들이 가장 많이 찾는 강의" moreTo="/library" />
+          <SectionHeader title="실시간 베스트" desc="전문가들이 가장 많이 찾는 강의" moreTo="/library" />
           {loading ? <CarouselSkeleton /> : <CourseCarousel courses={best} />}
         </Section>
       )}
@@ -96,7 +96,7 @@ export default function AcademyLanding() {
       {/* 6. 인기 전자책 */}
       {ebooks.length > 0 && (
         <Section divider>
-          <SectionHeader title="인기 전자책" desc="바로 읽는 체육관 경영 가이드" moreTo="/ebooks" />
+          <SectionHeader title="인기 전자책" desc="바로 읽는 사업 운영 가이드" moreTo="/ebooks" />
           <div className="no-scrollbar -mx-4 mt-2 flex snap-x gap-4 overflow-x-auto px-4 pb-2 sm:-mx-6 sm:px-6">
             {ebooks.map((e) => (
               <div key={e.id} className="w-64 shrink-0 snap-start sm:w-72">
@@ -134,7 +134,7 @@ export default function AcademyLanding() {
       {/* CTA */}
       <section className="px-4 pb-16 pt-12 sm:px-6">
         <div className="mx-auto max-w-6xl overflow-hidden rounded-3xl border border-violet-100 bg-violet-50 px-6 py-12 text-center sm:px-12">
-          <h2 className="text-2xl font-black text-zinc-900 sm:text-3xl">체육관 경영, 이제 혼자 고민하지 마세요</h2>
+          <h2 className="text-2xl font-black text-zinc-900 sm:text-3xl">사업 고민, 이제 혼자 하지 마세요</h2>
           <p className="mx-auto mt-3 max-w-xl text-zinc-600">
             지금 가입하면 무료 강의부터 바로 시청할 수 있어요.
           </p>

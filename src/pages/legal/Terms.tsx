@@ -1,13 +1,13 @@
 import StaticPage, { Section, OL, UL } from './StaticPage'
 
-// 이용약관 — 그래플레이 본 약관(Terms.tsx) 차용, 비즈(단품)로 조정·구독 조항 제외
+// 이용약관 — 그래플레이 본 약관(Terms.tsx) 차용, 파이네시스(단품)로 조정·구독 조항 제외
 export default function Terms() {
   return (
-    <StaticPage title="이용약관" updated="2026년 7월 5일">
+    <StaticPage title="이용약관" updated="2026년 9월 19일">
       <Section heading="제1조 (목적)">
         <p>
-          본 약관은 그래플레이 비즈(이하 "회사")가 제공하는 체육관 경영자·지도자를 위한 비즈니스 교육
-          플랫폼 서비스(이하 "서비스")의 이용과 관련하여 회사와 이용자 간의 권리, 의무 및 책임사항, 기타
+          본 약관은 그래플레이(이하 "회사")가 운영하는 전문가 비즈니스 교육 플랫폼 파이네시스(PHYNESIS,
+          이하 "서비스")의 이용과 관련하여 회사와 이용자 간의 권리, 의무 및 책임사항, 기타
           필요한 사항을 규정함을 목적으로 합니다.
         </p>
       </Section>

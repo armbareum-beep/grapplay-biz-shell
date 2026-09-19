@@ -236,7 +236,7 @@ function EditorForm({ existing, isEdit }: { existing?: Ebook; isEdit: boolean })
             <input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="예) 체육관 운영 체크리스트 50"
+              placeholder="예) 개업 준비 체크리스트 50"
               className="w-full rounded-xl border border-stone-300 px-4 py-2.5 outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100"
             />
           </Field>

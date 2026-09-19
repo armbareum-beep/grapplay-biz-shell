@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { CATEGORIES, type Category } from '../data/mock'
+import { CATEGORIES, type Category, resolveCategory } from '../data/mock'
 import { useBizData } from '../lib/useBizData'
 import CourseCard from '../components/CourseCard'
 import EbookCard from '../components/EbookCard'
@@ -23,8 +23,7 @@ export default function ContentHub() {
   const { courses, ebooks, loading } = useBizData()
   const [params] = useSearchParams()
   const initialCat = params.get('cat')
-  const validCat: '전체' | Category =
-    initialCat && CATEGORIES.some((c) => c.key === initialCat) ? (initialCat as Category) : '전체'
+  const validCat: '전체' | Category = resolveCategory(initialCat) ?? '전체'
 
   const [cat, setCat] = useState<'전체' | Category>(validCat)
   const [sort, setSort] = useState<Sort>('추천순')
@@ -64,7 +63,7 @@ export default function ContentHub() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
       <h1 className="text-2xl font-black text-slate-900 sm:text-3xl">컨텐츠</h1>
-      <p className="mt-2 text-slate-500">강의와 전자책을 한 곳에서 — 체육관 경영에 필요한 모든 콘텐츠</p>
+      <p className="mt-2 text-slate-500">강의와 전자책을 한 곳에서 — 사업 운영에 필요한 모든 콘텐츠</p>
 
       {/* 카테고리 칩 */}
       <div className="mt-6 flex flex-wrap gap-2">

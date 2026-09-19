@@ -95,7 +95,7 @@ export default function ExpertProfileEditor({
 
       <div>
         <label className="mb-1 block text-xs font-medium text-stone-500">직함</label>
-        <input className={field} value={title} onChange={(e) => setTitle(e.target.value)} placeholder="예: 15년차 체육관 경영 컨설턴트" />
+        <input className={field} value={title} onChange={(e) => setTitle(e.target.value)} placeholder="예: 15년차 세무사 · 개원 컨설턴트" />
       </div>
       <div>
         <label className="mb-1 block text-xs font-medium text-stone-500">소개</label>
@@ -134,7 +134,7 @@ export default function ExpertProfileEditor({
                 className="flex-1 rounded-lg border border-stone-300 px-3 py-2 text-sm outline-none focus:border-violet-400"
                 value={c}
                 onChange={(e) => setCred(i, e.target.value)}
-                placeholder="예: 체육관 경영 컨설팅 15년"
+                placeholder="예: 소규모 사업 컨설팅 15년"
               />
               <button
                 type="button"
