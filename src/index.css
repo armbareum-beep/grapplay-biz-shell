@@ -48,6 +48,14 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* 다크 섹션(brand-950) 질감 — 4% 점 격자 + 좌상단 옅은 빛 번짐. 평면감을 없애되 절제 유지 */
+.bg-dots {
+  background-image:
+    radial-gradient(ellipse 60% 50% at 15% 0%, rgba(111, 136, 179, 0.18), transparent 70%),
+    radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 100% 100%, 24px 24px;
+}
+
 /* 가로 스크롤 캐러셀에서 스크롤바 숨김 */
 .no-scrollbar {
   -ms-overflow-style: none;
