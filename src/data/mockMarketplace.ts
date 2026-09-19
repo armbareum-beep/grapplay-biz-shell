@@ -53,11 +53,12 @@ export function maskName(name: string): string {
   return name.charAt(0) + '○○'
 }
 
-/** 리브랜딩 이전(보라 계열)에 저장된 배너 그라데이션 → 현재 팔레트. Tailwind가 소스에 없는 클래스는 생성하지 않으므로 렌더 시 치환한다. */
+/** 리브랜딩 이전(보라 계열)에 저장된 배너 그라데이션 → 현재 팔레트. Tailwind가 소스에 없는 클래스는 생성하지 않으므로 렌더 시 치환한다.
+ * 전부 브랜드 네이비 계열로만 매핑한다(fuchsia·indigo 등 다른 색조 섞지 않음) — 다크 히어로·철학 섹션과 같은 톤을 유지. */
 export const LEGACY_GRADIENT: Record<string, string> = {
   'from-violet-600 to-purple-500': 'from-brand-600 to-brand-500',
-  'from-fuchsia-600 to-violet-600': 'from-fuchsia-600 to-brand-600',
-  'from-indigo-600 to-purple-600': 'from-indigo-600 to-brand-600',
+  'from-fuchsia-600 to-violet-600': 'from-brand-800 to-brand-600',
+  'from-indigo-600 to-purple-600': 'from-brand-950 to-brand-700',
   'from-violet-500 to-fuchsia-500': 'from-brand-600 to-brand-500',
 }
 export const resolveGradient = (g: string) => LEGACY_GRADIENT[g] ?? g

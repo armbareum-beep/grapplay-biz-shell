@@ -10,16 +10,13 @@ import {
 } from '../../../lib/adminApi'
 import { invalidateBizData } from '../../../lib/useBizData'
 
-// 그라데이션 프리셋 (배너 배경)
+// 그라데이션 프리셋 (배너 배경) — 히어로·철학 섹션과 같은 네이비 계열로만 구성.
+// 다른 색조를 섞으면 다크 섹션 사이를 슬라이드할 때 튀어 보인다(docs/plan/10-rebrand-phynesis.md §1.3).
 const GRADIENTS = [
   'from-brand-600 to-brand-500',
-  'from-fuchsia-600 to-brand-600',
-  'from-indigo-600 to-brand-600',
-  'from-rose-500 to-orange-500',
-  'from-emerald-500 to-teal-500',
-  'from-sky-500 to-indigo-500',
-  'from-amber-400 to-orange-500',
-  'from-slate-700 to-slate-900',
+  'from-brand-800 to-brand-600',
+  'from-brand-950 to-brand-700',
+  'from-slate-800 to-slate-950',
 ]
 
 // 배너 관리 — 랜딩 히어로 배너 추가/수정/삭제 (요청 ②③)
