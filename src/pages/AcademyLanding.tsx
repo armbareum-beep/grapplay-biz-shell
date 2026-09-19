@@ -128,8 +128,7 @@ export default function AcademyLanding() {
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
           <div className="grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:gap-16">
             <div>
-              <p className="text-[11px] font-bold tracking-[0.3em] text-slate-400">01 — 매일의 판단</p>
-              <h2 className="mt-3 text-3xl font-black leading-tight tracking-tight text-slate-900 sm:text-4xl">
+              <h2 className="text-3xl font-black leading-tight tracking-tight text-slate-900 sm:text-4xl">
                 사업을 하다 보면
                 <br />
                 매일 판단해야 합니다.
@@ -162,7 +161,6 @@ export default function AcademyLanding() {
       {(loading || best.length > 0) && (
         <Section divider>
           <SectionHeader
-            label="02 — 지금의 문제"
             title="지금 사업가들이 고민하는 문제"
             desc="가장 많이 찾는 강의부터"
             moreTo="/library"
@@ -185,7 +183,7 @@ export default function AcademyLanding() {
       {/* 4. 새 강의 + 전자책 (있을 때만) */}
       {(loading || latest.length > 0) && (
         <Section>
-          <SectionHeader label="03 — 신규" title="새로 올라온 강의" desc="이번 달 추가된 강의" moreTo="/library" />
+          <SectionHeader title="새로 올라온 강의" desc="이번 달 추가된 강의" moreTo="/library" />
           {loading ? (
             <GridSkeleton />
           ) : (
@@ -199,7 +197,7 @@ export default function AcademyLanding() {
       )}
       {ebooks.length > 0 && (
         <Section divider>
-          <SectionHeader label="04 — 전자책" title="바로 읽는 사업 운영 가이드" desc="워크북·체크리스트·가이드" moreTo="/ebooks" />
+          <SectionHeader title="바로 읽는 사업 운영 가이드" desc="워크북·체크리스트·가이드" moreTo="/ebooks" />
           <div className="no-scrollbar -mx-4 mt-2 flex snap-x gap-4 overflow-x-auto px-4 pb-2 sm:-mx-6 sm:px-6">
             {ebooks.map((e) => (
               <div key={e.id} className="w-64 shrink-0 snap-start sm:w-72">
@@ -244,7 +242,7 @@ export default function AcademyLanding() {
       {/* 6. 전문가 — 신뢰 */}
       {experts.length > 0 && (
         <Section>
-          <SectionHeader label="05 — 전문가" title="현장에서 사업을 키운 사람들" desc="이론이 아니라 자기 사업으로 증명한 전문가" moreTo="/experts" />
+          <SectionHeader title="현장에서 사업을 키운 사람들" desc="이론이 아니라 자기 사업으로 증명한 전문가" moreTo="/experts" />
           <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {experts.map((e) => (
               <Link
@@ -284,11 +282,11 @@ export default function AcademyLanding() {
       {/* 7. 후기 (마퀴) — 신뢰 */}
       {tickerReviews.length > 0 && (
         <Section divider>
-          <SectionHeader label="06 — 후기" title="수강생들이 남긴 말" desc="실제 수강 후기" />
+          <SectionHeader title="수강생들이 남긴 말" desc="실제 수강 후기" />
           {ratingSummary && (
             <div className="mt-6 flex items-center gap-4 text-sm">
               <span className="text-2xl font-black text-slate-900">
-                <span className="mr-1">★</span>
+                <span className="mr-1 text-amber-400">★</span>
                 {ratingSummary.avg.toFixed(1)}
                 <span className="ml-1 text-sm font-medium text-slate-400">/ 5.0</span>
               </span>
@@ -302,7 +300,7 @@ export default function AcademyLanding() {
                 <div key={i} className="w-80 shrink-0 rounded-lg border border-slate-200 bg-white p-5">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-semibold text-slate-800">{r.name}</span>
-                    {r.rating > 0 && <span>{'★'.repeat(r.rating)}</span>}
+                    {r.rating > 0 && <span className="text-amber-400">{'★'.repeat(r.rating)}</span>}
                   </div>
                   {r.course && <div className="mt-1 text-xs text-brand-600">{r.course}</div>}
                   <p className="mt-2 line-clamp-2 text-sm text-slate-600">{r.text}</p>
@@ -390,7 +388,7 @@ function FeaturedCourse({ course }: { course: Course }) {
           <span>{course.lessonCount}강 · {course.durationMin}분</span>
           {count > 0 && (
             <span>
-              <span>★</span> {rating.toFixed(1)} ({count})
+              <span className="text-amber-400">★</span> {rating.toFixed(1)} ({count})
             </span>
           )}
         </div>
@@ -503,12 +501,10 @@ function Section({ children, divider }: { children: React.ReactNode; divider?: b
 }
 
 function SectionHeader({
-  label,
   title,
   desc,
   moreTo,
 }: {
-  label?: string
   title: string
   desc: string
   moreTo?: string
@@ -516,8 +512,7 @@ function SectionHeader({
   return (
     <div className="flex items-end justify-between">
       <div>
-        {label && <p className="text-[11px] font-bold tracking-[0.3em] text-slate-400">{label}</p>}
-        <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">{title}</h2>
+        <h2 className="text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">{title}</h2>
         <p className="mt-2 text-sm text-slate-500">{desc}</p>
       </div>
       {moreTo && (
