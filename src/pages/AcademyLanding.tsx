@@ -18,12 +18,12 @@ import { maskName } from '../data/mockMarketplace'
 
 // 사업가가 매일 마주치는 판단 — 각 질문이 해당 카테고리 필터로 이어진다
 const DECISIONS: { q: string; cat: Category }[] = [
-  { q: '어떻게 고객을 늘릴 것인가.', cat: '마케팅' },
-  { q: '사람들은 나를 무엇으로 기억하는가.', cat: '브랜딩' },
-  { q: '어디에서 시작할 것인가.', cat: '상권분석' },
-  { q: '번 돈을 어떻게 키울 것인가.', cat: '투자' },
-  { q: '직원을 더 뽑아야 하는가. 가격을 올려야 하는가.', cat: '경영' },
-  { q: '무엇을 기준으로 결정할 것인가.', cat: '인문교양' },
+  { q: '어떻게 고객을 늘릴 것인가', cat: '마케팅' },
+  { q: '사람들은 나를 무엇으로 기억하는가', cat: '브랜딩' },
+  { q: '어디에서 시작할 것인가', cat: '상권분석' },
+  { q: '번 돈을 어떻게 키울 것인가', cat: '투자' },
+  { q: '직원을 더 뽑아야 하는가, 가격을 올려야 하는가', cat: '경영' },
+  { q: '무엇을 기준으로 결정할 것인가', cat: '인문교양' },
 ]
 
 export default function AcademyLanding() {
@@ -66,17 +66,13 @@ export default function AcademyLanding() {
       {/* 1. 히어로 — 다크 네이비 */}
       <section className="bg-dots relative overflow-hidden bg-brand-950 text-white">
         <div className="relative mx-auto max-w-6xl px-4 pb-20 pt-16 sm:px-6 sm:pb-24 sm:pt-20 lg:pb-28 lg:pt-24">
-          <p className="text-[11px] font-semibold tracking-[0.3em] text-brand-300">
-            BUSINESS EDUCATION FOR PROFESSIONALS
-          </p>
-          <h1 className="mt-5 max-w-3xl text-4xl font-black leading-[1.1] tracking-tight sm:text-5xl lg:text-6xl">
+          <h1 className="max-w-3xl text-4xl font-black leading-[1.1] tracking-tight sm:text-5xl lg:text-6xl">
             실력은 있는데,
             <br />
-            사업이 막힐 때.
+            사업이 막힐 때
           </h1>
           <p className="mt-6 max-w-xl text-base leading-relaxed text-brand-200 sm:text-lg">
-            마케팅·브랜딩·상권분석·투자·경영·인문교양. 현장에서 사업을 키운 전문가가 실전 판단을
-            가르칩니다.
+            실천적 지혜를 사업에 적용하세요
           </p>
           <div className="mt-9">
             <Link
@@ -88,7 +84,7 @@ export default function AcademyLanding() {
           </div>
           <p className="mt-10 text-[11px] tracking-[0.2em] text-brand-400">
             PAIDEIA × PHRONESIS
-            <span className="ml-3 tracking-normal text-brand-300">배움과 실천적 지혜를 사업으로 연결합니다.</span>
+            <span className="ml-3 tracking-normal text-brand-300">배움과 실천적 지혜를 사업으로 연결합니다</span>
           </p>
 
           {/* 숫자 — 데스크톱 우측 세로, 모바일 하단 가로 */}
@@ -121,11 +117,11 @@ export default function AcademyLanding() {
               <h2 className="text-3xl font-black leading-tight tracking-tight text-slate-900 sm:text-4xl">
                 사업을 하다 보면
                 <br />
-                매일 판단해야 합니다.
+                매일 판단해야 합니다
               </h2>
               <p className="mt-6 max-w-sm leading-relaxed text-slate-500">
                 파이네시스는 정답을 외우는 곳이 아니라
-                <br className="hidden sm:block" /> 더 나은 판단을 배우는 곳입니다.
+                <br className="hidden sm:block" /> 더 나은 판단을 배우는 곳입니다
               </p>
             </div>
             <ul className="divide-y divide-slate-200 border-y border-slate-200">
@@ -207,14 +203,14 @@ export default function AcademyLanding() {
               <p className="text-[11px] font-semibold tracking-[0.3em] text-brand-300">PAIDEIA</p>
               <p className="mt-2 text-xl font-black sm:mt-3 sm:text-3xl">파이데이아</p>
               <p className="mt-2 text-sm leading-relaxed text-brand-200 sm:mt-4 sm:text-base">
-                사람을 성장시키는 배움.
+                사람을 성장시키는 배움
               </p>
             </div>
             <div>
               <p className="text-[11px] font-semibold tracking-[0.3em] text-brand-300">PHRONESIS</p>
               <p className="mt-2 text-xl font-black sm:mt-3 sm:text-3xl">프로네시스</p>
               <p className="mt-2 text-sm leading-relaxed text-brand-200 sm:mt-4 sm:text-base">
-                현실에서 더 나은 결정을 내리는 실천적 지혜.
+                현실에서 더 나은 결정을 내리는 실천적 지혜
               </p>
             </div>
           </div>
@@ -222,7 +218,7 @@ export default function AcademyLanding() {
             <p className="text-2xl font-black leading-tight tracking-tight sm:text-5xl">
               우리는 이 둘을
               <br />
-              사업에 연결합니다.
+              사업에 연결합니다
             </p>
             <div className="mt-6 flex flex-wrap items-end gap-x-6 gap-y-2 sm:mt-10">
               <span className="font-wordmark text-4xl font-bold tracking-wide sm:text-7xl">PHYNESIS</span>
@@ -310,21 +306,21 @@ export default function AcademyLanding() {
           <p className="text-3xl font-black leading-tight tracking-tight text-slate-900 sm:text-5xl">
             사업의 모든 답을
             <br />
-            알 필요는 없습니다.
+            알 필요는 없습니다
           </p>
           <p className="mt-6 text-2xl font-bold leading-snug text-slate-700 sm:text-3xl">
             더 나은 판단을
             <br />
-            할 수 있으면 됩니다.
+            할 수 있으면 됩니다
           </p>
-          <p className="mt-8 max-w-md text-slate-500">파이네시스와 함께 사업을 배우고 성장하세요.</p>
+          <p className="mt-8 max-w-md text-slate-500">파이네시스와 함께 사업을 배우고 성장하세요</p>
           <Link
             to={startFreeTo}
             className="mt-8 inline-block rounded-lg bg-brand-600 px-8 py-3.5 font-bold text-white transition hover:bg-brand-700"
           >
             파이네시스 시작하기 →
           </Link>
-          <p className="mt-4 text-sm text-slate-400">가입만 하면 무료 강의를 바로 볼 수 있습니다.</p>
+          <p className="mt-4 text-sm text-slate-400">가입만 하면 무료 강의를 바로 볼 수 있습니다</p>
         </div>
       </section>
     </div>
