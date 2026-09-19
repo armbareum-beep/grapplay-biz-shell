@@ -311,7 +311,7 @@ function EditorForm({ existing, isEdit }: { existing?: Course; isEdit: boolean }
                       : 'border border-stone-300 bg-white text-stone-600 hover:bg-stone-100'
                   }`}
                 >
-                  {c.emoji} {c.key}
+                  {c.key}
                 </button>
               ))}
             </div>

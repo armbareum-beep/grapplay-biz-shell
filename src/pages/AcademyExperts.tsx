@@ -119,7 +119,7 @@ export default function AcademyExperts() {
       </div>
 
       {/* 전문가 진입 배너 (대시보드 진입점, md §3.6) */}
-      <div className="mt-12 flex flex-col items-start justify-between gap-4 rounded-3xl border border-violet-100 bg-violet-50 px-6 py-8 sm:flex-row sm:items-center sm:px-10">
+      <div className="mt-12 flex flex-col items-start justify-between gap-4 rounded-3xl border border-brand-100 bg-brand-50 px-6 py-8 sm:flex-row sm:items-center sm:px-10">
         <div>
           <h2 className="text-xl font-black text-slate-900">비즈니스 노하우를 가진 전문가이신가요?</h2>
           <p className="mt-1 text-sm text-slate-600">
@@ -130,7 +130,7 @@ export default function AcademyExperts() {
         </div>
         <Link
           to={isExpert ? '/expert/dashboard' : '/contact'}
-          className="shrink-0 rounded-xl bg-violet-600 px-6 py-3 font-bold text-white hover:bg-violet-700"
+          className="shrink-0 rounded-xl bg-brand-600 px-6 py-3 font-bold text-white hover:bg-brand-700"
         >
           {isExpert ? '전문가 대시보드 →' : '문의하기 →'}
         </Link>

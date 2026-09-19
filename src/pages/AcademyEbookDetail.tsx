@@ -73,7 +73,7 @@ export default function AcademyEbookDetail() {
         <h1 className="mt-4 text-2xl font-bold text-slate-900">전자책을 찾을 수 없어요</h1>
         <Link
           to="/ebooks"
-          className="mt-6 inline-block rounded-xl bg-violet-600 px-6 py-3 font-semibold text-white hover:bg-violet-700"
+          className="mt-6 inline-block rounded-xl bg-brand-600 px-6 py-3 font-semibold text-white hover:bg-brand-700"
         >
           전자책 목록으로
         </Link>
@@ -145,11 +145,11 @@ export default function AcademyEbookDetail() {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="rounded-full bg-violet-100 px-3 py-1 text-sm font-semibold text-violet-700">
+              <span className="rounded-full bg-brand-100 px-3 py-1 text-sm font-semibold text-brand-700">
                 전자책
               </span>
               {ebook.isNew && (
-                <span className="rounded-full bg-violet-600 px-2.5 py-1 text-xs font-bold text-white">
+                <span className="rounded-full bg-brand-600 px-2.5 py-1 text-xs font-bold text-white">
                   NEW
                 </span>
               )}
@@ -164,7 +164,7 @@ export default function AcademyEbookDetail() {
                 emoji={ebook.avatar}
                 src={authorExpert?.avatarUrl}
                 size={28}
-                fallbackBg="bg-violet-100"
+                fallbackBg="bg-brand-100"
               />
               <span className="font-semibold text-slate-700">{ebook.author}</span>
             </div>
@@ -205,7 +205,7 @@ export default function AcademyEbookDetail() {
             <a
               key={t.id}
               href={`#${t.id}`}
-              className="whitespace-nowrap border-b-2 border-transparent px-4 py-3 text-sm font-medium text-slate-600 hover:border-violet-500 hover:text-violet-600"
+              className="whitespace-nowrap border-b-2 border-transparent px-4 py-3 text-sm font-medium text-slate-600 hover:border-brand-500 hover:text-brand-600"
             >
               {t.label}
             </a>
@@ -284,7 +284,7 @@ export default function AcademyEbookDetail() {
               <button
                 onClick={onPrimary}
                 disabled={busy}
-                className="mt-4 rounded-xl bg-violet-600 px-6 py-2.5 font-bold text-white hover:bg-violet-700 disabled:opacity-50"
+                className="mt-4 rounded-xl bg-brand-600 px-6 py-2.5 font-bold text-white hover:bg-brand-700 disabled:opacity-50"
               >
                 {canRead
                   ? '전체 읽기 →'
@@ -307,12 +307,12 @@ export default function AcademyEbookDetail() {
                 emoji={ebook.avatar}
                 src={authorExpert?.avatarUrl}
                 size={64}
-                fallbackBg="bg-violet-100"
+                fallbackBg="bg-brand-100"
               />
               <div>
                 <h3 className="text-lg font-bold text-slate-900">{ebook.author}</h3>
                 {authorExpert && (
-                  <p className="text-sm font-medium text-violet-600">{authorExpert.title}</p>
+                  <p className="text-sm font-medium text-brand-600">{authorExpert.title}</p>
                 )}
                 {authorExpert?.bio && (
                   <p className="mt-2 leading-relaxed text-slate-600">{authorExpert.bio}</p>
@@ -323,7 +323,7 @@ export default function AcademyEbookDetail() {
               <ul className="mt-4 grid gap-2 border-t border-slate-100 pt-4 sm:grid-cols-2">
                 {credentials.map((c) => (
                   <li key={c} className="flex items-center gap-2 text-sm text-slate-600">
-                    <span className="text-violet-500">✓</span> {c}
+                    <span className="text-brand-500">✓</span> {c}
                   </li>
                 ))}
               </ul>
@@ -340,7 +340,7 @@ export default function AcademyEbookDetail() {
                 key={i}
                 className="flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-4"
               >
-                <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-violet-100 text-sm text-violet-600">
+                <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-brand-100 text-sm text-brand-600">
                   ✓
                 </span>
                 <span className="text-slate-700">{w}</span>
@@ -417,7 +417,7 @@ export default function AcademyEbookDetail() {
             <button
               onClick={onPrimary}
               disabled={busy}
-              className="h-11 rounded-xl bg-violet-600 px-6 font-bold text-white hover:bg-violet-700 disabled:opacity-50"
+              className="h-11 rounded-xl bg-brand-600 px-6 font-bold text-white hover:bg-brand-700 disabled:opacity-50"
             >
               {enrolled ? '바로 읽기' : isPaid ? '구매하기' : busy ? '등록 중…' : '무료로 읽기'}
             </button>

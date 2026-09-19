@@ -48,7 +48,7 @@ export default function OrdersTab() {
               key={f.key}
               onClick={() => setStatus(f.key)}
               className={`rounded-lg px-3 py-1.5 text-sm font-semibold transition ${
-                status === f.key ? 'bg-violet-600 text-white' : 'border border-stone-300 text-stone-600 hover:bg-stone-50'
+                status === f.key ? 'bg-brand-600 text-white' : 'border border-stone-300 text-stone-600 hover:bg-stone-50'
               }`}
             >
               {f.label}

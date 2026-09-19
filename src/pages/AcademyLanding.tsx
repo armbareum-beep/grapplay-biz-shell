@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import Icon from '../components/Icon'
 import { Link } from 'react-router-dom'
 import { CATEGORIES } from '../data/mock'
 import { useBizData } from '../lib/useBizData'
@@ -51,10 +52,12 @@ export default function AcademyLanding() {
             <Link
               key={c.key}
               to={`/library?cat=${encodeURIComponent(c.key)}`}
-              className="group rounded-2xl border border-slate-200 bg-white p-5 transition hover:border-violet-300 hover:shadow-md"
+              className="group rounded-2xl border border-slate-200 bg-white p-5 transition hover:border-brand-300 hover:shadow-md"
             >
-              <div className="text-3xl">{c.emoji}</div>
-              <h3 className="mt-3 font-bold text-slate-900 group-hover:text-violet-700">{c.key}</h3>
+              <div className="grid h-10 w-10 place-items-center rounded-xl bg-brand-50 text-brand-700 transition group-hover:bg-brand-600 group-hover:text-white">
+                <Icon name={c.icon} size={20} />
+              </div>
+              <h3 className="mt-3 font-bold text-slate-900 group-hover:text-brand-700">{c.key}</h3>
               <p className="mt-1 text-sm text-slate-500">{c.desc}</p>
             </Link>
           ))}
@@ -122,7 +125,7 @@ export default function AcademyLanding() {
                     <span className="text-sm font-semibold text-slate-800">{r.name}</span>
                     {r.rating > 0 && <span className="text-amber-400">{'★'.repeat(r.rating)}</span>}
                   </div>
-                  {r.course && <div className="mt-1 text-xs text-violet-600">{r.course}</div>}
+                  {r.course && <div className="mt-1 text-xs text-brand-600">{r.course}</div>}
                   <p className="mt-2 line-clamp-2 text-sm text-slate-600">{r.text}</p>
                 </div>
               ))}
@@ -133,14 +136,14 @@ export default function AcademyLanding() {
 
       {/* CTA */}
       <section className="px-4 pb-16 pt-12 sm:px-6">
-        <div className="mx-auto max-w-6xl overflow-hidden rounded-3xl border border-violet-100 bg-violet-50 px-6 py-12 text-center sm:px-12">
+        <div className="mx-auto max-w-6xl overflow-hidden rounded-3xl border border-brand-100 bg-brand-50 px-6 py-12 text-center sm:px-12">
           <h2 className="text-2xl font-black text-zinc-900 sm:text-3xl">사업 고민, 이제 혼자 하지 마세요</h2>
           <p className="mx-auto mt-3 max-w-xl text-zinc-600">
             지금 가입하면 무료 강의부터 바로 시청할 수 있어요.
           </p>
           <Link
             to={startFreeTo}
-            className="mt-7 inline-block rounded-xl bg-violet-600 px-8 py-3 font-bold text-white hover:bg-violet-700"
+            className="mt-7 inline-block rounded-xl bg-brand-600 px-8 py-3 font-bold text-white hover:bg-brand-700"
           >
             무료로 시작하기
           </Link>
@@ -218,7 +221,6 @@ function BannerSlide({ banner: b }: { banner: PromoBanner }) {
           {b.cta} →
         </span>
       )}
-      <span className="pointer-events-none absolute -right-6 -top-8 text-[120px] opacity-15">🎓</span>
     </>
   )
   const cls = `relative flex min-h-[180px] min-w-full flex-col justify-center bg-gradient-to-br ${b.gradient} p-7 text-white sm:min-h-[220px] sm:p-10`
@@ -256,7 +258,7 @@ function SectionHeader({ title, desc, moreTo }: { title: string; desc: string; m
       {moreTo && (
         <Link
           to={moreTo}
-          className="hidden text-sm font-semibold text-violet-600 hover:underline sm:block"
+          className="hidden text-sm font-semibold text-brand-600 hover:underline sm:block"
         >
           전체 보기 →
         </Link>

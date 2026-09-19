@@ -35,7 +35,7 @@ export default function UsersTab() {
     const map: Record<UserRole, string> = {
       user: 'bg-stone-100 text-stone-600',
       expert: 'bg-indigo-100 text-indigo-700',
-      admin: 'bg-violet-100 text-violet-700',
+      admin: 'bg-brand-100 text-brand-700',
     }
     const label: Record<UserRole, string> = { user: '일반', expert: '전문가', admin: '관리자' }
     return <span className={`rounded-full px-2.5 py-0.5 text-xs font-bold ${map[role]}`}>{label[role]}</span>
@@ -48,7 +48,7 @@ export default function UsersTab() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="이메일 또는 이름 검색"
-          className="flex-1 rounded-lg border border-stone-300 px-3 py-2 text-sm outline-none focus:border-violet-400"
+          className="flex-1 rounded-lg border border-stone-300 px-3 py-2 text-sm outline-none focus:border-brand-400"
         />
         <button className="rounded-lg bg-stone-900 px-4 py-2 text-sm font-semibold text-white hover:bg-stone-800">
           검색
@@ -109,7 +109,7 @@ export default function UsersTab() {
                                 if (confirm(`${u.email} 님을 관리자로 지정할까요?`)) changeRole(u, 'admin')
                               }}
                               disabled={busy}
-                              className="rounded-lg bg-violet-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-violet-700 disabled:opacity-50"
+                              className="rounded-lg bg-brand-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-700 disabled:opacity-50"
                             >
                               관리자 지정
                             </button>
@@ -136,7 +136,7 @@ export default function UsersTab() {
                             <select
                               value={pickExpert}
                               onChange={(e) => setPickExpert(e.target.value)}
-                              className="rounded-lg border border-stone-300 px-3 py-1.5 text-sm outline-none focus:border-violet-400"
+                              className="rounded-lg border border-stone-300 px-3 py-1.5 text-sm outline-none focus:border-brand-400"
                             >
                               <option value="">전문가를 선택하세요</option>
                               {experts.map((e) => (

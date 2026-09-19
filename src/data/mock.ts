@@ -1,3 +1,5 @@
+import type { IconName } from '../components/Icon'
+
 // 파이네시스 — 타입 정의 + 카테고리(앱 설정) + 공용 헬퍼.
 // 목업(가짜) 데이터는 모두 제거됨. 실제 데이터는 Supabase(src/lib/api.ts)에서만 온다.
 // 카테고리 6종: 마케팅 · 브랜딩 · 상권분석 · 투자 · 경영 · 인문교양
@@ -6,13 +8,14 @@
 
 export type Category = '마케팅' | '브랜딩' | '상권분석' | '투자' | '경영' | '인문교양'
 
-export const CATEGORIES: { key: Category; emoji: string; desc: string }[] = [
-  { key: '마케팅', emoji: '📣', desc: '신규 고객 확보와 광고·홍보 전략' },
-  { key: '브랜딩', emoji: '🎨', desc: '전문가 개인 브랜드와 포지셔닝' },
-  { key: '상권분석', emoji: '📍', desc: '입지 선정과 상권 데이터 읽는 법' },
-  { key: '투자', emoji: '💰', desc: '사업 수익을 자산으로 키우는 투자·재무 설계' },
-  { key: '경영', emoji: '📈', desc: '운영 효율과 수익 구조 설계' },
-  { key: '인문교양', emoji: '📚', desc: '사업의 안목을 넓히는 인문·교양 강의' },
+// icon = src/components/Icon.tsx 의 선 아이콘 이름 (이모지 대신 사용 — 톤앤매너)
+export const CATEGORIES: { key: Category; icon: IconName; desc: string }[] = [
+  { key: '마케팅', icon: 'megaphone', desc: '신규 고객 확보와 광고·홍보 전략' },
+  { key: '브랜딩', icon: 'tag', desc: '전문가 개인 브랜드와 포지셔닝' },
+  { key: '상권분석', icon: 'map-pin', desc: '입지 선정과 상권 데이터 읽는 법' },
+  { key: '투자', icon: 'trending-up', desc: '사업 수익을 자산으로 키우는 투자·재무 설계' },
+  { key: '경영', icon: 'briefcase', desc: '운영 효율과 수익 구조 설계' },
+  { key: '인문교양', icon: 'book-open', desc: '사업의 안목을 넓히는 인문·교양 강의' },
 ]
 
 /** 구 카테고리 → 신 카테고리. `?cat=연금` 같은 북마크·공유 링크 호환용. */

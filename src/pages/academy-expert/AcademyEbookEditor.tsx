@@ -23,7 +23,7 @@ interface Block {
 let blockSeq = 200
 
 const COVERS = [
-  'from-violet-500 to-fuchsia-500',
+  'from-brand-500 to-fuchsia-500',
   'from-emerald-500 to-teal-500',
   'from-rose-500 to-pink-500',
   'from-sky-500 to-indigo-500',
@@ -260,7 +260,7 @@ function EditorForm({ existing, isEdit }: { existing?: Ebook; isEdit: boolean })
                       : 'border-stone-300 text-stone-600 hover:bg-stone-100'
                   }`}
                 >
-                  {c.emoji} {c.key}
+                  {c.key}
                 </button>
               ))}
             </div>
@@ -394,7 +394,7 @@ function EditorForm({ existing, isEdit }: { existing?: Ebook; isEdit: boolean })
           <div className="space-y-2">
             {highlights.map((h, i) => (
               <div key={i} className="flex items-center gap-2">
-                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-violet-50 text-sm text-violet-600">
+                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-brand-50 text-sm text-brand-600">
                   ✓
                 </span>
                 <input
@@ -433,7 +433,7 @@ function EditorForm({ existing, isEdit }: { existing?: Ebook; isEdit: boolean })
                   href={pdfUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="block truncate font-medium text-violet-600 hover:underline"
+                  className="block truncate font-medium text-brand-600 hover:underline"
                 >
                   {pdfUrl.split('/').pop()}
                 </a>
@@ -568,7 +568,7 @@ function EditorForm({ existing, isEdit }: { existing?: Ebook; isEdit: boolean })
         <button
           onClick={handleSave}
           disabled={saving}
-          className="rounded-lg bg-violet-600 px-6 py-2.5 text-sm font-bold text-white hover:bg-violet-700 disabled:opacity-50"
+          className="rounded-lg bg-brand-600 px-6 py-2.5 text-sm font-bold text-white hover:bg-brand-700 disabled:opacity-50"
         >
           {saving ? '저장 중…' : isEdit ? '변경사항 저장' : '전자책 등록'}
         </button>

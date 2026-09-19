@@ -66,7 +66,7 @@ export default function PdfPreview({
     <div className="bg-slate-50 p-4">
       {loading && (
         <div className="grid h-64 place-items-center text-sm text-slate-400">
-          <span className="h-6 w-6 animate-spin rounded-full border-2 border-violet-500 border-t-transparent" />
+          <span className="h-6 w-6 animate-spin rounded-full border-2 border-brand-500 border-t-transparent" />
         </div>
       )}
       {error && (

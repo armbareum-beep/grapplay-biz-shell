@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import Icon, { type IconName } from './Icon'
 import BrandLogo from './BrandLogo'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
@@ -13,11 +14,11 @@ const MENU = [
 ]
 
 // 모바일 하단 메뉴 (별도) — 홈/검색/컨텐츠/내강의
-const MOBILE_TABS = [
-  { to: '/', label: '홈', icon: '🏠' },
-  { to: '/search', label: '검색', icon: '🔍' },
-  { to: '/content', label: '컨텐츠', icon: '📚' },
-  { to: '/my', label: '내강의', icon: '🎒' },
+const MOBILE_TABS: { to: string; label: string; icon: IconName }[] = [
+  { to: '/', label: '홈', icon: 'home' },
+  { to: '/search', label: '검색', icon: 'search' },
+  { to: '/content', label: '컨텐츠', icon: 'layers' },
+  { to: '/my', label: '내강의', icon: 'play-circle' },
 ]
 
 export default function AcademyLayout({ children }: { children: React.ReactNode }) {
@@ -62,13 +63,13 @@ export default function AcademyLayout({ children }: { children: React.ReactNode 
             {/* 검색창 (데스크톱 중앙) — 통합검색으로 이동 */}
             <form onSubmit={onSearch} className="relative hidden min-w-0 md:block md:w-64 lg:w-80">
               <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
-                🔍
+                <Icon name="search" size={16} />
               </span>
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="강의·전자책·전문가 검색"
-                className="w-full rounded-full border border-slate-300 bg-slate-50 py-2.5 pl-11 pr-4 text-sm outline-none focus:border-violet-400 focus:bg-white focus:ring-2 focus:ring-violet-100"
+                className="w-full rounded-full border border-slate-300 bg-slate-50 py-2.5 pl-11 pr-4 text-sm outline-none focus:border-brand-400 focus:bg-white focus:ring-2 focus:ring-brand-100"
               />
             </form>
 
@@ -87,8 +88,8 @@ export default function AcademyLayout({ children }: { children: React.ReactNode 
                 className={({ isActive }) =>
                   `-mb-px whitespace-nowrap border-b-2 px-1 py-3 text-sm font-bold tracking-tight transition sm:py-3.5 sm:text-[15px] ${
                     isActive
-                      ? 'border-violet-600 text-violet-700'
-                      : 'border-transparent text-slate-600 hover:text-violet-600'
+                      ? 'border-brand-600 text-brand-700'
+                      : 'border-transparent text-slate-600 hover:text-brand-600'
                   }`
                 }
               >
@@ -118,10 +119,10 @@ export default function AcademyLayout({ children }: { children: React.ReactNode 
                 key={t.to}
                 to={t.to}
                 className={`flex flex-col items-center gap-0.5 py-2 text-xs ${
-                  active ? 'text-violet-600' : 'text-slate-500'
+                  active ? 'text-brand-600' : 'text-slate-500'
                 }`}
               >
-                <span className="text-base">{t.icon}</span>
+                <Icon name={t.icon} size={20} strokeWidth={active ? 2 : 1.75} />
                 {t.label}
               </Link>
             )
@@ -199,7 +200,7 @@ function HeaderUtil() {
       <div className="ml-auto flex items-center gap-1 text-sm">
         <Link
           to="/auth"
-          className="rounded-lg bg-violet-600 px-4 py-2 font-semibold text-white hover:bg-violet-700"
+          className="rounded-lg bg-brand-600 px-4 py-2 font-semibold text-white hover:bg-brand-700"
         >
           로그인
         </Link>
@@ -224,7 +225,7 @@ function HeaderUtil() {
             className="h-8 w-8 shrink-0 rounded-full object-cover"
           />
         ) : (
-          <span className="grid h-8 w-8 place-items-center rounded-full bg-violet-100 font-bold text-violet-700">
+          <span className="grid h-8 w-8 place-items-center rounded-full bg-brand-100 font-bold text-brand-700">
             {initial}
           </span>
         )}
@@ -298,7 +299,7 @@ function FooterCol({ title, items }: { title: string; items: { label: string; to
       <ul className="space-y-2">
         {items.map((i) => (
           <li key={i.to}>
-            <Link to={i.to} className="text-slate-500 hover:text-violet-600">
+            <Link to={i.to} className="text-slate-500 hover:text-brand-600">
               {i.label}
             </Link>
           </li>

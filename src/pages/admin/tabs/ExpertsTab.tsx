@@ -33,7 +33,7 @@ export default function ExpertsTab() {
         </p>
         <button
           onClick={() => setEditing('new')}
-          className="rounded-xl bg-violet-600 px-4 py-2 text-sm font-bold text-white hover:bg-violet-700"
+          className="rounded-xl bg-brand-600 px-4 py-2 text-sm font-bold text-white hover:bg-brand-700"
         >
           + 새 전문가
         </button>
@@ -63,7 +63,7 @@ export default function ExpertsTab() {
                 {(e.categories?.length ? e.categories : e.category ? [e.category] : []).map((c) => (
                   <span
                     key={c}
-                    className="rounded-full bg-violet-100 px-2 py-0.5 text-[11px] font-bold text-violet-700"
+                    className="rounded-full bg-brand-100 px-2 py-0.5 text-[11px] font-bold text-brand-700"
                   >
                     {c}
                   </span>
@@ -149,10 +149,10 @@ function ExpertForm({
     onSaved()
   }
 
-  const input = 'w-full rounded-lg border border-stone-300 px-3 py-2 text-sm outline-none focus:border-violet-400'
+  const input = 'w-full rounded-lg border border-stone-300 px-3 py-2 text-sm outline-none focus:border-brand-400'
 
   return (
-    <div className="space-y-3 rounded-2xl border border-violet-200 bg-violet-50 p-5">
+    <div className="space-y-3 rounded-2xl border border-brand-200 bg-brand-50 p-5">
       <h3 className="font-bold text-stone-900">{expert ? '전문가 편집' : '새 전문가 등록'}</h3>
       <div className="grid gap-3 sm:grid-cols-2">
         <input className={input} value={name} onChange={(e) => setName(e.target.value)} placeholder="이름" />
@@ -184,7 +184,7 @@ function ExpertForm({
             )}
           </div>
           <input
-            className="w-full rounded-lg border border-stone-300 px-3 py-1.5 text-sm outline-none focus:border-violet-400"
+            className="w-full rounded-lg border border-stone-300 px-3 py-1.5 text-sm outline-none focus:border-brand-400"
             value={avatar}
             onChange={(e) => setAvatar(e.target.value)}
             placeholder="아바타 이모지 (사진 없을 때 폴백, 예: 🥋)"
@@ -207,7 +207,7 @@ function ExpertForm({
               }`}
             >
               {categories.includes(c.key) ? '✓ ' : ''}
-              {c.emoji} {c.key}
+              {c.key}
             </button>
           ))}
         </div>
@@ -220,7 +220,7 @@ function ExpertForm({
         <div className="space-y-2">
           {credentials.map((c, i) => (
             <div key={i} className="flex items-center gap-2">
-              <span className="text-violet-500">✓</span>
+              <span className="text-brand-500">✓</span>
               <input
                 className={input}
                 value={c}
@@ -240,7 +240,7 @@ function ExpertForm({
           <button
             type="button"
             onClick={() => setCredentials((prev) => [...prev, ''])}
-            className="rounded-lg border border-dashed border-stone-300 px-3 py-1.5 text-sm font-semibold text-stone-500 hover:border-violet-300 hover:text-violet-600"
+            className="rounded-lg border border-dashed border-stone-300 px-3 py-1.5 text-sm font-semibold text-stone-500 hover:border-brand-300 hover:text-brand-600"
           >
             + 약력 추가
           </button>
@@ -251,7 +251,7 @@ function ExpertForm({
         <button
           onClick={save}
           disabled={busy}
-          className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-700 disabled:opacity-50"
+          className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-50"
         >
           저장
         </button>

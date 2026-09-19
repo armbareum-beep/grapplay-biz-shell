@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { EmptyIcon } from '../components/Icon'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useBizData } from '../lib/useBizData'
 import { useAuth } from '../lib/auth'
@@ -153,7 +154,7 @@ function ItemsTab({
   if (rows.length === 0) {
     return (
       <div className="mt-10 rounded-3xl border border-dashed border-stone-300 bg-white py-20 text-center">
-        <div className="text-5xl">📚</div>
+        <EmptyIcon name="inbox" />
         <p className="mt-4 text-lg font-bold text-stone-800">
           {emptyKind === '수강 중' ? '아직 수강 중인 강의가 없어요' : '관심 강의가 비어 있어요'}
         </p>
@@ -187,7 +188,7 @@ function ItemsTab({
                 {eb.emoji}
               </div>
               <div className="flex-1">
-                <div className="text-xs font-medium text-violet-600">전자책</div>
+                <div className="text-xs font-medium text-brand-600">전자책</div>
                 <h3 className="mt-0.5 font-bold text-stone-900">{eb.title}</h3>
                 <p className="text-xs text-stone-500">
                   {eb.avatar} {eb.author}
@@ -196,7 +197,7 @@ function ItemsTab({
                   <div className="mt-3 flex items-center gap-3">
                     <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-stone-100">
                       <div
-                        className="h-full rounded-full bg-violet-600"
+                        className="h-full rounded-full bg-brand-600"
                         style={{ width: `${progress}%` }}
                       />
                     </div>
@@ -271,7 +272,7 @@ function OrdersTab({
   if (orders.length === 0) {
     return (
       <div className="mt-10 rounded-3xl border border-dashed border-stone-300 bg-white py-20 text-center">
-        <div className="text-5xl">🧾</div>
+        <EmptyIcon name="receipt" />
         <p className="mt-4 text-lg font-bold text-stone-800">주문 내역이 없어요</p>
         <p className="mt-1 text-sm text-stone-500">강의를 결제하면 여기에서 확인할 수 있어요.</p>
       </div>

@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import Icon from './Icon'
 import { Course, formatPrice } from '../data/mock'
 import { getCourseMeta, discountPct } from '../data/mockMarketplace'
 import { useWishlist } from '../lib/wishlist'
@@ -40,7 +41,7 @@ export default function CourseCard({ course }: { course: Course }) {
           {course.category}
         </span>
         {meta.isNew && (
-          <span className="absolute left-3 bottom-3 rounded-full bg-violet-600 px-2 py-0.5 text-[11px] font-bold text-white">
+          <span className="absolute left-3 bottom-3 rounded-full bg-brand-600 px-2 py-0.5 text-[11px] font-bold text-white">
             NEW
           </span>
         )}
@@ -53,13 +54,13 @@ export default function CourseCard({ course }: { course: Course }) {
           className="absolute right-3 top-3 grid h-8 w-8 place-items-center rounded-full bg-white/90 text-sm shadow-sm transition hover:scale-110"
           aria-label="찜하기"
         >
-          {wished ? '❤️' : '🤍'}
+          <Icon name="heart" size={15} filled={wished} className={wished ? 'text-rose-500' : 'text-slate-500'} />
         </button>
       </div>
 
       {/* 본문 */}
       <div className="flex flex-1 flex-col p-4">
-        <h3 className="line-clamp-2 font-bold leading-snug text-slate-900 group-hover:text-violet-700">
+        <h3 className="line-clamp-2 font-bold leading-snug text-slate-900 group-hover:text-brand-700">
           {course.title}
         </h3>
 
@@ -99,7 +100,7 @@ export default function CourseCard({ course }: { course: Course }) {
               {formatPrice(course.price)}
             </span>
           </div>
-          <span className="text-sm font-semibold text-violet-600 group-hover:underline">
+          <span className="text-sm font-semibold text-brand-600 group-hover:underline">
             자세히 →
           </span>
         </div>

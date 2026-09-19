@@ -1,6 +1,6 @@
 import type { SettlementRow } from '../../lib/expertApi'
 
-// 관리자 대시보드 공용 UI 조각 (violet 강조 = 관리자 영역)
+// 관리자 대시보드 공용 UI 조각 (brand 네이비 강조 = 관리자 영역)
 
 export function StatCard({
   label,
@@ -16,7 +16,7 @@ export function StatCard({
   return (
     <div
       className={`rounded-2xl border p-5 ${
-        accent ? 'border-violet-200 bg-violet-50' : 'border-stone-200 bg-white'
+        accent ? 'border-brand-200 bg-brand-50' : 'border-stone-200 bg-white'
       }`}
     >
       <div className="text-sm text-stone-500">

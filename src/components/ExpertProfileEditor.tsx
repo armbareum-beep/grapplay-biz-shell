@@ -58,13 +58,13 @@ export default function ExpertProfileEditor({
     alert('전문가 프로필을 저장했어요.')
   }
 
-  const field = 'w-full rounded-lg border border-stone-300 px-3 py-2 text-sm outline-none focus:border-violet-400'
+  const field = 'w-full rounded-lg border border-stone-300 px-3 py-2 text-sm outline-none focus:border-brand-400'
 
   return (
-    <section className="space-y-4 rounded-2xl border border-violet-200 bg-violet-50 p-6">
+    <section className="space-y-4 rounded-2xl border border-brand-200 bg-brand-50 p-6">
       <div className="flex items-center gap-2">
         <h2 className="font-black text-stone-900">전문가 공개 프로필</h2>
-        <span className="rounded-full bg-violet-100 px-2 py-0.5 text-[11px] font-bold text-violet-700">
+        <span className="rounded-full bg-brand-100 px-2 py-0.5 text-[11px] font-bold text-brand-700">
           EXPERT
         </span>
       </div>
@@ -73,7 +73,7 @@ export default function ExpertProfileEditor({
       <div className="flex items-center gap-4">
         <ExpertAvatar emoji={avatar} src={avatarUrl} size={64} />
         <div className="flex items-center gap-2">
-          <label className="cursor-pointer rounded-lg bg-violet-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-violet-700">
+          <label className="cursor-pointer rounded-lg bg-brand-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-700">
             {uploading ? '업로드 중…' : '사진 변경'}
             <input
               type="file"
@@ -116,7 +116,7 @@ export default function ExpertProfileEditor({
               }`}
             >
               {categories.includes(c.key) ? '✓ ' : ''}
-              {c.emoji} {c.key}
+              {c.key}
             </button>
           ))}
         </div>
@@ -129,9 +129,9 @@ export default function ExpertProfileEditor({
         <div className="space-y-2">
           {credentials.map((c, i) => (
             <div key={i} className="flex items-center gap-2">
-              <span className="text-violet-500">✓</span>
+              <span className="text-brand-500">✓</span>
               <input
-                className="flex-1 rounded-lg border border-stone-300 px-3 py-2 text-sm outline-none focus:border-violet-400"
+                className="flex-1 rounded-lg border border-stone-300 px-3 py-2 text-sm outline-none focus:border-brand-400"
                 value={c}
                 onChange={(e) => setCred(i, e.target.value)}
                 placeholder="예: 소규모 사업 컨설팅 15년"
@@ -149,7 +149,7 @@ export default function ExpertProfileEditor({
           <button
             type="button"
             onClick={addCred}
-            className="rounded-lg border border-dashed border-stone-300 px-3 py-1.5 text-sm font-semibold text-stone-500 hover:border-violet-300 hover:text-violet-600"
+            className="rounded-lg border border-dashed border-stone-300 px-3 py-1.5 text-sm font-semibold text-stone-500 hover:border-brand-300 hover:text-brand-600"
           >
             + 약력 추가
           </button>
@@ -159,7 +159,7 @@ export default function ExpertProfileEditor({
       <button
         onClick={save}
         disabled={saving}
-        className="rounded-lg bg-violet-600 px-5 py-2 text-sm font-bold text-white hover:bg-violet-700 disabled:opacity-50"
+        className="rounded-lg bg-brand-600 px-5 py-2 text-sm font-bold text-white hover:bg-brand-700 disabled:opacity-50"
       >
         전문가 프로필 저장
       </button>

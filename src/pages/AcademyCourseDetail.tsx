@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import Icon, { EmptyIcon } from '../components/Icon'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { formatPrice, type Course } from '../data/mock'
 import { useBizData } from '../lib/useBizData'
@@ -92,11 +93,11 @@ export default function AcademyCourseDetail() {
   if (!course) {
     return (
       <div className="mx-auto max-w-2xl px-4 py-24 text-center">
-        <div className="text-5xl">🤔</div>
+        <EmptyIcon name="help-circle" />
         <h1 className="mt-4 text-2xl font-bold text-slate-900">강의를 찾을 수 없어요</h1>
         <Link
           to="/library"
-          className="mt-6 inline-block rounded-xl bg-violet-600 px-6 py-3 font-semibold text-white hover:bg-violet-700"
+          className="mt-6 inline-block rounded-xl bg-brand-600 px-6 py-3 font-semibold text-white hover:bg-brand-700"
         >
           강의 목록으로
         </Link>
@@ -133,7 +134,7 @@ export default function AcademyCourseDetail() {
       <div className="mx-auto max-w-6xl px-4 sm:px-6 md:grid md:grid-cols-[1fr_340px] md:gap-8">
         {/* 좌측 컬럼 */}
         <div className="min-w-0">
-          <div className="pt-5 text-sm font-bold text-violet-600 md:pt-8">{course.category}</div>
+          <div className="pt-5 text-sm font-bold text-brand-600 md:pt-8">{course.category}</div>
 
           {/* 영상 플레이어 (미리보기 하이라이트) */}
           <section id="video" className="mt-3 scroll-mt-32">
@@ -148,7 +149,7 @@ export default function AcademyCourseDetail() {
                     emoji={expert.avatar}
                     src={expert.avatarUrl}
                     size={28}
-                    fallbackBg="bg-violet-100"
+                    fallbackBg="bg-brand-100"
                   />
                   <span className="font-semibold text-slate-700">{expert.name}</span>
                 </div>
@@ -172,11 +173,11 @@ export default function AcademyCourseDetail() {
             <a
               key={t.id}
               href={`#${t.id}`}
-              className="whitespace-nowrap border-b-2 border-transparent px-4 py-3 text-sm font-medium text-slate-600 hover:border-violet-500 hover:text-violet-600"
+              className="whitespace-nowrap border-b-2 border-transparent px-4 py-3 text-sm font-medium text-slate-600 hover:border-brand-500 hover:text-brand-600"
             >
               {t.label}
               {t.id === 'reviews' && reviews.length > 0 && (
-                <span className="ml-1 text-violet-500">{reviews.length}</span>
+                <span className="ml-1 text-brand-500">{reviews.length}</span>
               )}
             </a>
           ))}
@@ -188,12 +189,12 @@ export default function AcademyCourseDetail() {
         <section id="intro" className="scroll-mt-32">
           <h2 className="text-xl font-black text-slate-900">강의 소개</h2>
           <div className="mt-3 flex flex-wrap gap-2 text-xs">
-            <span className="rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-600">
-              📅 업데이트 26.03.13
+            <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-600">
+              <Icon name="calendar" size={12} /> 업데이트 26.03.13
             </span>
             {meta.accessPeriod && (
-              <span className="rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-600">
-                ⏳ {meta.accessPeriod}
+              <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-600">
+                <Icon name="clock" size={12} /> {meta.accessPeriod}
               </span>
             )}
           </div>
@@ -245,11 +246,11 @@ export default function AcademyCourseDetail() {
               return (
                 <div
                   key={i}
-                  className={`flex items-center gap-4 p-4 ${isActive ? 'bg-violet-50' : ''}`}
+                  className={`flex items-center gap-4 p-4 ${isActive ? 'bg-brand-50' : ''}`}
                 >
                   <span
                     className={`grid h-8 w-8 shrink-0 place-items-center rounded-lg text-sm font-bold ${
-                      isActive ? 'bg-violet-600 text-white' : 'bg-slate-100 text-slate-500'
+                      isActive ? 'bg-brand-600 text-white' : 'bg-slate-100 text-slate-500'
                     }`}
                   >
                     {i + 1}
@@ -261,12 +262,12 @@ export default function AcademyCourseDetail() {
                         setActiveIdx(i)
                         document.getElementById('video')?.scrollIntoView({ behavior: 'smooth' })
                       }}
-                      className="rounded-full bg-violet-600 px-2.5 py-0.5 text-[11px] font-semibold text-white hover:bg-violet-700"
+                      className="rounded-full bg-brand-600 px-2.5 py-0.5 text-[11px] font-semibold text-white hover:bg-brand-700"
                     >
                       ▶ 미리보기
                     </button>
                   ) : (
-                    <span className="text-slate-300">🔒</span>
+                    <span className="text-slate-300"><Icon name="lock" size={14} /></span>
                   )}
                   <span className="text-sm text-slate-400">{l.durationMin}분</span>
                 </div>
@@ -289,11 +290,11 @@ export default function AcademyCourseDetail() {
                 emoji={expert?.avatar}
                 src={expert?.avatarUrl}
                 size={64}
-                fallbackBg="bg-violet-100"
+                fallbackBg="bg-brand-100"
               />
               <div>
                 <h3 className="text-lg font-bold text-slate-900">{expert?.name}</h3>
-                <p className="text-sm font-medium text-violet-600">{expert?.title}</p>
+                <p className="text-sm font-medium text-brand-600">{expert?.title}</p>
                 <p className="mt-2 leading-relaxed text-slate-600">{expert?.bio}</p>
               </div>
             </div>
@@ -301,7 +302,7 @@ export default function AcademyCourseDetail() {
               <ul className="mt-4 grid gap-2 border-t border-slate-100 pt-4 sm:grid-cols-2">
                 {credentials.map((c) => (
                   <li key={c} className="flex items-center gap-2 text-sm text-slate-600">
-                    <span className="text-violet-500">✓</span> {c}
+                    <span className="text-brand-500">✓</span> {c}
                   </li>
                 ))}
               </ul>
@@ -318,7 +319,7 @@ export default function AcademyCourseDetail() {
                 key={i}
                 className="flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-4"
               >
-                <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-violet-100 text-sm text-violet-600">
+                <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-brand-100 text-sm text-brand-600">
                   ✓
                 </span>
                 <span className="text-slate-700">{w}</span>
@@ -340,7 +341,7 @@ export default function AcademyCourseDetail() {
 
         {/* 9. 주의사항 */}
         <section className="scroll-mt-32">
-          <h2 className="text-xl font-black text-slate-900">⚠️ 주의사항</h2>
+          <h2 className="flex items-center gap-2 text-xl font-black text-slate-900"><Icon name="alert-triangle" size={20} className="text-amber-500" /> 주의사항</h2>
           <ul className="mt-4 space-y-2 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-sm text-slate-600">
             {NOTICES.map((n, i) => (
               <li key={i} className="flex gap-2">
@@ -439,7 +440,7 @@ function PurchaseCard({
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
       <div className="flex items-start justify-between">
-        <span className="rounded-full bg-violet-100 px-3 py-1 text-xs font-semibold text-violet-700">
+        <span className="rounded-full bg-brand-100 px-3 py-1 text-xs font-semibold text-brand-700">
           강의
         </span>
         <div className="flex gap-1">
@@ -448,14 +449,14 @@ function PurchaseCard({
             aria-label="찜하기"
             className="grid h-9 w-9 place-items-center rounded-lg border border-slate-200 hover:bg-slate-50"
           >
-            {wished ? '❤️' : '🤍'}
+            <Icon name="heart" size={15} filled={wished} className={wished ? 'text-rose-500' : 'text-slate-500'} />
           </button>
           <button
             onClick={share}
             aria-label="공유"
             className="grid h-9 w-9 place-items-center rounded-lg border border-slate-200 hover:bg-slate-50"
           >
-            🔗
+            <Icon name="link" size={16} className="text-slate-600" />
           </button>
         </div>
       </div>
@@ -488,7 +489,7 @@ function PurchaseCard({
       <button
         onClick={onPrimary}
         disabled={busy}
-        className="mt-5 w-full rounded-xl bg-violet-600 py-3 font-bold text-white hover:bg-violet-700 disabled:opacity-50"
+        className="mt-5 w-full rounded-xl bg-brand-600 py-3 font-bold text-white hover:bg-brand-700 disabled:opacity-50"
       >
         {enrolled ? '이어보기' : isPaid ? '구매하기' : busy ? '등록 중…' : '무료로 시청하기'}
       </button>
@@ -549,7 +550,7 @@ function LessonPlayer({ course, activeIdx }: { course: Course; activeIdx: number
       {/* 레슨 라벨 */}
       {lesson && (
         <div className="mt-3">
-          <div className="text-xs font-medium text-violet-600">
+          <div className="text-xs font-medium text-brand-600">
             {activeIdx + 1}강 · 미리보기
           </div>
           <div className="font-bold text-slate-900">{lesson.title}</div>

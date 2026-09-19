@@ -75,7 +75,7 @@ npm run preview  # 빌드 결과 미리보기
 - 로고: `public/logo/` (PNS 심볼 원본 검정/흰, 투명 심볼). **심볼은 파비콘·앱 아이콘에만** 쓴다. 설명은 `public/logo/README.md`.
 - 파비콘·OG 이미지: `public/favicon-*.png`, `favicon.ico`, `apple-touch-icon.png`, `og-image.png`, `site.webmanifest`.
 - 워드마크: **파이네시스 / PHYNESIS** 2줄, SUIT Bold 서브셋(`public/fonts/wordmark.woff2`) — `src/components/BrandLogo.tsx`. 정적 SVG는 `public/logo/wordmark*.svg`.
-- 포인트 컬러: violet 계열 단색 (`src/index.css`).
+- 포인트 컬러: 딥 네이비 단일 액센트 `brand-*` (`src/index.css`). UI 아이콘은 `src/components/Icon.tsx` 선 아이콘(이모지 사용 안 함).
 - 카테고리: `src/data/mock.ts`의 `CATEGORIES` 6종 (마케팅·브랜딩·상권분석·투자·경영·인문교양). 구 값 `연금`은 `resolveCategory()`가 `투자`로 매핑.
 
 ## 구조

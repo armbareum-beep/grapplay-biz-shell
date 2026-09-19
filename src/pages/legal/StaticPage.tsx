@@ -31,8 +31,8 @@ export default function StaticPage({
 export function Section({ heading, children }: { heading: string; children: React.ReactNode }) {
   return (
     <section>
-      <h2 className="mb-3 flex items-center gap-2 text-lg font-bold text-violet-700">
-        <span className="h-1.5 w-1.5 rounded-full bg-violet-500" />
+      <h2 className="mb-3 flex items-center gap-2 text-lg font-bold text-brand-700">
+        <span className="h-1.5 w-1.5 rounded-full bg-brand-500" />
         {heading}
       </h2>
       <div className="space-y-2 border-l border-stone-200 pl-4 text-sm text-stone-600">{children}</div>

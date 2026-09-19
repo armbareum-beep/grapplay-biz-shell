@@ -590,7 +590,7 @@ function RevenueTab({ revenue, expertId }: { revenue: ExpertRevenue | null; expe
                           className={`mr-1.5 rounded px-1.5 py-0.5 text-[11px] font-bold ${
                             it.label === '강의'
                               ? 'bg-amber-100 text-amber-700'
-                              : 'bg-violet-100 text-violet-700'
+                              : 'bg-brand-100 text-brand-700'
                           }`}
                         >
                           {it.label}

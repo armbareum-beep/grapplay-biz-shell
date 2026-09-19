@@ -62,7 +62,7 @@ function mapBanner(r: any): PromoBanner {
     id: r.id,
     title: r.title,
     subtitle: r.subtitle ?? '',
-    gradient: r.gradient ?? 'from-violet-600 to-purple-500',
+    gradient: r.gradient ?? 'from-brand-600 to-brand-500',
     cta: r.cta ?? '',
     link: r.link ?? undefined,
   }
