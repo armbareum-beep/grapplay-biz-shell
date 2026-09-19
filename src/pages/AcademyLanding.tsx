@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { CATEGORIES, type Category } from '../data/mock'
 import { useBizData } from '../lib/useBizData'
@@ -9,7 +9,7 @@ import EbookCard from '../components/EbookCard'
 import ExpertAvatar from '../components/ExpertAvatar'
 import Icon from '../components/Icon'
 import { COVER_BY_CATEGORY, COVER_DEFAULT, formatPrice, type Course } from '../data/mock'
-import { maskName, resolveGradient, type PromoBanner } from '../data/mockMarketplace'
+import { maskName } from '../data/mockMarketplace'
 
 // 랜딩 — 정보 구조: 문제 제시 → 콘텐츠 → 철학 → 신뢰(전문가·후기) → 가입
 // (docs/plan/10-rebrand-phynesis.md §1.3). 강의몰 순서(카테고리 → 인기 → 최신)를 쓰지 않는다.
@@ -28,7 +28,7 @@ const DECISIONS: { q: string; cat: Category }[] = [
 
 export default function AcademyLanding() {
   const { session } = useAuth()
-  const { courses, getCourse, courseReviews, ebooks, experts, banners, loading } = useBizData()
+  const { courses, getCourse, courseReviews, ebooks, experts, loading } = useBizData()
   // 시작하기: 로그인 → 컨텐츠(무료 필터), 비로그인 → 로그인 페이지
   const startFreeTo = session ? '/content?free=1' : '/auth'
 
@@ -112,13 +112,6 @@ export default function AcademyLanding() {
           </div>
         </div>
       </section>
-
-      {/* 1-1. 관리자 배너 (있을 때만) */}
-      {banners.length > 0 && (
-        <section className="mx-auto max-w-6xl px-4 pt-8 sm:px-6">
-          <BannerCarousel banners={banners} />
-        </section>
-      )}
 
       {/* 2. 사업가가 매일 마주치는 판단 — 문제 제시 */}
       <section className="bg-white">
@@ -205,32 +198,35 @@ export default function AcademyLanding() {
         </Section>
       )}
 
-      {/* 5. 철학 — 다크. 브랜드가 기억되는 장면 */}
+      {/* 5. 철학 — 다크. 브랜드가 기억되는 장면. 모바일에서도 PAIDEIA/PHRONESIS를 2열로 두고
+          여백을 좁혀 스크롤 길이를 줄인다(2026-09-19). */}
       <section className="bg-dots relative overflow-hidden bg-brand-950 text-white">
-        <div className="relative mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-28">
-          <div className="grid gap-12 lg:grid-cols-2 lg:gap-20">
+        <div className="relative mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-28">
+          <div className="grid grid-cols-2 gap-6 sm:gap-12 lg:gap-20">
             <div>
               <p className="text-[11px] font-semibold tracking-[0.3em] text-brand-300">PAIDEIA</p>
-              <p className="mt-3 text-2xl font-black sm:text-3xl">파이데이아</p>
-              <p className="mt-4 max-w-sm leading-relaxed text-brand-200">사람을 성장시키는 배움.</p>
+              <p className="mt-2 text-xl font-black sm:mt-3 sm:text-3xl">파이데이아</p>
+              <p className="mt-2 text-sm leading-relaxed text-brand-200 sm:mt-4 sm:text-base">
+                사람을 성장시키는 배움.
+              </p>
             </div>
             <div>
               <p className="text-[11px] font-semibold tracking-[0.3em] text-brand-300">PHRONESIS</p>
-              <p className="mt-3 text-2xl font-black sm:text-3xl">프로네시스</p>
-              <p className="mt-4 max-w-sm leading-relaxed text-brand-200">
+              <p className="mt-2 text-xl font-black sm:mt-3 sm:text-3xl">프로네시스</p>
+              <p className="mt-2 text-sm leading-relaxed text-brand-200 sm:mt-4 sm:text-base">
                 현실에서 더 나은 결정을 내리는 실천적 지혜.
               </p>
             </div>
           </div>
-          <div className="mt-16 border-t border-white/10 pt-14 sm:mt-20 sm:pt-16">
-            <p className="text-3xl font-black leading-tight tracking-tight sm:text-5xl">
+          <div className="mt-10 border-t border-white/10 pt-8 sm:mt-20 sm:pt-16">
+            <p className="text-2xl font-black leading-tight tracking-tight sm:text-5xl">
               우리는 이 둘을
               <br />
               사업에 연결합니다.
             </p>
-            <div className="mt-10 flex flex-wrap items-end gap-x-6 gap-y-2">
-              <span className="font-wordmark text-5xl font-bold tracking-wide sm:text-7xl">PHYNESIS</span>
-              <span className="font-wordmark text-2xl font-bold text-brand-300 sm:text-3xl">파이네시스</span>
+            <div className="mt-6 flex flex-wrap items-end gap-x-6 gap-y-2 sm:mt-10">
+              <span className="font-wordmark text-4xl font-bold tracking-wide sm:text-7xl">PHYNESIS</span>
+              <span className="font-wordmark text-xl font-bold text-brand-300 sm:text-3xl">파이네시스</span>
             </div>
           </div>
         </div>
@@ -399,169 +395,6 @@ function FeaturedCourse({ course }: { course: Course }) {
         </div>
       </div>
     </Link>
-  )
-}
-
-/* ── 자동 슬라이드 배너 (관리자 배너 탭에서 관리) — 드래그/스와이프로 직접 넘길 수 있다 ── */
-function BannerCarousel({ banners }: { banners: PromoBanner[] }) {
-  const [idx, setIdx] = useState(0)
-  const [dragX, setDragX] = useState(0) // 드래그 중 실시간 이동량(px). 드래그 아닐 때 0
-  const dragRef = useRef<{ startX: number; width: number } | null>(null)
-  const dragXRef = useRef(0) // dragX의 최신값(window 리스너 클로저의 stale state 회피용)
-  const wasDragRef = useRef(false) // 방금 드래그였으면 뒤이은 클릭(링크 이동)을 막는다
-  const listenersRef = useRef<{ move: (e: PointerEvent) => void; up: () => void } | null>(null)
-  const n = banners.length
-
-  useEffect(() => {
-    if (n <= 1) return
-    const t = setInterval(() => {
-      if (dragRef.current) return // 드래그 중이면 자동 전환 건너뜀
-      setIdx((i) => (i + 1) % n)
-    }, 4500)
-    return () => clearInterval(t)
-  }, [n])
-
-  // 언마운트 시 남아있을 수 있는 window 리스너 정리
-  useEffect(() => {
-    return () => {
-      if (!listenersRef.current) return
-      window.removeEventListener('pointermove', listenersRef.current.move)
-      window.removeEventListener('pointerup', listenersRef.current.up)
-      window.removeEventListener('pointercancel', listenersRef.current.up)
-    }
-  }, [])
-
-  if (n === 0) return null
-
-  // setPointerCapture는 이후의 네이티브 click 이벤트까지 캡처 대상으로 재타깃해
-  // 배너 링크(Link/a) 클릭이 무시되는 부작용이 있어 쓰지 않는다. 대신 드래그 중에는
-  // window에 직접 리스너를 붙여 포인터가 카드 바깥으로 나가도 이동을 계속 추적한다.
-  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (n <= 1) return
-    dragRef.current = { startX: e.clientX, width: e.currentTarget.clientWidth }
-    dragXRef.current = 0
-
-    const onMove = (ev: PointerEvent) => {
-      if (!dragRef.current) return
-      const dx = ev.clientX - dragRef.current.startX
-      dragXRef.current = dx
-      setDragX(dx)
-    }
-    const onUp = () => {
-      const d = dragRef.current
-      if (!d) return
-      dragRef.current = null
-      const threshold = Math.max(40, d.width * 0.15)
-      const dx = dragXRef.current
-      if (dx < -threshold) setIdx((i) => (i + 1) % n)
-      else if (dx > threshold) setIdx((i) => (i - 1 + n) % n)
-      wasDragRef.current = Math.abs(dx) > 8
-      dragXRef.current = 0
-      setDragX(0)
-      window.removeEventListener('pointermove', onMove)
-      window.removeEventListener('pointerup', onUp)
-      window.removeEventListener('pointercancel', onUp)
-      listenersRef.current = null
-    }
-
-    listenersRef.current = { move: onMove, up: onUp }
-    window.addEventListener('pointermove', onMove)
-    window.addEventListener('pointerup', onUp)
-    window.addEventListener('pointercancel', onUp)
-  }
-  const onClickCapture = (e: React.MouseEvent) => {
-    if (!wasDragRef.current) return
-    e.preventDefault()
-    e.stopPropagation()
-    wasDragRef.current = false
-  }
-
-  const dragging = !!dragRef.current
-  const dragPercent = dragging && dragRef.current!.width ? (dragX / dragRef.current!.width) * 100 : 0
-
-  return (
-    <div
-      className={`group relative touch-pan-y select-none overflow-hidden rounded-lg ${n > 1 ? (dragging ? 'cursor-grabbing' : 'cursor-grab') : ''}`}
-      onPointerDown={onPointerDown}
-      onClickCapture={onClickCapture}
-    >
-      <div
-        className={`flex ${dragging ? '' : 'transition-transform duration-700 ease-out'}`}
-        style={{ transform: `translateX(${-(idx * 100) + dragPercent}%)` }}
-      >
-        {banners.map((b, i) => (
-          <BannerSlide key={b.id ?? `${b.title}-${i}`} banner={b} />
-        ))}
-      </div>
-
-      {/* 좌우 화살표 (데스크톱 hover) */}
-      <button
-        onClick={() => setIdx((i) => (i - 1 + n) % n)}
-        className="absolute left-3 top-1/2 hidden h-9 w-9 -translate-y-1/2 place-items-center rounded-full bg-white/80 text-slate-700 opacity-0 transition group-hover:opacity-100 md:grid"
-        aria-label="이전"
-      >
-        ‹
-      </button>
-      <button
-        onClick={() => setIdx((i) => (i + 1) % n)}
-        className="absolute right-3 top-1/2 hidden h-9 w-9 -translate-y-1/2 place-items-center rounded-full bg-white/80 text-slate-700 opacity-0 transition group-hover:opacity-100 md:grid"
-        aria-label="다음"
-      >
-        ›
-      </button>
-
-      {/* 인디케이터 점 */}
-      <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5">
-        {banners.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => setIdx(i)}
-            className={`h-2 rounded-full transition-all ${
-              i === idx ? 'w-5 bg-white' : 'w-2 bg-white/50'
-            }`}
-            aria-label={`배너 ${i + 1}`}
-          />
-        ))}
-      </div>
-    </div>
-  )
-}
-
-/* 배너 한 장 — link가 있으면 내부 라우트(Link) / 외부 URL(a)로 이동 */
-function BannerSlide({ banner: b }: { banner: PromoBanner }) {
-  const inner = (
-    <>
-      <h2 className="text-xl font-black sm:text-2xl">{b.title}</h2>
-      <p className="mt-1 max-w-sm text-sm text-white/85">{b.subtitle}</p>
-      {b.cta && (
-        <span className="mt-5 w-fit rounded-lg bg-white/95 px-5 py-2.5 text-sm font-bold text-slate-900 transition group-hover:bg-white">
-          {b.cta} →
-        </span>
-      )}
-    </>
-  )
-  const cls = `relative flex min-h-[180px] min-w-full flex-col justify-center bg-gradient-to-br ${resolveGradient(b.gradient)} p-7 text-white sm:min-h-[220px] sm:p-10`
-
-  // draggable=false — 앵커(a)는 브라우저 기본값이 draggable이라, 스와이프 중 마우스가
-  // 살짝만 움직여도 네이티브 드래그(dragstart)로 전환돼 이후 pointermove가 끊긴다.
-  if (!b.link) return <div className={cls}>{inner}</div>
-  if (b.link.startsWith('/'))
-    return (
-      <Link to={b.link} className={cls} draggable={false} onDragStart={(e) => e.preventDefault()}>
-        {inner}
-      </Link>
-    )
-  return (
-    <a
-      href={b.link}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={cls}
-      draggable={false}
-      onDragStart={(e) => e.preventDefault()}
-    >
-      {inner}
-    </a>
   )
 }
 
