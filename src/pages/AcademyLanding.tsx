@@ -99,7 +99,7 @@ export default function AcademyLanding() {
           {/* 배경 워터마크 */}
           <div
             aria-hidden
-            className="pointer-events-none absolute -bottom-10 -right-4 select-none font-wordmark text-[140px] font-bold leading-none tracking-wide text-white/[0.04] sm:text-[200px] lg:text-[240px]"
+            className="pointer-events-none absolute -bottom-[0.28em] -right-4 select-none font-wordmark text-[18vw] font-bold leading-none tracking-wide text-white/[0.04] xl:text-[220px]"
           >
             PHYNESIS
           </div>
