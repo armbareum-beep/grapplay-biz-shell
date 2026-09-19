@@ -18,6 +18,17 @@ export const CATEGORIES: { key: Category; icon: IconName; desc: string }[] = [
   { key: '인문교양', icon: 'book-open', desc: '사업의 안목을 넓히는 인문·교양 강의' },
 ]
 
+/** 표지 이미지가 없을 때 카드 표지에 쓰는 카테고리별 어두운 그라데이션 (Tailwind 클래스). */
+export const COVER_BY_CATEGORY: Record<Category, string> = {
+  마케팅: 'from-brand-900 to-brand-600',
+  브랜딩: 'from-[#2a1f3d] to-[#5b4a7a]',
+  상권분석: 'from-slate-800 to-slate-500',
+  투자: 'from-[#3b2f1e] to-[#8a6a2c]',
+  경영: 'from-brand-950 to-brand-700',
+  인문교양: 'from-[#1f3a2e] to-[#4d7a63]',
+}
+export const COVER_DEFAULT = 'from-slate-900 to-slate-600'
+
 /** 구 카테고리 → 신 카테고리. `?cat=연금` 같은 북마크·공유 링크 호환용. */
 export const LEGACY_CATEGORY: Record<string, Category> = { 연금: '투자' }
 

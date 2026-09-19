@@ -131,14 +131,12 @@ export default function AcademyLayout({ children }: { children: React.ReactNode 
       )}
 
       {/* 푸터 — 모바일에선 기본 숨김, 결제 페이지에서만 노출 */}
-      <footer
-        className={`border-t border-slate-200 bg-slate-50 ${isCheckout ? '' : 'hidden md:block'}`}
-      >
-        <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-          <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+      <footer className={`bg-brand-950 text-brand-300 ${isCheckout ? '' : 'hidden md:block'}`}>
+        <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
+          <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
             <div>
-              <BrandLogo size="sm" />
-              <p className="mt-3 max-w-xs text-sm text-slate-500">
+              <BrandLogo size="sm" tone="light" />
+              <p className="mt-4 max-w-xs text-sm text-brand-300">
                 전문가를 위한 비즈니스 교육 플랫폼.
               </p>
             </div>
@@ -162,26 +160,26 @@ export default function AcademyLayout({ children }: { children: React.ReactNode 
           </div>
 
           {/* 사업자 정보 — 운영 법인 그래플레이 (서비스명과 무관하게 유지) */}
-          <div className="mt-10 space-y-1.5 border-t border-slate-200 pt-8 text-[11px] leading-relaxed text-slate-400">
+          <div className="mt-12 space-y-1.5 border-t border-white/10 pt-6 text-[11px] leading-relaxed text-brand-400">
             <p>
-              <strong className="text-slate-500">상호명:</strong> 그래플레이 |{' '}
-              <strong className="text-slate-500">대표자:</strong> 이바름
+              <strong className="text-brand-300">상호명:</strong> 그래플레이 |{' '}
+              <strong className="text-brand-300">대표자:</strong> 이바름
             </p>
             <p>
-              <strong className="text-slate-500">사업자등록번호:</strong> 111-39-34149 |{' '}
-              <strong className="text-slate-500">통신판매업 신고번호:</strong> 2026-서울동작-0405
+              <strong className="text-brand-300">사업자등록번호:</strong> 111-39-34149 |{' '}
+              <strong className="text-brand-300">통신판매업 신고번호:</strong> 2026-서울동작-0405
             </p>
             <p>
-              <strong className="text-slate-500">주소:</strong> 서울 동작구 동작대로29길 119,
+              <strong className="text-brand-300">주소:</strong> 서울 동작구 동작대로29길 119,
               102-1207
             </p>
             <p>
-              <strong className="text-slate-500">이메일:</strong> grapplay.com@gmail.com |{' '}
-              <strong className="text-slate-500">전화번호:</strong> 02-599-6315
+              <strong className="text-brand-300">이메일:</strong> grapplay.com@gmail.com |{' '}
+              <strong className="text-brand-300">전화번호:</strong> 02-599-6315
             </p>
           </div>
 
-          <div className="mt-6 text-xs text-slate-400">
+          <div className="mt-6 text-xs text-brand-400">
             © 2026 PHYNESIS. Operated by 그래플레이. All rights reserved.
           </div>
         </div>
@@ -295,11 +293,11 @@ function MenuLink({
 function FooterCol({ title, items }: { title: string; items: { label: string; to: string }[] }) {
   return (
     <div>
-      <h4 className="mb-3 font-semibold text-slate-900">{title}</h4>
+      <h4 className="mb-3 font-semibold text-white">{title}</h4>
       <ul className="space-y-2">
         {items.map((i) => (
           <li key={i.to}>
-            <Link to={i.to} className="text-slate-500 hover:text-brand-600">
+            <Link to={i.to} className="text-brand-300 hover:text-white">
               {i.label}
             </Link>
           </li>

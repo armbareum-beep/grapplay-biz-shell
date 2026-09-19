@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { resolveGradient } from '../../../data/mockMarketplace'
 import {
   listBanners,
   createBanner,
@@ -82,7 +83,7 @@ export default function BannerTab() {
             className="flex items-center gap-4 rounded-2xl border border-stone-200 bg-white p-3"
           >
             <div
-              className={`grid h-16 w-28 shrink-0 place-items-center rounded-xl bg-gradient-to-br ${b.gradient} px-2 text-center text-[11px] font-bold text-white`}
+              className={`grid h-16 w-28 shrink-0 place-items-center rounded-xl bg-gradient-to-br ${resolveGradient(b.gradient)} px-2 text-center text-[11px] font-bold text-white`}
             >
               {b.title}
             </div>
@@ -137,7 +138,7 @@ function BannerForm({
 }) {
   const [title, setTitle] = useState(banner?.title ?? '')
   const [subtitle, setSubtitle] = useState(banner?.subtitle ?? '')
-  const [gradient, setGradient] = useState(banner?.gradient ?? GRADIENTS[0])
+  const [gradient, setGradient] = useState(resolveGradient(banner?.gradient ?? GRADIENTS[0]))
   const [cta, setCta] = useState(banner?.cta ?? '')
   const [link, setLink] = useState(banner?.link ?? '')
   const [sortOrder, setSortOrder] = useState(banner?.sort_order ?? nextOrder)

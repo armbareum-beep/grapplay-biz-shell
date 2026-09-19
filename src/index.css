@@ -30,6 +30,13 @@
   --color-brand-800: #1b2a47;
   --color-brand-900: #152238;
   --color-brand-950: #0d1526;
+
+  /* 2차 액센트 골드 — 섹션 번호·라벨·무료 표시 등 소량. 버튼에는 쓰지 않는다 */
+  --color-gold-400: #d4a84b;
+  --color-gold-500: #b8892b;
+  --color-gold-600: #9a7020;
+  /* 섹션 리듬용 따뜻한 오프화이트 */
+  --color-paper: #f6f4ef;
 }
 
 html {

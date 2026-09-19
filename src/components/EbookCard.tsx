@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import Icon from './Icon'
-import { formatPrice } from '../data/mock'
+import { formatPrice, COVER_BY_CATEGORY, COVER_DEFAULT } from '../data/mock'
 import { Ebook, ebookDiscountPct } from '../data/mockEbooks'
 import { useWishlist } from '../lib/wishlist'
 import { useBizData } from '../lib/useBizData'
@@ -20,27 +20,29 @@ export default function EbookCard({ ebook }: { ebook: Ebook }) {
       to={`/ebooks/${ebook.id}`}
       className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white transition hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-200/60"
     >
-      {/* 표지 — 가로 비율 (이미지 있으면 이미지, 없으면 그라데이션+이모지) */}
+      {/* 표지 — 이미지 위 어두운 오버레이 또는 카테고리별 다크 그라데이션. 제목은 표지 안에 흰색으로 */}
       <div
-        className={`relative aspect-[16/10] ${ebook.coverImage ? 'bg-slate-100' : `bg-gradient-to-br ${ebook.cover}`}`}
+        className={`relative aspect-[16/10] bg-gradient-to-br ${(ebook.category && COVER_BY_CATEGORY[ebook.category]) || COVER_DEFAULT}`}
       >
-        {ebook.coverImage ? (
-          <img
-            src={ebook.coverImage}
-            alt={ebook.title}
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-        ) : (
-          <span className="absolute inset-0 grid place-items-center text-5xl">{ebook.emoji}</span>
+        {ebook.coverImage && (
+          <>
+            <img src={ebook.coverImage} alt="" className="absolute inset-0 h-full w-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/30 to-slate-950/10" />
+          </>
         )}
-        <span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-xs font-semibold text-slate-700">
-          전자책
-        </span>
-        {ebook.isNew && (
-          <span className="absolute left-3 bottom-3 rounded-full bg-brand-600 px-2 py-0.5 text-[11px] font-bold text-white">
-            NEW
+        <div className="absolute left-3 top-3 flex items-center gap-1.5">
+          <span className="rounded-full bg-white/15 px-2.5 py-1 text-[11px] font-semibold tracking-wider text-white backdrop-blur">
+            전자책{ebook.category ? ` · ${ebook.category}` : ''}
           </span>
-        )}
+          {ebook.isNew && (
+            <span className="rounded-full bg-gold-500 px-2 py-1 text-[10px] font-bold tracking-wider text-white">
+              NEW
+            </span>
+          )}
+        </div>
+        <h3 className="absolute inset-x-4 bottom-4 line-clamp-2 text-lg font-bold leading-snug text-white">
+          {ebook.title}
+        </h3>
         <button
           onClick={(e) => {
             e.preventDefault()
@@ -54,10 +56,7 @@ export default function EbookCard({ ebook }: { ebook: Ebook }) {
       </div>
 
       <div className="flex flex-1 flex-col p-4">
-        <h3 className="line-clamp-2 font-bold leading-snug text-slate-900 group-hover:text-brand-700">
-          {ebook.title}
-        </h3>
-        <div className="mt-2 flex items-center gap-1.5 text-xs text-slate-500">
+        <div className="flex items-center gap-1.5 text-xs text-slate-500">
           <ExpertAvatar emoji={expert?.avatar ?? ebook.avatar} src={expert?.avatarUrl} size={18} />
           <span className="truncate">{ebook.author}</span>
         </div>
@@ -82,7 +81,7 @@ export default function EbookCard({ ebook }: { ebook: Ebook }) {
               </div>
             )}
             <span
-              className={`text-lg font-black ${isPaid ? 'text-slate-900' : 'text-emerald-600'}`}
+              className={`text-lg font-black ${isPaid ? 'text-slate-900' : 'text-gold-600'}`}
             >
               {formatPrice(ebook.price)}
             </span>
