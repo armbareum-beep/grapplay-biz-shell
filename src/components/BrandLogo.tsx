@@ -1,20 +1,16 @@
-// 파이네시스 워드마크 — 한국어 "파이네시스" + 아래 작게 영문 "PHYNESIS" (docs/plan/10-rebrand-phynesis.md D2).
-// 서체: SUIT Bold 서브셋(font-wordmark, src/index.css). 자간은 한글 +0.04em, 영문 +0.28em.
-// PNS 심볼은 파비콘·앱 아이콘에만 쓰고 화면 안에는 넣지 않는다.
+// 파이네시스 브랜드 마크 — PH 모노그램 (docs/plan/10-rebrand-phynesis.md D2).
+// 원본 PNG를 벡터로 추적한 패스. 색은 currentColor를 따르므로 밝은/어두운 배경 모두에서 쓴다.
 // 헤더·푸터·로그인 화면이 공용으로 쓴다. 링크가 필요하면 바깥에서 <Link>로 감싼다.
+// 정적 파일이 필요할 땐 public/logo/mark.svg (파비콘·앱 아이콘은 public/favicon-*).
 
 type Size = 'sm' | 'md' | 'lg'
 
-const KO: Record<Size, string> = {
-  sm: 'text-lg',
-  md: 'text-xl sm:text-2xl',
-  lg: 'text-3xl',
-}
-const EN: Record<Size, string> = {
-  sm: 'text-[8px]',
-  md: 'text-[8px] sm:text-[9px]',
-  lg: 'text-[11px]',
-}
+// 마크 원본 비율 670×700 — 높이 기준으로 크기를 정한다.
+// 정사각에 가까운 마크라, 같은 존재감을 내려면 2줄 텍스트 워드마크보다 높이를 키워야 한다.
+const BOX: Record<Size, number> = { sm: 26, md: 32, lg: 52 }
+
+const PATH =
+  'M668 0 670 0 670 516 665 516 654 508 648 506 646 503 640 501 636 497 630 495 626 491 620 489 616 485 610 483 601 476 595 474 583 465 577 463 573 459 545 443 544 323 513 346 499 359 433 403 429 404 427 407 411 416 409 419 405 420 374 442 370 443 368 446 344 462 340 463 335 468 331 469 296 494 284 506 272 522 265 535 259 552 257 562 257 641 201 670 200 672 161 692 151 699 146 700 146 567 144 557 144 540 149 523 163 497 187 473 223 452 267 423 271 422 271 420 276 419 276 417 279 417 279 415 282 415 282 413 324 388 345 373 349 372 351 369 355 368 377 352 381 351 515 260 533 240 540 226 545 207 545 74Z M99 185 280 185 298 188 314 194 339 211 339 213 341 213 353 227 360 241 362 242 368 258 371 273 372 288 370 304 365 319 360 325 359 329 346 342 346 344 343 344 341 348 337 349 337 351 327 355 327 357 319 360 319 362 312 365 297 376 283 383 252 404 248 405 218 425 212 427 210 430 204 432 192 441 186 443 184 446 162 458 135 480 118 503 110 521 108 530 107 641 74 659 68 664 56 669 50 674 31 683 23 689 15 692 14 694 0 700 0 504 2 490 13 465 24 453 24 451 41 437 221 338 228 331 230 331 240 319 248 299 249 259 246 259 212 275 211 277 185 290 172 299 121 326 115 331 105 335 104 337 87 345 56 364 7 390 6 282 8 266 13 250 28 224 49 204 70 192Z'
 
 export default function BrandLogo({
   size = 'md',
@@ -25,12 +21,18 @@ export default function BrandLogo({
   className?: string
   tone?: 'dark' | 'light' // light = 어두운 배경 위
 }) {
-  const ko = tone === 'dark' ? 'text-slate-900' : 'text-white'
-  const en = tone === 'dark' ? 'text-slate-500' : 'text-slate-300'
+  const h = BOX[size]
   return (
-    <span className={`inline-flex flex-col leading-none font-wordmark font-bold ${className}`} aria-label="파이네시스 PHYNESIS">
-      <span className={`${KO[size]} ${ko}`} style={{ letterSpacing: '0.04em' }}>파이네시스</span>
-      <span className={`${EN[size]} ${en} mt-1 pl-px`} style={{ letterSpacing: '0.28em' }}>PHYNESIS</span>
-    </span>
+    <svg
+      viewBox="0 0 670 700"
+      height={h}
+      width={(h * 670) / 700}
+      fill="currentColor"
+      role="img"
+      aria-label="파이네시스"
+      className={`${tone === 'dark' ? 'text-slate-900' : 'text-white'} ${className}`}
+    >
+      <path fillRule="evenodd" d={PATH} />
+    </svg>
   )
 }
