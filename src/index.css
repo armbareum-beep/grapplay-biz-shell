@@ -1,7 +1,9 @@
 @import "tailwindcss";
 
 /* 워드마크 전용 서체 — SUIT Bold 를 "파이네시스PHYNESIS" 13글자만 서브셋(1.3KB).
-   원본/재생성: scripts/build-wordmark.py. 화면 워드마크는 BrandLogo.tsx 가 .font-wordmark 로 사용. */
+   원본/재생성: scripts/build-wordmark.py.
+   브랜드 마크(헤더·푸터·로그인)는 BrandLogo.tsx 의 PH 모노그램 SVG 로 대체됐고,
+   이 서체는 랜딩의 대형 PHYNESIS 표기(히어로 배경 워터마크·철학 섹션)에만 남아 있다. */
 @font-face {
   font-family: "Wordmark";
   src: url("/fonts/wordmark.woff2") format("woff2");

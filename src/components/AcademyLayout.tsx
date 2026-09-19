@@ -137,7 +137,7 @@ export default function AcademyLayout({ children }: { children: React.ReactNode 
             <div>
               <BrandLogo size="sm" tone="light" />
               <p className="mt-4 max-w-xs text-sm text-brand-300">
-                전문가를 위한 비즈니스 교육 플랫폼.
+                전문가를 위한 비즈니스 교육 플랫폼
               </p>
             </div>
             <div className="grid grid-cols-2 gap-8 text-sm">

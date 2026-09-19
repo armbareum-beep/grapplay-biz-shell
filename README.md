@@ -72,9 +72,10 @@ npm run preview  # 빌드 결과 미리보기
 
 ## 브랜드 자산
 
-- 로고: `public/logo/` (PNS 심볼 원본 검정/흰, 투명 심볼). **심볼은 파비콘·앱 아이콘에만** 쓴다. 설명은 `public/logo/README.md`.
-- 파비콘·OG 이미지: `public/favicon-*.png`, `favicon.ico`, `apple-touch-icon.png`, `og-image.png`, `site.webmanifest`.
-- 워드마크: **파이네시스 / PHYNESIS** 2줄, SUIT Bold 서브셋(`public/fonts/wordmark.woff2`) — `src/components/BrandLogo.tsx`. 정적 SVG는 `public/logo/wordmark*.svg`.
+- 로고: **PH 모노그램 마크** 하나로 통일. 화면·파비콘·OG 이미지 전부 같은 마크를 쓴다. 자산과 재생성 방법은 `public/logo/README.md`.
+- 화면 마크: `src/components/BrandLogo.tsx` — 패스를 인라인 SVG로 들고 있어 `currentColor`를 따른다. 정적 파일은 `public/logo/mark*.svg`.
+- 파비콘·OG 이미지: `public/favicon-*.png`, `favicon.ico`, `apple-touch-icon.png`, `og-image.png`, `site.webmanifest`. 재생성은 `python3 scripts/build-brand-assets.py`.
+- 서브셋 웹폰트(`public/fonts/wordmark.woff2`, SUIT Bold)는 로고에서 빠졌고, 랜딩의 대형 PHYNESIS 표기에만 남아 있다.
 - 포인트 컬러: 딥 네이비 `brand-*` 단일 포인트, 섹션 배경 `bg-paper` (`src/index.css`). UI 아이콘은 `src/components/Icon.tsx` 선 아이콘(이모지 사용 안 함).
 - 카테고리: `src/data/mock.ts`의 `CATEGORIES` 6종 (마케팅·브랜딩·상권분석·투자·경영·인문교양). 구 값 `연금`은 `resolveCategory()`가 `투자`로 매핑.
 
