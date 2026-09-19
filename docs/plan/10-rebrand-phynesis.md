@@ -16,8 +16,8 @@
 
 | 항목 | 값 |
 |---|---|
-| 워드마크 | 한국어 **파이네시스** (헤더·푸터·로그인 글자 로고). 영문 `PHYNESIS`는 문장 내 병기용 |
-| 심볼(로고) | **PNS 모노그램** — `public/logo/` (검정/흰 원본 + 투명 심볼). 파비콘 적용 완료 (§6 E7) |
+| 워드마크 | 한국어 **파이네시스** 글자만 (헤더·푸터·로그인·OG 이미지). 영문 `PHYNESIS`는 문장 내 병기용 |
+| 심볼(로고) | **PNS 모노그램** — `public/logo/`. **파비콘·앱 아이콘에만 사용**, 화면 안에는 넣지 않는다 (§6 E7) |
 | 한글 표기 | **파이네시스** (고정. "피네시스" 표기는 사용하지 않음) |
 | 어원 | Paideia(파이데이아, 전인적 교육) + Phronesis(프로네시스, 실천적 지혜) |
 | 포지셔닝 | 전문가(전문직·자영 전문가·지도자 등)가 **자기 사업을 운영하는 데 필요한 실천 지식**을 다른 전문가에게서 배우는 교육 플랫폼 |
@@ -32,7 +32,7 @@
 ### 1.1 용어 설명 (D2·D3)
 
 - **워드마크(wordmark)** = 로고를 그림 없이 **글자만으로** 표현한 것. 지금 헤더 왼쪽 위의 `Grapplay-biz` 글자가
-  워드마크다. → 한국어 **파이네시스**로 확정(D2). PNS 심볼 이미지 옆에 붙여 쓴다.
+  워드마크다. → 한국어 **파이네시스**로 확정(D2). 화면에는 글자만 쓰고 PNS 심볼은 파비콘에만 쓴다.
 - **태그라인(tagline)** = 브랜드 이름 옆에 항상 붙는 **한 줄 설명**. 이름만 보고는 뭘 하는 서비스인지 알 수
   없으니 필요하다. 지금 푸터의 "체육관 경영자와 지도자를 위한 비즈니스 교육 플랫폼."이 태그라인이고,
   브라우저 탭 제목(`index.html`의 `<title>`)에도 같은 역할로 들어간다.
@@ -42,7 +42,7 @@
 | # | 결정 | 상태 | 값 / 비고 |
 |---|---|---|---|
 | D1 | 한글 표기 | ✅ 확정 | **파이네시스**. 로고·도메인·앱스토어·약관 전부 동일 표기 |
-| D2 | 워드마크 표기 | ✅ 확정 | 한국어 **파이네시스**. 헤더/푸터/로그인 3곳에 **PNS 심볼(`/logo/pns-symbol.png`) + "파이네시스"** 조합. `font-brand`(Inter, 라틴 전용)는 더 이상 쓰지 않고 Noto Sans KR 900으로 |
+| D2 | 워드마크 표기 | ✅ 확정 | 한국어 **파이네시스** 글자만. 헤더/푸터/로그인 3곳 공통(`BrandLogo.tsx`). **PNS 심볼은 파비콘·앱 아이콘 전용**. `font-brand`(Inter, 라틴 전용) 제거, Noto Sans KR 900 |
 | D3 | 태그라인 | 🟡 기본값 채택 | **"전문가를 위한 비즈니스 교육 플랫폼"** (푸터·`<title>`·`meta description`용, 서술형). 랜딩 히어로는 §3.1의 감성 카피를 따로 쓴다. 다른 의견 없으면 이대로 진행 |
 | D4 | 도메인 | ⬜ 미정 | phynesis.com / .kr / .co 확보 여부 확인 → Vercel 연결. **KIPRIS 상표 검색** 병행 |
 | D5 | 대표 이메일 | ⬜ 미정 | 현재 `grapplay.com@gmail.com` (푸터·문의·개인정보 책임자 3곳). 새 주소를 만들지, 당분간 유지할지 |
@@ -59,19 +59,19 @@
 
 ## 2. PR 1-A: 브랜드 표기 교체 (기계적) — ✅ 완료
 
-> 헤더·푸터·로그인 워드마크는 공용 컴포넌트 `src/components/BrandLogo.tsx`(PNS 심볼 + 파이네시스)로 뽑았다.
+> 헤더·푸터·로그인 워드마크는 공용 컴포넌트 `src/components/BrandLogo.tsx`("파이네시스" 글자만)로 뽑았다.
 > `index.html`에 `meta description`·OG 태그·`og-image.png`(1200×630)까지 추가. `--font-brand` 토큰 제거.
 
 ### 2.1 현재 상태 → 변경
 
 | 파일 | 위치 | 현재 | 변경 |
 |---|---|---|---|
-| `src/components/AcademyLayout.tsx` | :59-60 헤더 로고 | `Grapplay` + `-biz` 2 span | `<img src="/logo/pns-symbol.png" alt="" class="h-6">` + `파이네시스` 텍스트. `font-brand` 제거, `font-black` |
+| `src/components/AcademyLayout.tsx` | :59-60 헤더 로고 | `Grapplay` + `-biz` 2 span | `<BrandLogo>` — `파이네시스` 텍스트만, `font-black`. `font-brand` 제거 |
 | `src/components/AcademyLayout.tsx` | :142-143 푸터 로고 | 같음 | 같음 |
 | `src/components/AcademyLayout.tsx` | :146 푸터 설명 | "체육관 경영자와 지도자를 위한 비즈니스 교육 플랫폼." | "전문가를 위한 비즈니스 교육 플랫폼." (D3) |
 | `src/components/AcademyLayout.tsx` | :168 주석 | "그래플레이 본사이트와 동일" | "운영 법인 그래플레이 사업자 정보" |
 | `src/components/AcademyLayout.tsx` | :189 저작권 | `© 2026 Grapplay.` | `© 2026 PHYNESIS. Operated by 그래플레이.` (D9) |
-| `src/pages/AuthPage.tsx` | :55-56 로고 | `Grapplay` + `-biz` | 심볼 + `파이네시스` (헤더와 동일 조합) |
+| `src/pages/AuthPage.tsx` | :55-56 로고 | `Grapplay` + `-biz` | `<BrandLogo size="lg">` (헤더와 동일, 글자만) |
 | `index.html` | `<title>` | "그래플레이 비즈 — 체육관 경영자를 위한 비즈니스 교육" | "파이네시스 — 전문가를 위한 비즈니스 교육 플랫폼" + `<meta name="description">` 신설 |
 | `package.json` | `name` | `grapplay-biz` | `phynesis` |
 | `src/data/mock.ts` | :1 주석 | "그래플레이 비즈 —" | "파이네시스 —" |
@@ -264,7 +264,7 @@ npm run build
 | E4 | 토스페이먼츠 | 상점명(결제창·영수증·카드 명세 표기) | `orderName`은 강의 제목이라 코드 변경 없음(`Checkout.tsx:72`). 상점명은 대시보드 설정 |
 | E5 | Vimeo | 폴더/프로젝트명 | 선택. 사용자 비노출 |
 | E6 | Supabase 프로젝트명 | 대시보드 표시명만 | 선택. URL 불변 |
-| E7 | 파비콘·OG 이미지 | ✅ 완료 — 파비콘 세트 + `og-image.png`(1200×630, 심볼+워드마크+태그라인) + OG/twitter 메타 태그 | 완료 |
+| E7 | 파비콘·OG 이미지 | ✅ 완료 — 파비콘 세트(PNS 심볼) + `og-image.png`(1200×630, 워드마크+태그라인, 심볼 없음) + OG/twitter 메타 태그 | 완료 |
 | E8 | 통신판매업 | 신고 사항 중 **인터넷 도메인** 변경 신고 | 도메인 바뀌면 필요. 상호는 불변 |
 | E9 | 공지 | 약관 변경 공지 배너 (관리자 배너 탭) — 배포 7일 전 | §2.2 |
 | E10 | GitHub | 리포 rename(D10), Vercel Git 연동 재확인 | 선택 |
