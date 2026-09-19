@@ -7,6 +7,8 @@ import CourseCard from '../components/CourseCard'
 import CourseCarousel from '../components/CourseCarousel'
 import EbookCard from '../components/EbookCard'
 import ExpertAvatar from '../components/ExpertAvatar'
+import Icon from '../components/Icon'
+import { COVER_BY_CATEGORY, COVER_DEFAULT, formatPrice, type Course } from '../data/mock'
 import { maskName, resolveGradient, type PromoBanner } from '../data/mockMarketplace'
 
 // 랜딩 — 정보 구조: 문제 제시 → 콘텐츠 → 분야 → 철학 → 신뢰(전문가·후기) → 가입
@@ -42,6 +44,15 @@ export default function AcademyLanding() {
       text: r.content,
     }))
 
+  // 후기 집계 (별점 있는 공개 후기만)
+  const rated = courseReviews.filter((r) => !r.hidden && (r.rating ?? 0) > 0)
+  const ratingSummary = rated.length
+    ? { avg: rated.reduce((s, r) => s + (r.rating ?? 0), 0) / rated.length, count: rated.length }
+    : null
+  // 전문가별 강의 수
+  const courseCountByExpert: Record<string, number> = {}
+  for (const c of courses) courseCountByExpert[c.expertId] = (courseCountByExpert[c.expertId] ?? 0) + 1
+
   // 히어로 숫자 — 실제 DB 수치만. 0이면 항목 자체를 숨긴다 (부풀리기 금지)
   const stats = [
     { value: CATEGORIES.length, label: '주제' },
@@ -52,7 +63,7 @@ export default function AcademyLanding() {
   return (
     <div>
       {/* 1. 히어로 — 다크 네이비 */}
-      <section className="relative overflow-hidden bg-brand-950 text-white">
+      <section className="bg-dots relative overflow-hidden bg-brand-950 text-white">
         <div className="relative mx-auto max-w-6xl px-4 pb-20 pt-16 sm:px-6 sm:pb-24 sm:pt-20 lg:pb-28 lg:pt-24">
           <p className="text-[11px] font-semibold tracking-[0.3em] text-brand-300">
             BUSINESS EDUCATION FOR PROFESSIONALS
@@ -116,7 +127,7 @@ export default function AcademyLanding() {
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
           <div className="grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:gap-16">
             <div>
-              <p className="text-[11px] font-bold tracking-[0.3em] text-gold-500">01 — 매일의 판단</p>
+              <p className="text-[11px] font-bold tracking-[0.3em] text-slate-400">01 — 매일의 판단</p>
               <h2 className="mt-3 text-3xl font-black leading-tight tracking-tight text-slate-900 sm:text-4xl">
                 사업을 하다 보면
                 <br />
@@ -155,7 +166,18 @@ export default function AcademyLanding() {
             desc="가장 많이 찾는 강의부터"
             moreTo="/library"
           />
-          {loading ? <CarouselSkeleton /> : <CourseCarousel courses={best} />}
+          {loading ? (
+            <CarouselSkeleton />
+          ) : (
+            <>
+              <FeaturedCourse course={best[0]} />
+              {best.length > 1 && (
+                <div className="mt-8">
+                  <CourseCarousel courses={best.slice(1)} />
+                </div>
+              )}
+            </>
+          )}
         </Section>
       )}
 
@@ -170,7 +192,7 @@ export default function AcademyLanding() {
                 to={`/library?cat=${encodeURIComponent(c.key)}`}
                 className="group relative border-b border-slate-300 py-7 pr-10 transition sm:px-6 sm:[&:nth-child(2n)]:border-l lg:[&:nth-child(2n)]:border-l-0 lg:[&:nth-child(3n+2)]:border-l lg:[&:nth-child(3n+2)]:border-r"
               >
-                <div className="text-xs tracking-[0.2em] text-gold-500">{String(i + 1).padStart(2, '0')}</div>
+                <div className="text-xs tracking-[0.2em] text-slate-400">{String(i + 1).padStart(2, '0')}</div>
                 <h3 className="mt-3 text-2xl font-black text-slate-900 group-hover:text-brand-600">{c.key}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-slate-500">{c.desc}</p>
                 <span className="absolute right-1 top-7 text-slate-400 transition group-hover:translate-x-1 group-hover:text-brand-600 sm:right-6">
@@ -211,16 +233,16 @@ export default function AcademyLanding() {
       )}
 
       {/* 6. 철학 — 다크. 브랜드가 기억되는 장면 */}
-      <section className="relative overflow-hidden bg-brand-950 text-white">
+      <section className="bg-dots relative overflow-hidden bg-brand-950 text-white">
         <div className="relative mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-28">
           <div className="grid gap-12 lg:grid-cols-2 lg:gap-20">
             <div>
-              <p className="text-[11px] font-semibold tracking-[0.3em] text-gold-400">PAIDEIA</p>
+              <p className="text-[11px] font-semibold tracking-[0.3em] text-brand-300">PAIDEIA</p>
               <p className="mt-3 text-2xl font-black sm:text-3xl">파이데이아</p>
               <p className="mt-4 max-w-sm leading-relaxed text-brand-200">사람을 성장시키는 배움.</p>
             </div>
             <div>
-              <p className="text-[11px] font-semibold tracking-[0.3em] text-gold-400">PHRONESIS</p>
+              <p className="text-[11px] font-semibold tracking-[0.3em] text-brand-300">PHRONESIS</p>
               <p className="mt-3 text-2xl font-black sm:text-3xl">프로네시스</p>
               <p className="mt-4 max-w-sm leading-relaxed text-brand-200">
                 현실에서 더 나은 결정을 내리는 실천적 지혜.
@@ -260,17 +282,20 @@ export default function AcademyLanding() {
                     <ul className="mt-2 space-y-0.5 text-xs text-slate-500">
                       {e.credentials.slice(0, 2).map((c) => (
                         <li key={c} className="truncate">
-                          <span className="mr-1 text-gold-500">✓</span>
+                          <span className="mr-1 text-brand-600">✓</span>
                           {c}
                         </li>
                       ))}
                     </ul>
                   )}
-                  {(e.categories ?? (e.category ? [e.category] : [])).length > 0 && (
-                    <div className="mt-2 text-[11px] tracking-wider text-slate-400">
-                      {(e.categories ?? [e.category]).join(' · ')}
-                    </div>
-                  )}
+                  <div className="mt-2 flex flex-wrap items-center gap-x-3 text-[11px] tracking-wider text-slate-400">
+                    {courseCountByExpert[e.id] > 0 && (
+                      <span className="font-semibold text-slate-600">강의 {courseCountByExpert[e.id]}개</span>
+                    )}
+                    {(e.categories ?? (e.category ? [e.category] : [])).length > 0 && (
+                      <span>{(e.categories ?? [e.category]).join(' · ')}</span>
+                    )}
+                  </div>
                 </div>
               </Link>
             ))}
@@ -282,13 +307,24 @@ export default function AcademyLanding() {
       {tickerReviews.length > 0 && (
         <Section divider>
           <SectionHeader label="07 — 후기" title="수강생들이 남긴 말" desc="실제 수강 후기" />
-          <div className="no-scrollbar mt-2 overflow-hidden">
+          {ratingSummary && (
+            <div className="mt-6 flex items-center gap-4 text-sm">
+              <span className="text-2xl font-black text-slate-900">
+                <span className="mr-1 text-amber-400">★</span>
+                {ratingSummary.avg.toFixed(1)}
+                <span className="ml-1 text-sm font-medium text-slate-400">/ 5.0</span>
+              </span>
+              <span className="h-5 w-px bg-slate-200" />
+              <span className="font-semibold text-slate-700">{ratingSummary.count}개의 리뷰</span>
+            </div>
+          )}
+          <div className="no-scrollbar mt-6 overflow-hidden">
             <div className="flex w-max animate-marquee gap-4">
               {[...tickerReviews, ...tickerReviews].map((r, i) => (
                 <div key={i} className="w-80 shrink-0 rounded-lg border border-slate-200 bg-white p-5">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-semibold text-slate-800">{r.name}</span>
-                    {r.rating > 0 && <span className="text-gold-500">{'★'.repeat(r.rating)}</span>}
+                    {r.rating > 0 && <span className="text-amber-400">{'★'.repeat(r.rating)}</span>}
                   </div>
                   {r.course && <div className="mt-1 text-xs text-brand-600">{r.course}</div>}
                   <p className="mt-2 line-clamp-2 text-sm text-slate-600">{r.text}</p>
@@ -319,9 +355,77 @@ export default function AcademyLanding() {
           >
             파이네시스 시작하기 →
           </Link>
+          <p className="mt-4 text-sm text-slate-400">가입만 하면 무료 강의를 바로 볼 수 있습니다.</p>
         </div>
       </section>
     </div>
+  )
+}
+
+/* ── 대표 강의 미리보기 카드 — 가장 많이 듣는 강의 1개를 크게. 미리보기 강좌가 있으면 재생 버튼이 #video 로 간다 ── */
+function FeaturedCourse({ course }: { course: Course }) {
+  const { getExpert, getCourseRating } = useBizData()
+  const expert = getExpert(course.expertId)
+  const { rating, count } = getCourseRating(course.id)
+  const preview = course.curriculum.find((l) => l.preview)
+  const to = preview ? `/courses/${course.id}#video` : `/courses/${course.id}`
+  return (
+    <Link
+      to={to}
+      className="group mt-8 grid overflow-hidden rounded-lg border border-slate-200 bg-white transition hover:border-brand-600 lg:grid-cols-[3fr_2fr]"
+    >
+      <div
+        className={`relative aspect-[16/9] bg-gradient-to-br lg:aspect-auto lg:min-h-[320px] ${COVER_BY_CATEGORY[course.category] ?? COVER_DEFAULT}`}
+      >
+        {course.coverImage && (
+          <>
+            <img src={course.coverImage} alt="" className="absolute inset-0 h-full w-full object-cover" />
+            <div className="absolute inset-0 bg-slate-950/40 transition group-hover:bg-slate-950/30" />
+          </>
+        )}
+        <span className="absolute left-4 top-4 rounded-full bg-white/15 px-2.5 py-1 text-[11px] font-semibold tracking-wider text-white backdrop-blur">
+          {course.category}
+        </span>
+        {/* 재생 버튼 */}
+        <span className="absolute left-1/2 top-1/2 grid h-16 w-16 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-white text-brand-950 shadow-lg transition group-hover:scale-105">
+          <Icon name="play-circle" size={30} strokeWidth={1.5} />
+        </span>
+        {preview && (
+          <span className="absolute bottom-4 left-4 rounded-md bg-slate-950/70 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur">
+            무료 미리보기 · {preview.title}
+          </span>
+        )}
+      </div>
+      <div className="flex flex-col p-6 sm:p-8">
+        <p className="text-[11px] font-bold tracking-[0.3em] text-slate-400">FEATURED</p>
+        <h3 className="mt-3 text-2xl font-black leading-snug text-slate-900 group-hover:text-brand-600 sm:text-3xl">
+          {course.title}
+        </h3>
+        {course.subtitle && <p className="mt-3 text-slate-500">{course.subtitle}</p>}
+        <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slate-500">
+          {expert && (
+            <span className="flex items-center gap-1.5">
+              <ExpertAvatar emoji={expert.avatar} src={expert.avatarUrl} size={20} />
+              {expert.name}
+            </span>
+          )}
+          <span>{course.lessonCount}강 · {course.durationMin}분</span>
+          {count > 0 && (
+            <span>
+              <span className="text-amber-400">★</span> {rating.toFixed(1)} ({count})
+            </span>
+          )}
+        </div>
+        <div className="mt-auto flex items-end justify-between pt-8">
+          <span className={`text-xl font-black ${course.price > 0 ? 'text-slate-900' : 'text-brand-600'}`}>
+            {formatPrice(course.price)}
+          </span>
+          <span className="text-sm font-semibold text-brand-600 group-hover:underline">
+            {preview ? '미리보기 재생 →' : '자세히 →'}
+          </span>
+        </div>
+      </div>
+    </Link>
   )
 }
 
@@ -434,7 +538,7 @@ function SectionHeader({
   return (
     <div className="flex items-end justify-between">
       <div>
-        {label && <p className="text-[11px] font-bold tracking-[0.3em] text-gold-500">{label}</p>}
+        {label && <p className="text-[11px] font-bold tracking-[0.3em] text-slate-400">{label}</p>}
         <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">{title}</h2>
         <p className="mt-2 text-sm text-slate-500">{desc}</p>
       </div>

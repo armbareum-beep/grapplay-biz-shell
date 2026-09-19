@@ -31,10 +31,6 @@
   --color-brand-900: #152238;
   --color-brand-950: #0d1526;
 
-  /* 2차 액센트 골드 — 섹션 번호·라벨·무료 표시 등 소량. 버튼에는 쓰지 않는다 */
-  --color-gold-400: #d4a84b;
-  --color-gold-500: #b8892b;
-  --color-gold-600: #9a7020;
   /* 섹션 리듬용 따뜻한 오프화이트 */
   --color-paper: #f6f4ef;
 }
@@ -46,6 +42,14 @@ html {
 body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+}
+
+/* 다크 섹션(brand-950) 질감 — 4% 점 격자 + 좌상단 옅은 빛 번짐. 평면감을 없애되 절제 유지 */
+.bg-dots {
+  background-image:
+    radial-gradient(ellipse 60% 50% at 15% 0%, rgba(111, 136, 179, 0.18), transparent 70%),
+    radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 100% 100%, 24px 24px;
 }
 
 /* 가로 스크롤 캐러셀에서 스크롤바 숨김 */
