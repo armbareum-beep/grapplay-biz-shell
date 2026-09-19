@@ -74,7 +74,7 @@ npm run preview  # 빌드 결과 미리보기
 
 - 로고: `public/logo/` (PNS 심볼 원본 검정/흰, 투명 심볼). **심볼은 파비콘·앱 아이콘에만** 쓴다. 설명은 `public/logo/README.md`.
 - 파비콘·OG 이미지: `public/favicon-*.png`, `favicon.ico`, `apple-touch-icon.png`, `og-image.png`, `site.webmanifest`.
-- 워드마크: 한국어 **파이네시스** — `src/components/BrandLogo.tsx`.
+- 워드마크: **파이네시스 / PHYNESIS** 2줄, SUIT Bold 서브셋(`public/fonts/wordmark.woff2`) — `src/components/BrandLogo.tsx`. 정적 SVG는 `public/logo/wordmark*.svg`.
 - 포인트 컬러: violet 계열 단색 (`src/index.css`).
 - 카테고리: `src/data/mock.ts`의 `CATEGORIES` (현재 4종, 6종 개편 예정 — Phase 10 §4).
 
