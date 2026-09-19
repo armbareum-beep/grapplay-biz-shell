@@ -11,9 +11,10 @@ import Icon from '../components/Icon'
 import { COVER_BY_CATEGORY, COVER_DEFAULT, formatPrice, type Course } from '../data/mock'
 import { maskName, resolveGradient, type PromoBanner } from '../data/mockMarketplace'
 
-// 랜딩 — 정보 구조: 문제 제시 → 콘텐츠 → 분야 → 철학 → 신뢰(전문가·후기) → 가입
+// 랜딩 — 정보 구조: 문제 제시 → 콘텐츠 → 철학 → 신뢰(전문가·후기) → 가입
 // (docs/plan/10-rebrand-phynesis.md §1.3). 강의몰 순서(카테고리 → 인기 → 최신)를 쓰지 않는다.
-// 섹션 리듬: 다크 히어로 → 흰색(판단) → 흰색(강의) → 종이색(분야) → 다크(철학) → 흰색(전문가·후기) → 종이색(CTA) → 다크 푸터
+// '분야'(카테고리 편집형 표)는 '01 매일의 판단' 질문 목록과 내용이 겹쳐 제거(2026-09-19).
+// 섹션 리듬: 다크 히어로 → 흰색(판단) → 흰색(강의) → 다크(철학) → 흰색(전문가·후기) → 종이색(CTA) → 다크 푸터
 
 // 사업가가 매일 마주치는 판단 — 각 질문이 해당 카테고리 필터로 이어진다
 const DECISIONS: { q: string; cat: Category }[] = [
@@ -181,33 +182,10 @@ export default function AcademyLanding() {
         </Section>
       )}
 
-      {/* 4. 분야별 — 종이색 배경, 편집형 표 */}
-      <section className="bg-paper">
-        <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
-          <SectionHeader label="03 — 분야" title="여섯 가지 주제" desc="전문가의 사업에 꼭 필요한 것만" />
-          <div className="mt-10 grid grid-cols-1 border-t border-slate-300 sm:grid-cols-2 lg:grid-cols-3">
-            {CATEGORIES.map((c, i) => (
-              <Link
-                key={c.key}
-                to={`/library?cat=${encodeURIComponent(c.key)}`}
-                className="group relative border-b border-slate-300 py-7 pr-10 transition sm:px-6 sm:[&:nth-child(2n)]:border-l lg:[&:nth-child(2n)]:border-l-0 lg:[&:nth-child(3n+2)]:border-l lg:[&:nth-child(3n+2)]:border-r"
-              >
-                <div className="text-xs tracking-[0.2em] text-slate-400">{String(i + 1).padStart(2, '0')}</div>
-                <h3 className="mt-3 text-2xl font-black text-slate-900 group-hover:text-brand-600">{c.key}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-slate-500">{c.desc}</p>
-                <span className="absolute right-1 top-7 text-slate-400 transition group-hover:translate-x-1 group-hover:text-brand-600 sm:right-6">
-                  →
-                </span>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 5. 새 강의 + 전자책 (있을 때만) */}
+      {/* 4. 새 강의 + 전자책 (있을 때만) */}
       {(loading || latest.length > 0) && (
         <Section>
-          <SectionHeader label="04 — 신규" title="새로 올라온 강의" desc="이번 달 추가된 강의" moreTo="/library" />
+          <SectionHeader label="03 — 신규" title="새로 올라온 강의" desc="이번 달 추가된 강의" moreTo="/library" />
           {loading ? (
             <GridSkeleton />
           ) : (
@@ -221,7 +199,7 @@ export default function AcademyLanding() {
       )}
       {ebooks.length > 0 && (
         <Section divider>
-          <SectionHeader label="05 — 전자책" title="바로 읽는 사업 운영 가이드" desc="워크북·체크리스트·가이드" moreTo="/ebooks" />
+          <SectionHeader label="04 — 전자책" title="바로 읽는 사업 운영 가이드" desc="워크북·체크리스트·가이드" moreTo="/ebooks" />
           <div className="no-scrollbar -mx-4 mt-2 flex snap-x gap-4 overflow-x-auto px-4 pb-2 sm:-mx-6 sm:px-6">
             {ebooks.map((e) => (
               <div key={e.id} className="w-64 shrink-0 snap-start sm:w-72">
@@ -232,7 +210,7 @@ export default function AcademyLanding() {
         </Section>
       )}
 
-      {/* 6. 철학 — 다크. 브랜드가 기억되는 장면 */}
+      {/* 5. 철학 — 다크. 브랜드가 기억되는 장면 */}
       <section className="bg-dots relative overflow-hidden bg-brand-950 text-white">
         <div className="relative mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-28">
           <div className="grid gap-12 lg:grid-cols-2 lg:gap-20">
@@ -263,10 +241,10 @@ export default function AcademyLanding() {
         </div>
       </section>
 
-      {/* 7. 전문가 — 신뢰 */}
+      {/* 6. 전문가 — 신뢰 */}
       {experts.length > 0 && (
         <Section>
-          <SectionHeader label="06 — 전문가" title="현장에서 사업을 키운 사람들" desc="이론이 아니라 자기 사업으로 증명한 전문가" moreTo="/experts" />
+          <SectionHeader label="05 — 전문가" title="현장에서 사업을 키운 사람들" desc="이론이 아니라 자기 사업으로 증명한 전문가" moreTo="/experts" />
           <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {experts.map((e) => (
               <Link
@@ -303,14 +281,14 @@ export default function AcademyLanding() {
         </Section>
       )}
 
-      {/* 8. 후기 (마퀴) — 신뢰 */}
+      {/* 7. 후기 (마퀴) — 신뢰 */}
       {tickerReviews.length > 0 && (
         <Section divider>
-          <SectionHeader label="07 — 후기" title="수강생들이 남긴 말" desc="실제 수강 후기" />
+          <SectionHeader label="06 — 후기" title="수강생들이 남긴 말" desc="실제 수강 후기" />
           {ratingSummary && (
             <div className="mt-6 flex items-center gap-4 text-sm">
               <span className="text-2xl font-black text-slate-900">
-                <span className="mr-1 text-amber-400">★</span>
+                <span className="mr-1">★</span>
                 {ratingSummary.avg.toFixed(1)}
                 <span className="ml-1 text-sm font-medium text-slate-400">/ 5.0</span>
               </span>
@@ -324,7 +302,7 @@ export default function AcademyLanding() {
                 <div key={i} className="w-80 shrink-0 rounded-lg border border-slate-200 bg-white p-5">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-semibold text-slate-800">{r.name}</span>
-                    {r.rating > 0 && <span className="text-amber-400">{'★'.repeat(r.rating)}</span>}
+                    {r.rating > 0 && <span>{'★'.repeat(r.rating)}</span>}
                   </div>
                   {r.course && <div className="mt-1 text-xs text-brand-600">{r.course}</div>}
                   <p className="mt-2 line-clamp-2 text-sm text-slate-600">{r.text}</p>
@@ -335,7 +313,7 @@ export default function AcademyLanding() {
         </Section>
       )}
 
-      {/* 9. 최종 CTA — 종이색 */}
+      {/* 8. 최종 CTA — 종이색 */}
       <section className="bg-paper">
         <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-28">
           <p className="text-3xl font-black leading-tight tracking-tight text-slate-900 sm:text-5xl">
@@ -412,7 +390,7 @@ function FeaturedCourse({ course }: { course: Course }) {
           <span>{course.lessonCount}강 · {course.durationMin}분</span>
           {count > 0 && (
             <span>
-              <span className="text-amber-400">★</span> {rating.toFixed(1)} ({count})
+              <span>★</span> {rating.toFixed(1)} ({count})
             </span>
           )}
         </div>
