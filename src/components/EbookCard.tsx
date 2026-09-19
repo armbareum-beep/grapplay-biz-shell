@@ -18,7 +18,7 @@ export default function EbookCard({ ebook }: { ebook: Ebook }) {
   return (
     <Link
       to={`/ebooks/${ebook.id}`}
-      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white transition hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-200/60"
+      className="group flex h-full flex-col overflow-hidden rounded-lg border border-slate-200 bg-white transition hover:border-brand-600"
     >
       {/* 표지 — 이미지 위 어두운 오버레이 또는 카테고리별 다크 그라데이션. 제목은 표지 안에 흰색으로 */}
       <div
