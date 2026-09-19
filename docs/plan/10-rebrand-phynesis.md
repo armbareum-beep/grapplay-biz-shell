@@ -1,6 +1,6 @@
 # Phase 10 — 리브랜딩: 그래플레이 비즈 → 파이네시스 (PHYNESIS)
 
-> 작성일: 2026-09-19 · 상태: **계획 (미착수)**
+> 작성일: 2026-09-19 · 갱신: 2026-09-19 (카테고리 결정 반영) · 상태: **계획 (미착수)**
 > 선행: 없음 (Phase 0~9 완료 상태 기준). 후속: 없음.
 > 관련: [00-db-schema.md](./00-db-schema.md), [DB-SCHEMA.md](./DB-SCHEMA.md), [../tasks/01-copy-labels.md](../tasks/01-copy-labels.md)(카테고리 rename 선례)
 
@@ -10,7 +10,7 @@
 
 "그래플레이의 하위 서비스(주짓수 체육관 관장 대상)"를 **"모든 분야 전문가를 위한 독립 브랜드
 파이네시스"** 로 바꾼다. 단순 이름 교체가 아니라 **(1) 브랜드 표기 교체 → (2) 체육관 전제 카피 일반화
-→ (3) 카테고리 구조를 다분야 대응으로 개편 → (4) 외부 서비스 설정 교체** 4단계로 진행한다.
+→ (3) 카테고리 4개 → 6개 개편 → (4) 외부 서비스 설정 교체** 4단계로 진행한다.
 
 ### 브랜드 정의
 
@@ -20,29 +20,39 @@
 | 한글 표기 | **파이네시스** (고정. "피네시스" 표기는 사용하지 않음) |
 | 어원 | Paideia(파이데이아, 전인적 교육) + Phronesis(프로네시스, 실천적 지혜) |
 | 포지셔닝 | 전문가(전문직·자영 전문가·지도자 등)가 **자기 사업을 운영하는 데 필요한 실천 지식**을 다른 전문가에게서 배우는 교육 플랫폼 |
-| 그래플레이와의 관계 | **없음.** 별개 브랜드. 그래플레이는 파이네시스의 첫 번째 분야(피트니스·무도) 콘텍스트로만 남는다. "by Grapplay" 병기 안 함. |
+| 그래플레이와의 관계 | **없음.** 별개 브랜드. 기존 체육관 경영 콘텐츠는 파이네시스의 초기 콘텐츠로 남을 뿐이다. "by Grapplay" 병기 안 함. |
 | 운영 주체 (법인) | 그래플레이 (상호명·사업자등록·통신판매업 신고는 **그대로 유지**) — §2.4 참고 |
+| 카테고리 (6) | **마케팅 · 상권분석 · 투자 · 경영 · 브랜딩 · 인문교양** — §4 |
 
 ---
 
-## 1. 사전 결정 사항 (코드 작업 전에 확정)
+## 1. 사전 결정 사항
 
-코드를 건드리기 전에 아래를 정한다. 미정 항목은 작업 착수 시점에 채운다.
+### 1.1 용어 설명 (D2·D3)
 
-| # | 결정 | 상태 | 비고 |
+- **워드마크(wordmark)** = 로고를 그림 없이 **글자만으로** 표현한 것. 지금 헤더 왼쪽 위의 `Grapplay-biz` 글자가
+  워드마크다. 결정할 것은 "PHYNESIS"(전부 대문자)로 쓸지 "Phynesis"(첫 글자만 대문자)로 쓸지 하나다.
+- **태그라인(tagline)** = 브랜드 이름 옆에 항상 붙는 **한 줄 설명**. 이름만 보고는 뭘 하는 서비스인지 알 수
+  없으니 필요하다. 지금 푸터의 "체육관 경영자와 지도자를 위한 비즈니스 교육 플랫폼."이 태그라인이고,
+  브라우저 탭 제목(`index.html`의 `<title>`)에도 같은 역할로 들어간다.
+
+### 1.2 결정표
+
+| # | 결정 | 상태 | 값 / 비고 |
 |---|---|---|---|
-| D1 | 한글 표기 "파이네시스" | ✅ 확정 | 로고·도메인·앱스토어·약관 전부 동일 표기 |
-| D2 | 워드마크 표기: `PHYNESIS` 전부 대문자 vs `Phynesis` | ⬜ 미정 | 헤더/푸터/로그인 3곳에 동일 적용. 현재 `font-brand`(Inter) 유지 여부도 함께 |
-| D3 | 태그라인 (한 줄 설명) | ⬜ 미정 | 추상 이름이라 **항상 함께 노출**. 초안: "전문가의 사업을 가르치는 전문가", "실력은 있는데 사업이 막힐 때" |
+| D1 | 한글 표기 | ✅ 확정 | **파이네시스**. 로고·도메인·앱스토어·약관 전부 동일 표기 |
+| D2 | 워드마크 표기 | 🟡 기본값 채택 | **`PHYNESIS` 전부 대문자.** 현재 `font-brand`(Inter) 유지. 짧은 고유명사는 대문자가 로고로 안정적이고, 소문자 `y`가 섞이면 "Phy-"가 "피"로 읽힐 여지가 생긴다. 다른 의견 없으면 이대로 진행 |
+| D3 | 태그라인 | 🟡 기본값 채택 | **"전문가를 위한 비즈니스 교육 플랫폼"** (푸터·`<title>`·`meta description`용, 서술형). 랜딩 히어로는 §3.1의 감성 카피를 따로 쓴다. 다른 의견 없으면 이대로 진행 |
 | D4 | 도메인 | ⬜ 미정 | phynesis.com / .kr / .co 확보 여부 확인 → Vercel 연결. **KIPRIS 상표 검색** 병행 |
 | D5 | 대표 이메일 | ⬜ 미정 | 현재 `grapplay.com@gmail.com` (푸터·문의·개인정보 책임자 3곳). 새 주소를 만들지, 당분간 유지할지 |
-| D6 | 첫 출시 분야 범위 | ⬜ 미정 | "모든 전문가"의 실제 첫 타깃. 카테고리 구조(§4)의 **분야 목록**이 여기서 나온다 |
-| D7 | 카테고리 `연금` 명칭 | ⬜ 미정 | 4개 중 유일하게 협소한 이름. `재무·연금` 또는 `재무·세무` 제안 (§4.2) |
+| D6 | 분야(업종) 축 도입 | ✅ 결정: **도입 안 함** | 피트니스·무도 / 법률·세무 / 의료 같은 업종 분류를 만들지 않는다. 카테고리는 주제 단일 축으로 간다 (§4) |
+| D7 | 카테고리 개편 | ✅ 확정 | `연금` → **`투자`** rename. **`브랜딩`, `인문교양`** 신설. 총 6개 |
 | D8 | 브랜드 컬러 | ⬜ 미정 | 현재 violet 계열. 유지하면 CSS 변경 0. 바꾸면 `src/index.css` 토큰 + Tailwind 클래스 전수 교체(별도 작업) |
-| D9 | 저작권 표기 | ⬜ 미정 | 제안: `© 2026 PHYNESIS. Operated by 그래플레이.` |
+| D9 | 저작권 표기 | 🟡 기본값 채택 | `© 2026 PHYNESIS. Operated by 그래플레이.` |
 | D10 | GitHub 리포지토리 이름 | ⬜ 미정 | `grapplay-biz-shell` → `phynesis` (선택. 코드에 영향 없음) |
 
-> D2·D3·D7은 **PR 1(§2·§3) 착수 전**, D6은 **PR 2(§4) 착수 전**에 확정되어야 한다.
+> 🟡 기본값 항목은 코드 작업 착수 시 그대로 적용한다. 바꾸고 싶으면 착수 전에 이 표를 고친다.
+> D4·D5는 코드가 아니라 배포(§6)와 관련되므로 배포 전까지만 정하면 된다.
 
 ---
 
@@ -52,13 +62,13 @@
 
 | 파일 | 위치 | 현재 | 변경 |
 |---|---|---|---|
-| `src/components/AcademyLayout.tsx` | :59-60 헤더 로고 | `Grapplay` + `-biz` 2 span | `PHYNESIS` 1 span (D2). `-biz` span 삭제 |
+| `src/components/AcademyLayout.tsx` | :59-60 헤더 로고 | `Grapplay` + `-biz` 2 span | `PHYNESIS` 1 span. `-biz` span 삭제 |
 | `src/components/AcademyLayout.tsx` | :142-143 푸터 로고 | 같음 | 같음 |
-| `src/components/AcademyLayout.tsx` | :146 푸터 설명 | "체육관 경영자와 지도자를 위한 비즈니스 교육 플랫폼." | 태그라인(D3) |
+| `src/components/AcademyLayout.tsx` | :146 푸터 설명 | "체육관 경영자와 지도자를 위한 비즈니스 교육 플랫폼." | "전문가를 위한 비즈니스 교육 플랫폼." (D3) |
 | `src/components/AcademyLayout.tsx` | :168 주석 | "그래플레이 본사이트와 동일" | "운영 법인 그래플레이 사업자 정보" |
-| `src/components/AcademyLayout.tsx` | :189 저작권 | `© 2026 Grapplay.` | D9 |
+| `src/components/AcademyLayout.tsx` | :189 저작권 | `© 2026 Grapplay.` | `© 2026 PHYNESIS. Operated by 그래플레이.` (D9) |
 | `src/pages/AuthPage.tsx` | :55-56 로고 | `Grapplay` + `-biz` | `PHYNESIS` |
-| `index.html` | `<title>` | "그래플레이 비즈 — 체육관 경영자를 위한 비즈니스 교육" | "파이네시스 — {태그라인}" + `<meta name="description">` 신설 |
+| `index.html` | `<title>` | "그래플레이 비즈 — 체육관 경영자를 위한 비즈니스 교육" | "파이네시스 — 전문가를 위한 비즈니스 교육 플랫폼" + `<meta name="description">` 신설 |
 | `package.json` | `name` | `grapplay-biz` | `phynesis` |
 | `src/data/mock.ts` | :1 주석 | "그래플레이 비즈 —" | "파이네시스 —" |
 | `src/pages/AcademyCourseDetail.tsx` | :25 환불 안내 | "그래플레이 환불정책에 따라" | "파이네시스 환불정책에 따라" |
@@ -110,8 +120,8 @@
 | 파일:라인 | 현재 | 변경 제안 |
 |---|---|---|
 | `src/pages/AcademyLanding.tsx:36` | 체육관 경영, 오늘은 무엇을 배워볼까요? | 내 사업, 오늘은 무엇을 배워볼까요? |
-| `src/pages/AcademyLanding.tsx:39` | 마케팅·상권분석·연금·경영까지 — 현장 전문가의 비즈니스 강의 | 마케팅·상권분석·{D7}·경영까지 — 현장에서 사업을 키운 전문가의 강의 |
-| `src/pages/AcademyLanding.tsx:48` | 체육관 경영에 꼭 필요한 4가지 분야 | 전문가의 사업에 꼭 필요한 4가지 주제 |
+| `src/pages/AcademyLanding.tsx:39` | 마케팅·상권분석·연금·경영까지 — 현장 전문가의 비즈니스 강의 | 마케팅·브랜딩·투자·경영·인문교양까지 — 현장에서 사업을 키운 전문가의 강의 (PR 2와 함께 반영) |
+| `src/pages/AcademyLanding.tsx:48` | 체육관 경영에 꼭 필요한 4가지 분야 | 전문가의 사업에 꼭 필요한 6가지 주제 (PR 2와 함께 반영) |
 | `src/pages/AcademyLanding.tsx:67` | 관장님들이 가장 많이 찾는 강의 | 전문가들이 가장 많이 찾는 강의 |
 | `src/pages/AcademyLanding.tsx:99` | 바로 읽는 체육관 경영 가이드 | 바로 읽는 사업 운영 가이드 |
 | `src/pages/AcademyLanding.tsx:137` | 체육관 경영, 이제 혼자 고민하지 마세요 | 사업 고민, 이제 혼자 하지 마세요 |
@@ -136,18 +146,7 @@
 | `src/pages/academy-expert/AcademyCourseEditor.tsx:290` | 예) 체육관 첫 100명 회원 만들기 | 예) 첫 100명 고객 만들기 |
 | `src/pages/academy-expert/AcademyCourseEditor.tsx:87` | 체육관 운영의 현실적인 고민을 풀어드립니다. (기본 블록) | 현장의 현실적인 고민을 풀어드립니다. |
 
-### 3.3 카테고리 설명·이모지 (`src/data/mock.ts:7-12`)
-
-카테고리 **키(문자열)는 PR 2에서** 다루고, 여기서는 설명만 중립화한다.
-
-| key | 현재 desc | 변경 |
-|---|---|---|
-| 마케팅 | 신규 회원 모집과 브랜딩 전략 | 신규 고객 확보와 브랜딩 전략 |
-| 상권분석 | 입지 선정과 상권 데이터 읽는 법 | (유지) |
-| 연금 | 관장을 위한 노후·자산 설계 | 자영 전문가를 위한 노후·자산 설계 |
-| 경영 (🏋️) | 운영 효율과 수익 구조 설계 | (유지) · 이모지 🏋️ → 📈 |
-
-### 3.4 검증 (PR 1)
+### 3.3 검증 (PR 1)
 
 ```bash
 # 브랜드 잔존 — 사업자 정보 3곳(상호명) 외 0건이어야 함
@@ -164,114 +163,88 @@ npm run build                   # 타입체크 + 빌드
 
 ---
 
-## 4. PR 2: 카테고리 구조 개편 (다분야 대응)
+## 4. PR 2: 카테고리 4개 → 6개
 
-### 4.1 현재 구조와 문제
+### 4.1 현재 구조
 
 - `src/data/mock.ts:5` — `type Category = '마케팅' | '상권분석' | '연금' | '경영'` 하드코딩 union.
-- 이 타입/`CATEGORIES` 상수를 **12개 파일**이 import: `AcademyLanding`, `AcademyLibrary`, `AcademyEbooks`,
-  `ContentHub`, `AcademyExperts`, `AcademyCourseEditor`, `AcademyEbookEditor`, `ExpertProfileEditor`,
-  `admin/tabs/ExpertsTab`, `lib/expertApi`, `lib/adminApi`, `data/mockEbooks`.
-- DB: `courses.category`, `ebooks.category` = `text`, `experts.category` = `text`, `experts.categories` =
-  `text[]`. **check 제약 없음** → DB는 어떤 문자열이든 받는다. 제약은 앱 타입에만 있다.
-- 핵심 관찰: **현재 4개 카테고리는 "주제(topic)"이고 이미 업종 중립적**이다(마케팅·상권분석·재무·경영은
-  어느 전문가에게나 해당). 체육관 색은 `desc` 문구와 이모지, 그리고 `연금`이라는 협소한 이름에만 있다.
-  따라서 "업종"은 카테고리를 갈아엎는 게 아니라 **별도 축(분야, field)을 추가**하는 문제다.
+- `src/data/mock.ts:7-12` — `CATEGORIES` 상수 (key·emoji·desc). 필터 칩·에디터 select·랜딩 그리드가 전부
+  이 상수를 `map` 해서 그리므로 **상수에 항목을 추가하면 UI에 자동 반영**된다.
+- 이 타입/상수를 import 하는 파일 12개: `AcademyLanding`, `AcademyLibrary`, `AcademyEbooks`, `ContentHub`,
+  `AcademyExperts`, `AcademyCourseEditor`, `AcademyEbookEditor`, `ExpertProfileEditor`, `admin/tabs/ExpertsTab`,
+  `lib/expertApi`, `lib/adminApi`, `data/mockEbooks`. **타입이 union이므로 상수만 고치면 나머지는 자동으로 따라온다.**
+- DB: `courses.category`, `ebooks.category`, `experts.category` = `text`, `experts.categories` = `text[]`.
+  **check 제약 없음** → 새 카테고리 값 추가에 스키마 변경이 필요 없다. rename만 데이터 update가 필요하다.
 
-### 4.2 결정: 2축 분류 (주제 × 분야)
+### 4.2 결정된 카테고리 (D6·D7)
 
-| 축 | 의미 | 예 | 저장 위치 |
-|---|---|---|---|
-| **주제(topic)** = 기존 `category` | 무엇을 배우나 | 마케팅 · 상권분석 · 재무·연금(D7) · 경영 | `courses.category`, `ebooks.category`, `experts.categories` (기존 컬럼 그대로) |
-| **분야(field)** = 신규 | 누구를 위한 콘텐츠인가 | 피트니스·무도 · 의료·헬스케어 · 법률·세무 · 교육·학원 · 뷰티 · 크리에이터 … (D6에서 확정) | `courses.field`, `ebooks.field`, `experts.fields` (신규) |
+분야(업종) 축은 만들지 않는다. 주제 단일 축, 6개.
 
-- 분야는 **nullable / 빈 배열 허용** = "모든 분야 공통". 기존 콘텐츠는 마이그레이션에서
-  `'피트니스·무도'`로 일괄 지정 (현재 콘텐츠 전부 체육관 대상이므로).
-- 주제 4개는 **당분간 코드 상수 유지**. 분야 목록은 처음부터 DB 테이블로 두어 관리자가 추가할 수 있게 한다
-  (분야는 늘어날 것이 확실하고, 주제는 안정적이기 때문).
+| # | key | 변경 | emoji | desc (제안) |
+|---|---|---|---|---|
+| 1 | 마케팅 | 유지 | 📣 | 신규 고객 확보와 광고·홍보 전략 (현재 "신규 회원 모집과 브랜딩 전략" — 회원→고객, 브랜딩은 별도 카테고리로 분리) |
+| 2 | 브랜딩 | **신설** | 🎨 | 전문가 개인 브랜드와 포지셔닝 |
+| 3 | 상권분석 | 유지 | 📍 | 입지 선정과 상권 데이터 읽는 법 (유지) |
+| 4 | 투자 | **`연금` → rename** | 💰 | 사업 수익을 자산으로 키우는 투자·재무 설계 (현재 "관장을 위한 노후·자산 설계") |
+| 5 | 경영 | 유지 | 📈 | 운영 효율과 수익 구조 설계 (유지) · 이모지 🏋️ → 📈 |
+| 6 | 인문교양 | **신설** | 📚 | 사업의 안목을 넓히는 인문·교양 강의 |
 
-### 4.3 단계
+순서는 "고객을 모으고(마케팅·브랜딩) → 자리를 잡고(상권분석) → 돈을 키우고(투자·경영) → 사람을 키운다(인문교양)"
+흐름. 랜딩 그리드 순서에 그대로 쓴다.
 
-**4.3.1 `연금` → `재무·연금` rename (D7 확정 시)**
+### 4.3 변경
+
+**4.3.1 데이터 마이그레이션 — `연금` → `투자`**
 [`tasks/01-copy-labels.md`](../tasks/01-copy-labels.md)와 `supabase/migrations/20260615000000_category_rename_ebook_category.sql`
-의 "체육관 운영 → 경영" 선례를 그대로 따른다.
+의 "체육관 운영 → 경영" 선례를 그대로 따른다. 신설 2개는 마이그레이션 불필요(행이 없으므로).
 
 ```sql
--- supabase/migrations/2026MMDD000000_category_rename_finance.sql
-update courses set category = '재무·연금' where category = '연금';
-update ebooks  set category = '재무·연금' where category = '연금';
-update experts set category = '재무·연금' where category = '연금';
-update experts set categories = array_replace(categories, '연금', '재무·연금')
+-- supabase/migrations/2026MMDD000000_category_rename_invest.sql
+update courses set category = '투자' where category = '연금';
+update ebooks  set category = '투자' where category = '연금';
+update experts set category = '투자' where category = '연금';
+update experts set categories = array_replace(categories, '연금', '투자')
   where '연금' = any(categories);
 ```
-+ `src/data/mock.ts:5,10` 타입·상수 갱신. URL 파라미터 `?cat=연금` 북마크는 깨지므로
-`AcademyLibrary.tsx:16`, `AcademyEbooks.tsx:16`, `ContentHub.tsx:27`의 initialCat 판정 앞에 구 값 → 신 값
-매핑 1줄 추가.
 
-**4.3.2 분야(field) 테이블 + 컬럼**
+`docs/plan/DB-SCHEMA.md`의 카테고리 설명 문구에 6개 값 반영.
 
-```sql
--- supabase/migrations/2026MMDD000100_fields.sql
-create table if not exists fields (
-  key        text primary key,          -- '피트니스·무도'
-  label      text not null,             -- 표시명 (key와 같아도 됨)
-  emoji      text,
-  sort_order integer not null default 0,
-  is_active  boolean not null default true
-);
-alter table fields enable row level security;
-create policy "fields public read" on fields for select using (true);
--- 쓰기: 관리자만 (기존 is_admin() 헬퍼 재사용 — DB-SCHEMA.md 참고)
+**4.3.2 앱**
 
-alter table courses add column if not exists field  text references fields(key);
-alter table ebooks  add column if not exists field  text references fields(key);
-alter table experts add column if not exists fields text[] not null default '{}';
+| 파일 | 변경 |
+|---|---|
+| `src/data/mock.ts:3-12` | 주석 "카테고리 4종" → 6종. `Category` union에 `'투자' \| '브랜딩' \| '인문교양'` (연금 제거). `CATEGORIES` 배열을 §4.2 순서·emoji·desc로 교체 |
+| `src/pages/AcademyLanding.tsx:49` | 그리드 `grid-cols-2 … lg:grid-cols-4` → `grid-cols-2 sm:grid-cols-3 lg:grid-cols-6` (6칸 한 줄) 또는 `lg:grid-cols-3` (2줄). 카드 안 desc가 길어서 **`lg:grid-cols-3` 2줄 권장** |
+| `src/pages/AcademyLanding.tsx:39,48` | §3.1의 카테고리 나열 카피·"6가지 주제" |
+| `src/pages/AcademyLibrary.tsx:16`, `AcademyEbooks.tsx:16`, `ContentHub.tsx:27` | `?cat=연금` 구 URL(북마크·공유 링크) → `투자`로 매핑하는 1줄 추가. 예: `const LEGACY_CAT: Record<string, Category> = { 연금: '투자' }` 를 `mock.ts`에 두고 initialCat 판정 전에 치환 |
+| `src/pages/academy-expert/AcademyEbookEditor.tsx:77` | 기본값 `CATEGORIES[0].key` — 순서 바뀌어도 마케팅이 0번이므로 영향 없음 (확인만) |
+| 나머지 9개 파일 | `CATEGORIES.map` / `Category` 타입 사용 → **수정 없음**. `npm run build`로 타입 에러 없음만 확인 |
 
-insert into fields (key, label, emoji, sort_order) values ('피트니스·무도','피트니스·무도','🥋',0)
-  on conflict do nothing;
--- 기존 콘텐츠는 전부 첫 분야로
-update courses set field = '피트니스·무도' where field is null;
-update ebooks  set field = '피트니스·무도' where field is null;
-update experts set fields = array['피트니스·무도'] where fields = '{}';
-```
-D6에서 확정한 나머지 분야를 `insert`로 추가. `docs/plan/DB-SCHEMA.md`에 `fields` 테이블과 3개 컬럼 반영.
-
-**4.3.3 앱 반영**
-
-| 영역 | 파일 | 변경 |
-|---|---|---|
-| 타입 | `src/data/mock.ts` | `Field` 타입(`string`), `Course.field?`, `Expert.fields?`; `mockEbooks.ts`의 `Ebook.field?` |
-| 로드 | `src/lib/api.ts`, `src/lib/useBizData.ts` | `fields` 테이블 로드 + 매퍼에 `field`/`fields` 추가 |
-| 쓰기 | `src/lib/expertApi.ts`, `src/lib/adminApi.ts` | course/ebook 저장 payload에 `field`, expert에 `fields` |
-| 편집 | `AcademyCourseEditor`, `AcademyEbookEditor` | 카테고리 select 옆에 **분야 select** (fields 테이블 기반, "공통" 옵션 = null) |
-| 편집 | `ExpertProfileEditor`, `admin/tabs/ExpertsTab` | 전문 주제 토글 아래 **활동 분야 토글**(다중) |
-| 관리 | `admin/tabs/` 신규 `FieldsTab.tsx` 또는 `ContentTab` 내 섹션 | 분야 추가·순서·활성화 (BannerTab 패턴 재사용) |
-| 필터 | `AcademyLibrary`, `AcademyEbooks`, `ContentHub`, `AcademyExperts` | 기존 주제 칩 위에 **분야 칩 1줄** 추가. URL `?field=` 파라미터 (기존 `?cat=`와 병행) |
-| 랜딩 | `AcademyLanding.tsx:47-62` | "무엇을 배우고 싶으세요?"(주제 4칸) 유지 + 그 위/아래에 **"어떤 분야에서 일하시나요?"** 분야 그리드 신설 → `/library?field=` |
-| 검색 | `SearchResults.tsx` | 결과에 분야 배지 표시 (필터는 선택) |
-
-> 분야가 1개(피트니스·무도)뿐인 시점에는 분야 칩/그리드를 **자동 숨김**(`fields.length > 1`일 때만 렌더)
-> → 첫 출시에서 UI가 비어 보이지 않는다.
+> 필터 칩(`AcademyLibrary:38`, `AcademyEbooks:37`, `ContentHub:71`, `AcademyExperts:57`)은 `'전체'` + 6개 = 7개.
+> 모바일 폭에서 `flex-wrap`으로 2줄 되는지 확인. 넘치면 가로 스크롤(`overflow-x-auto`)로 바꾼다.
 
 ### 4.4 검증 (PR 2)
 
-- 마이그레이션 후 `select category, count(*) from courses group by 1` 에 `연금` 0건.
-- `select field, count(*) from courses group by 1` 전부 `피트니스·무도`.
-- 분야 1개 상태에서 랜딩·목록에 분야 UI **안 보임**; 관리자에서 분야 1개 추가 → 즉시 칩 노출.
-- 강의 편집기에서 분야 저장 → 목록 `?field=` 필터 동작.
-- `?cat=연금` 구 URL 진입 → `재무·연금` 필터로 정상 매핑.
-- `npm run build` 통과.
+```bash
+grep -rn "'연금'" src                    # 0건 (LEGACY_CAT 매핑 제외)
+npm run build
+```
+- 마이그레이션 후 `select category, count(*) from courses group by 1` 에 `연금` 0건, `투자` = 기존 연금 건수.
+  `ebooks`, `experts`(category·categories) 동일.
+- 랜딩 카테고리 6칸 표시·클릭 → `/library?cat=브랜딩` 등 정상 필터.
+- `/library?cat=연금` 진입 → `투자` 칩 활성.
+- 강의/전자책 에디터 select에 6개, 전문가 프로필·관리자 전문가 탭 토글에 6개.
+- 관리자에서 전문가 카테고리를 `인문교양`으로 저장 → `/experts` 필터에서 조회됨.
 
 ---
 
 ## 5. 데이터 (시드·기존 콘텐츠)
 
 - `supabase/seed.sql`, `supabase/setup.sql`: 개발용 시드(김도장, "체육관 첫 100명 회원 만들기" 등)가 전부
-  체육관 콘텐츠. **운영 DB에는 영향 없음**(이미 실데이터). 두 가지 선택:
-  - (권장) 시드는 "피트니스·무도 분야 샘플"로 두고 헤더 주석에만 명시. 새 분야 샘플 1~2건 추가.
-  - 전면 재작성 — 비용 대비 효과 낮음.
-- 운영 DB의 기존 전문가·강의·전자책은 그대로 파이네시스의 **첫 분야 콘텐츠**가 된다. 마이그레이션(§4.3.2)이
-  `field` 를 채워 준다. 콘텐츠 본문의 "관장님" 등 표현은 전문가 각자가 수정(강제 안 함).
+  체육관 콘텐츠. **운영 DB에는 영향 없음**(이미 실데이터). 시드 파일은 유지하고 §4.3.1 rename만 시드에도 반영
+  (`'연금'` → `'투자'`, 시드가 다시 돌아도 구 값이 안 들어가도록). 브랜딩·인문교양 샘플 1건씩 추가는 선택.
+- 운영 DB의 기존 전문가·강의·전자책은 그대로 파이네시스의 초기 콘텐츠가 된다. 콘텐츠 본문의 "관장님" 등 표현은
+  전문가 각자가 수정(강제 안 함).
 
 ---
 
@@ -296,19 +269,21 @@ D6에서 확정한 나머지 분야를 `insert`로 추가. `docs/plan/DB-SCHEMA.
 
 ## 7. 실행 순서·PR 분할
 
-| 순서 | 작업 | 선행 결정 | 산출물 |
+| 순서 | 작업 | 선행 결정 | 규모 |
 |---|---|---|---|
-| 0 | 사전 결정 D1~D10 중 D2·D3·D7 확정, 도메인·상표 확인 | — | 이 문서 §1 표 갱신 |
-| 1 | **PR 1**: §2 브랜드 표기 + §3 카피 일반화 + §2.3 문서 | D2, D3, D7(명칭만) | 한 PR. 배포는 E1~E4·E9와 같은 날 |
-| 2 | **PR 2**: §4 카테고리 2축 (rename 마이그레이션 → fields 테이블 → 앱) | D6, D7 | 마이그레이션 2개 + 앱. 분야 1개면 UI 자동 숨김이라 PR 1과 독립 배포 가능 |
-| 3 | E5~E8, E10 정리, 시드 보강(§5) | — | 후속 소규모 |
+| 1 | **PR 1**: §2 브랜드 표기 + §3 카피 일반화 + §2.3 문서 | D2·D3·D9 기본값 (확정됨) | 문자열 교체 위주, 반나절 |
+| 2 | **PR 2**: §4 카테고리 6개 (마이그레이션 1개 + `mock.ts` + 랜딩 그리드 + 구 URL 매핑) | D7 (확정됨) | 반나절 |
+| 3 | 배포: PR 1·2 머지 → 마이그레이션 적용 → E1~E4·E9 같은 날 | D4·D5 | 오너 작업 |
+| 4 | E5~E8, E10 정리 | — | 후속 소규모 |
 
-- PR 1은 **문자열 교체 위주**로 하루 작업. PR 2는 스키마·12개 파일 수정으로 2~3일.
-- PR 1을 먼저 배포하고 PR 2는 두 번째 분야 출시 직전에 배포해도 된다. 단 `연금` rename(§4.3.1)만은
-  카피(§3.1의 랜딩 :39)와 같이 나가야 자연스러우므로 **PR 1에 포함**하는 것도 가능 — D7 확정 시점에 결정.
+- PR 1과 PR 2는 파일이 겹치는 곳이 `AcademyLanding.tsx:39,48` 두 줄뿐이다. **PR 1을 먼저 머지하고 PR 2를
+  그 위에서 만든다.** 둘 다 코드 결정이 끝났으므로 연달아 진행 가능.
+- 마이그레이션(§4.3.1)은 PR 2 머지 직후 Supabase에 적용. 앱 배포 전에 적용해도 안전하다(구 앱은 `연금` 행이
+  0건이 되어 필터에 안 잡힐 뿐 오류는 없음).
 
 ## 8. 범위 외
 
+- 분야(업종) 축 — D6에서 도입 안 함으로 결정. 필요해지면 별도 Phase.
 - 브랜드 컬러 변경(D8에서 "바꾼다"로 결정될 경우 별도 Phase).
 - 새 법인 설립 시 사업자 정보 교체.
 - 로고 디자인(이미지) 제작 — 확정되면 E7에서 파비콘/OG만 반영.
