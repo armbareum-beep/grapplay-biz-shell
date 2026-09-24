@@ -44,11 +44,10 @@ export default function AcademyCourseDetail() {
   // 상단 하이라이트 플레이어가 보여줄 레슨 (미리보기 클릭 시 전환)
   const [activeIdx, setActiveIdx] = useState(0)
 
-  // 강의 로드 시 첫 미리보기 레슨으로 기본 설정
+  // 강의 로드 시 첫 미리보기 레슨으로 기본 설정 (미리보기 레슨이 없으면 -1 → 영상 대신 커버 노출)
   useEffect(() => {
     if (!course) return
-    const firstPreview = course.curriculum.findIndex((l) => l.preview)
-    setActiveIdx(firstPreview >= 0 ? firstPreview : 0)
+    setActiveIdx(course.curriculum.findIndex((l) => l.preview))
   }, [course?.id])
 
   // 상세페이지 조회 기록 (소유 지도자·관리자 본인 조회는 집계에서 제외)
@@ -505,7 +504,9 @@ function PurchaseCard({
 
 /* ── 상세(판매) 페이지용 — 미리보기 영상 하이라이트 ── */
 function LessonPlayer({ course, activeIdx }: { course: Course; activeIdx: number }) {
-  const lesson = course.curriculum[activeIdx]
+  // 미리보기로 지정된 레슨만 재생 — 미리보기 없는 강의는 영상을 노출하지 않음
+  const candidate = course.curriculum[activeIdx]
+  const lesson = candidate?.preview ? candidate : undefined
   const embed = toEmbedUrl(lesson?.videoUrl)
 
   // 세로영상이면 9:16 가운데 정렬, 아니면 기본 16:9
