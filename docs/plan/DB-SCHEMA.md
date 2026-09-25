@@ -225,3 +225,4 @@ enrollments.item_id ──> courses.id 또는 ebooks.id (item_type로 구분, FK
 - 클라이언트는 `createSignedUrl`(1시간)로만 연다 — `src/lib/privatePdf.ts`.
 - 판단 헬퍼: `can_read_ebook_file(ebook_id)`, `can_read_reward_file(course_id)` (security definer).
 - 구방식 공개 URL 컬럼(`pdf_url`, `review_reward_pdf_url`)은 3단계(2026-09-27)에서 제거됨.
+  제거 시점에 비공개로 옮기지 않은 행의 주소는 `legacy_pdf_urls`(item_type, item_id, url) 백업 테이블에 보관 — RLS 정책 없음, SQL Editor에서만 조회.
