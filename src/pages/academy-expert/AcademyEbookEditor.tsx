@@ -92,8 +92,6 @@ function EditorForm({ existing, isEdit }: { existing?: Ebook; isEdit: boolean })
   const [emoji, setEmoji] = useState(existing?.emoji ?? EMOJIS[0])
   // 신규 전자책도 업로드 경로({expertId}/{ebookId}/…)에 쓰도록 ID를 저장 전에 확정
   const [ebookId] = useState(() => existing?.id ?? genEbookId())
-  // 구방식(공개 URL) — 새 PDF를 올리면 비운다. 이전 완료 후 제거 예정.
-  const [legacyPdfUrl, setLegacyPdfUrl] = useState(existing?.pdfUrl ?? '')
   const [pdfPath, setPdfPath] = useState(existing?.pdfPath ?? '')
   const [previewPdfUrl, setPreviewPdfUrl] = useState(existing?.previewPdfUrl ?? '')
   // 현재 미리보기 PDF가 몇 쪽 기준으로 만들어졌는지 — 저장 시 쪽수가 바뀌었으면 다시 만든다
@@ -154,7 +152,6 @@ function EditorForm({ existing, isEdit }: { existing?: Ebook; isEdit: boolean })
     }
     setPdfPath(path)
     setPdfFileName(file.name)
-    setLegacyPdfUrl('')
     const pages = Number(previewPages) || 0
     const pv = await buildAndUploadPreview(ebookId, file, pages)
     setPdfUploading(false)
@@ -255,7 +252,6 @@ function EditorForm({ existing, isEdit }: { existing?: Ebook; isEdit: boolean })
       emoji,
       summary: summary.trim(),
       highlights: highlights.map((h) => h.trim()).filter(Boolean),
-      pdfUrl: legacyPdfUrl || null,
       pdfPath: pdfPath || null,
       previewPdfUrl: preview.url || null,
       useLandingPage: useLanding,
@@ -500,10 +496,6 @@ function EditorForm({ existing, isEdit }: { existing?: Ebook; isEdit: boolean })
                 >
                   {pdfFileName || pdfPath.split('/').pop()}
                 </button>
-              ) : legacyPdfUrl ? (
-                <span className="text-amber-700">
-                  이전 방식으로 등록된 PDF예요. 보안을 위해 PDF를 다시 업로드해 주세요.
-                </span>
               ) : (
                 <span className="text-stone-400">등록된 PDF가 없습니다.</span>
               )}

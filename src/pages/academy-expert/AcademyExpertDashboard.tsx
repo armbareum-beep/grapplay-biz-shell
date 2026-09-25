@@ -390,7 +390,7 @@ function ReviewsTab({ expertId }: { expertId: string }) {
             <div className="mt-1 text-xs font-medium text-amber-600">{course?.title}</div>
             <p className="mt-2 leading-relaxed text-stone-600">{r.content}</p>
             <div className="mt-4 flex flex-wrap items-center gap-2">
-              {(course?.rewardPdfPath || course?.reviewRewardPdfUrl) && !r.hidden && (
+              {course?.rewardPdfPath && !r.hidden && (
                 <span className="rounded-lg bg-indigo-50 px-3 py-2 text-sm font-semibold text-indigo-700">
                   🎁 리워드 PDF 자동 제공 중
                 </span>

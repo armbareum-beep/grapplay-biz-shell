@@ -73,7 +73,6 @@ export interface Course {
   whatYouLearn: string[]
   useLandingPage?: boolean
   detailBlocks?: DetailBlock[]
-  reviewRewardPdfUrl?: string // [구방식·공개] 리뷰 리워드 PDF 주소 — 이전 완료 후 제거
   rewardPdfPath?: string // 리뷰 리워드 PDF (비공개 reward-files 버킷 경로, 리뷰 작성자만 열람)
 }
 

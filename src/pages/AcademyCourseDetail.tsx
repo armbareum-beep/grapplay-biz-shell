@@ -340,7 +340,6 @@ export default function AcademyCourseDetail() {
         />
         <RewardPdfBox
           rewardPdfPath={course.rewardPdfPath}
-          legacyUrl={course.reviewRewardPdfUrl}
           enrolled={enrolled}
           alreadyWrote={alreadyWrote}
         />

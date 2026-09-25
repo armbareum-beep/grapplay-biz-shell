@@ -18,7 +18,6 @@ export interface CourseInput {
   whatYouLearn: string[]
   useLandingPage: boolean
   detailBlocks: unknown[]
-  rewardPdfUrl?: string | null
   rewardPdfPath?: string | null
 }
 
@@ -88,7 +87,6 @@ export async function createCourse(input: CourseInput) {
     curriculum: input.curriculum,
     use_landing_page: input.useLandingPage,
     detail_blocks: input.detailBlocks,
-    review_reward_pdf_url: input.rewardPdfUrl ?? null,
     reward_pdf_path: input.rewardPdfPath ?? null,
   }
   const { data, error } = await supabase.from('courses').insert(row).select().single()
@@ -111,7 +109,6 @@ export async function updateCourse(id: string, input: CourseInput) {
     curriculum: input.curriculum,
     use_landing_page: input.useLandingPage,
     detail_blocks: input.detailBlocks,
-    review_reward_pdf_url: input.rewardPdfUrl ?? null,
     reward_pdf_path: input.rewardPdfPath ?? null,
   }
   const { data, error } = await supabase.from('courses').update(patch).eq('id', id).select().single()
@@ -193,7 +190,6 @@ export interface EbookInput {
   avatar?: string
   summary: string
   highlights: string[]
-  pdfUrl?: string | null
   pdfPath?: string | null
   previewPdfUrl?: string | null
   useLandingPage: boolean
@@ -221,7 +217,6 @@ function ebookRow(input: EbookInput) {
     avatar: input.avatar || '📘',
     summary: input.summary,
     highlights: input.highlights,
-    pdf_url: input.pdfUrl ?? null,
     pdf_path: input.pdfPath ?? null,
     preview_pdf_url: input.previewPdfUrl ?? null,
     use_landing_page: input.useLandingPage,
