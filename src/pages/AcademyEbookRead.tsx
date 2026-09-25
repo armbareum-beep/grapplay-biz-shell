@@ -6,6 +6,7 @@ import { supabase } from '../lib/supabase'
 import PdfReader from '../components/PdfReader'
 import { watermarkText } from '../lib/pdfWatermark'
 import { updateProgress } from '../lib/userData'
+import { getSignedPdfUrl } from '../lib/privatePdf'
 
 const NOTICES = [
   '전자책은 마이페이지 > 내 강의에서 다시 열람할 수 있습니다.',
@@ -51,6 +52,32 @@ export default function AcademyEbookRead() {
       active = false
     }
   }, [user, id])
+
+  // 비공개 원본은 서명 URL(1시간)로 연다 — 스토리지 RLS가 구매 여부를 다시 확인한다.
+  // 구방식(공개 URL)은 이전 완료 전까지만 폴백.
+  const [pdfSrc, setPdfSrc] = useState<string | null>(null)
+  const [pdfError, setPdfError] = useState(false)
+  const pdfPath = ebook?.pdfPath
+  const legacyUrl = ebook?.pdfUrl
+  useEffect(() => {
+    if (!enrolled) return
+    let active = true
+    setPdfError(false)
+    if (pdfPath) {
+      getSignedPdfUrl('ebook-files', pdfPath).then(({ url }) => {
+        if (!active) return
+        if (url) setPdfSrc(url)
+        else setPdfError(true)
+      })
+    } else if (legacyUrl) {
+      setPdfSrc(legacyUrl)
+    } else {
+      setPdfError(true)
+    }
+    return () => {
+      active = false
+    }
+  }, [enrolled, pdfPath, legacyUrl])
 
   // 페이지 이동 시 호출 — 최고 진도 갱신 + 1.5초 디바운스 저장
   const handleProgress = (pct: number) => {
@@ -113,12 +140,22 @@ export default function AcademyEbookRead() {
       {/* PDF 뷰어 — 다운로드 불가(canvas 렌더) + 워터마크 */}
       <div className="mx-auto max-w-5xl px-4 pb-6 sm:px-6">
         <div className="overflow-hidden rounded-2xl border border-white/10">
-          <PdfReader
-            url={ebook.pdfUrl}
-            watermark={watermarkText(user?.email)}
-            initialPercent={savedPct ?? 0}
-            onProgress={handleProgress}
-          />
+          {pdfSrc ? (
+            <PdfReader
+              url={pdfSrc}
+              watermark={watermarkText(user?.email)}
+              initialPercent={savedPct ?? 0}
+              onProgress={handleProgress}
+            />
+          ) : pdfError ? (
+            <div className="grid h-64 place-items-center text-sm text-white/60">
+              전자책을 불러올 수 없어요. 잠시 후 다시 시도해 주세요.
+            </div>
+          ) : (
+            <div className="grid h-64 place-items-center">
+              <span className="h-6 w-6 animate-spin rounded-full border-2 border-brand-500 border-t-transparent" />
+            </div>
+          )}
         </div>
 
         <ul className="mt-4 space-y-1.5 text-xs text-white/50">

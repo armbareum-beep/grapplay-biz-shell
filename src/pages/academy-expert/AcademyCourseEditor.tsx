@@ -6,6 +6,7 @@ import { useAuth } from '../../lib/auth'
 import {
   createCourse,
   updateCourse,
+  genCourseId,
   settlementBreakdown,
   type CourseInput,
 } from '../../lib/expertApi'
@@ -13,6 +14,7 @@ import { uploadVideoToVimeo } from '../../lib/vimeo'
 import { fetchVimeoDuration } from '../../lib/video'
 import { supabase } from '../../lib/supabase'
 import { uploadToCovers } from '../../lib/storage'
+import { uploadPrivatePdf, getSignedPdfUrl } from '../../lib/privatePdf'
 import BlockStyleToolbar, { type BlockStyle } from '../../components/BlockStyleToolbar'
 
 type BlockType = 'heading' | 'text' | 'image'
@@ -102,7 +104,12 @@ function EditorForm({ existing, isEdit }: { existing?: Course; isEdit: boolean }
     existing?.whatYouLearn?.length ? existing.whatYouLearn : [''],
   )
 
-  const [pdfUrl, setPdfUrl] = useState<string>(existing?.reviewRewardPdfUrl ?? '')
+  // 신규 강의도 리워드 업로드 경로({expertId}/{courseId}/…)에 쓰도록 ID를 저장 전에 확정
+  const [courseId] = useState(() => existing?.id ?? genCourseId())
+  // 구방식(공개 URL) — 새 PDF를 올리거나 제거하면 비운다. 이전 완료 후 제거 예정.
+  const [legacyPdfUrl, setLegacyPdfUrl] = useState<string>(existing?.reviewRewardPdfUrl ?? '')
+  const [rewardPath, setRewardPath] = useState<string>(existing?.rewardPdfPath ?? '')
+  const [rewardFileName, setRewardFileName] = useState('')
   const [pdfUploading, setPdfUploading] = useState(false)
 
   const [saving, setSaving] = useState(false)
@@ -148,23 +155,36 @@ function EditorForm({ existing, isEdit }: { existing?: Course; isEdit: boolean }
     }
   }
 
+  // 리뷰 리워드 PDF — 비공개 reward-files 버킷. 해당 강의 리뷰 작성자만 서명 URL로 받는다.
   async function handlePdfUpload(file: File) {
-    if (!supabase) return
-    setError(null)
-    setPdfUploading(true)
-    const path = `course-pdfs/${crypto.randomUUID()}.pdf`
-    const { error: upErr } = await supabase.storage
-      .from('covers')
-      .upload(path, file, { upsert: true, contentType: 'application/pdf' })
-    if (upErr) {
-      setPdfUploading(false)
-      setError('PDF 업로드 실패: ' + upErr.message)
+    if (!targetExpertId) {
+      setError('전문가 권한이 없습니다.')
       return
     }
-    const { data } = supabase.storage.from('covers').getPublicUrl(path)
-    setPdfUrl(data.publicUrl)
+    setError(null)
+    setPdfUploading(true)
+    const { path, error: upErr } = await uploadPrivatePdf('reward-files', targetExpertId, courseId, file)
     setPdfUploading(false)
+    if (upErr || !path) {
+      setError('PDF 업로드 실패: ' + upErr)
+      return
+    }
+    setRewardPath(path)
+    setRewardFileName(file.name)
+    setLegacyPdfUrl('')
   }
+
+  async function openRewardPdf() {
+    const win = window.open('', '_blank')
+    const { url, error: e } = await getSignedPdfUrl('reward-files', rewardPath)
+    if (e || !url) {
+      win?.close()
+      setError('PDF를 열 수 없습니다: ' + e)
+      return
+    }
+    if (win) win.location.href = url
+  }
+
 
   const [blockUploading, setBlockUploading] = useState<Record<number, boolean>>({})
 
@@ -227,6 +247,7 @@ function EditorForm({ existing, isEdit }: { existing?: Course; isEdit: boolean }
     }))
 
     const input: CourseInput = {
+      id: courseId,
       expertId: targetExpertId,
       title: title.trim(),
       subtitle: subtitle.trim(),
@@ -238,7 +259,8 @@ function EditorForm({ existing, isEdit }: { existing?: Course; isEdit: boolean }
       whatYouLearn: learn.map((t) => t.trim()).filter(Boolean),
       useLandingPage: useLanding,
       detailBlocks: blocks,
-      rewardPdfUrl: pdfUrl.trim() || null,
+      rewardPdfUrl: legacyPdfUrl || null,
+      rewardPdfPath: rewardPath || null,
     }
 
     const res = isEdit ? await updateCourse(existing!.id, input) : await createCourse(input)
@@ -658,29 +680,36 @@ function EditorForm({ existing, isEdit }: { existing?: Course; isEdit: boolean }
         {/* 리뷰 리워드 PDF */}
         <Section title="리뷰 리워드 PDF">
           <p className="text-sm text-stone-500">
-            수강생이 리뷰를 남기면 보내줄 PDF를 강의별로 등록하세요. (전문가가 직접 발송)
+            수강생이 후기를 남기면 강의 페이지에서 바로 받을 수 있는 PDF예요. 후기 작성자만 열람할 수 있어요.
           </p>
           <div className="mt-3 flex items-center gap-3 rounded-xl border border-stone-200 bg-white p-4">
             <div className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-indigo-100 text-lg">
               📄
             </div>
             <div className="min-w-0 flex-1 text-sm">
-              {pdfUrl ? (
-                <a
-                  href={pdfUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="block truncate font-medium text-indigo-600 hover:underline"
+              {rewardPath ? (
+                <button
+                  type="button"
+                  onClick={openRewardPdf}
+                  className="block max-w-full truncate text-left font-medium text-indigo-600 hover:underline"
                 >
-                  {decodeURIComponent(pdfUrl.split('/').pop() ?? 'PDF')}
-                </a>
+                  {rewardFileName || rewardPath.split('/').pop()}
+                </button>
+              ) : legacyPdfUrl ? (
+                <span className="text-amber-700">
+                  이전 방식으로 등록된 PDF예요. 보안을 위해 PDF를 다시 업로드해 주세요.
+                </span>
               ) : (
                 <span className="text-stone-400">등록된 PDF가 없습니다.</span>
               )}
             </div>
-            {pdfUrl && (
+            {(rewardPath || legacyPdfUrl) && (
               <button
-                onClick={() => setPdfUrl('')}
+                onClick={() => {
+                  setRewardPath('')
+                  setRewardFileName('')
+                  setLegacyPdfUrl('')
+                }}
                 className="text-xs text-rose-500 hover:underline"
               >
                 제거
@@ -701,14 +730,6 @@ function EditorForm({ existing, isEdit }: { existing?: Course; isEdit: boolean }
               />
             </label>
           </div>
-          <Field label="또는 PDF URL 직접 입력">
-            <input
-              value={pdfUrl}
-              onChange={(e) => setPdfUrl(e.target.value)}
-              placeholder="https://…"
-              className="w-full rounded-xl border border-stone-300 px-4 py-2.5 text-sm outline-none focus:border-amber-400"
-            />
-          </Field>
         </Section>
       </div>
 

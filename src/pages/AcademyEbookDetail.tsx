@@ -268,7 +268,14 @@ export default function AcademyEbookDetail() {
           </p>
 
           <div className="mt-4 overflow-hidden rounded-2xl border border-slate-200">
-            <PdfPreview url={ebook.pdfUrl} maxPages={previewPages} />
+            {/* 앞 N쪽만 담긴 미리보기 PDF. 구방식(전체 공개 URL)은 이전 완료 전까지만 폴백 */}
+            {ebook.previewPdfUrl || ebook.pdfUrl ? (
+              <PdfPreview url={(ebook.previewPdfUrl || ebook.pdfUrl)!} maxPages={previewPages} />
+            ) : (
+              <div className="grid h-40 place-items-center bg-slate-50 text-sm text-slate-400">
+                미리보기를 준비 중이에요.
+              </div>
+            )}
 
             {/* 미리보기 종료 + CTA */}
             <div className="border-t border-slate-200 bg-white px-6 py-8 text-center">

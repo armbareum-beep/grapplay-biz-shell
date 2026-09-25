@@ -13,6 +13,7 @@ import { toEmbedUrl, fetchVimeoPortrait } from '../lib/video'
 import CourseCard from '../components/CourseCard'
 import PurchaseBar from '../components/PurchaseBar'
 import ReviewSection from '../components/ReviewSection'
+import RewardPdfBox from '../components/RewardPdfBox'
 import ExpertAvatar from '../components/ExpertAvatar'
 import { Stars } from '../components/Stars'
 import { getCourseMeta, discountPct, EXPERT_CREDENTIALS } from '../data/mockMarketplace'
@@ -336,6 +337,12 @@ export default function AcademyCourseDetail() {
           canWrite={enrolled}
           alreadyWrote={alreadyWrote}
           onSubmit={submitReview}
+        />
+        <RewardPdfBox
+          rewardPdfPath={course.rewardPdfPath}
+          legacyUrl={course.reviewRewardPdfUrl}
+          enrolled={enrolled}
+          alreadyWrote={alreadyWrote}
         />
 
         {/* 9. 주의사항 */}

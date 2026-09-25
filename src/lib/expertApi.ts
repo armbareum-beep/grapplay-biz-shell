@@ -19,6 +19,7 @@ export interface CourseInput {
   useLandingPage: boolean
   detailBlocks: unknown[]
   rewardPdfUrl?: string | null
+  rewardPdfPath?: string | null
 }
 
 // 전문가 본인 공개 프로필(제목/소개/사진/분야) 수정 — 마이페이지에서 사용.
@@ -62,7 +63,7 @@ const DEFAULT_COVERS = [
   'from-brand-400 to-brand-500',
 ]
 
-function genCourseId() {
+export function genCourseId() {
   return `c_${crypto.randomUUID().slice(0, 8)}`
 }
 
@@ -88,6 +89,7 @@ export async function createCourse(input: CourseInput) {
     use_landing_page: input.useLandingPage,
     detail_blocks: input.detailBlocks,
     review_reward_pdf_url: input.rewardPdfUrl ?? null,
+    reward_pdf_path: input.rewardPdfPath ?? null,
   }
   const { data, error } = await supabase.from('courses').insert(row).select().single()
   return { data, error: error?.message ?? null }
@@ -110,6 +112,7 @@ export async function updateCourse(id: string, input: CourseInput) {
     use_landing_page: input.useLandingPage,
     detail_blocks: input.detailBlocks,
     review_reward_pdf_url: input.rewardPdfUrl ?? null,
+    reward_pdf_path: input.rewardPdfPath ?? null,
   }
   const { data, error } = await supabase.from('courses').update(patch).eq('id', id).select().single()
   return { data, error: error?.message ?? null }
@@ -172,18 +175,6 @@ export async function deleteEbookReview(reviewId: string) {
   return { error: null }
 }
 
-export async function incrementPdfSent(reviewId: string, current: number) {
-  if (!supabase) return { error: '연결이 설정되지 않았습니다.' }
-  const { data, error } = await supabase
-    .from('course_reviews')
-    .update({ pdf_sent_count: current + 1 })
-    .eq('id', reviewId)
-    .select('id')
-  if (error) return { error: error.message }
-  if (!data || data.length === 0) return { error: '권한이 없거나 리뷰를 찾을 수 없습니다.' }
-  return { error: null }
-}
-
 // ── 전자책 CRUD ──
 export interface EbookInput {
   id?: string
@@ -203,11 +194,13 @@ export interface EbookInput {
   summary: string
   highlights: string[]
   pdfUrl?: string | null
+  pdfPath?: string | null
+  previewPdfUrl?: string | null
   useLandingPage: boolean
   detailBlocks: unknown[]
 }
 
-function genEbookId() {
+export function genEbookId() {
   return `eb_${crypto.randomUUID().slice(0, 8)}`
 }
 
@@ -229,6 +222,8 @@ function ebookRow(input: EbookInput) {
     summary: input.summary,
     highlights: input.highlights,
     pdf_url: input.pdfUrl ?? null,
+    pdf_path: input.pdfPath ?? null,
+    preview_pdf_url: input.previewPdfUrl ?? null,
     use_landing_page: input.useLandingPage,
     detail_blocks: input.detailBlocks,
   }

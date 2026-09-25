@@ -4,7 +4,13 @@ import { useBizData, invalidateBizData } from '../../lib/useBizData'
 import { useAuth } from '../../lib/auth'
 import { supabase } from '../../lib/supabase'
 import { uploadToCovers } from '../../lib/storage'
-import { createEbook, updateEbook, type EbookInput } from '../../lib/expertApi'
+import { createEbook, updateEbook, genEbookId, type EbookInput } from '../../lib/expertApi'
+import {
+  uploadPrivatePdf,
+  getSignedPdfUrl,
+  downloadPrivatePdf,
+  buildAndUploadPreview,
+} from '../../lib/privatePdf'
 import { CATEGORIES, type Category } from '../../data/mock'
 import type { Ebook } from '../../data/mockEbooks'
 
@@ -84,7 +90,17 @@ function EditorForm({ existing, isEdit }: { existing?: Ebook; isEdit: boolean })
   const [coverImage, setCoverImage] = useState(existing?.coverImage ?? '')
   const [uploading, setUploading] = useState(false)
   const [emoji, setEmoji] = useState(existing?.emoji ?? EMOJIS[0])
-  const [pdfUrl, setPdfUrl] = useState(existing?.pdfUrl ?? '')
+  // 신규 전자책도 업로드 경로({expertId}/{ebookId}/…)에 쓰도록 ID를 저장 전에 확정
+  const [ebookId] = useState(() => existing?.id ?? genEbookId())
+  // 구방식(공개 URL) — 새 PDF를 올리면 비운다. 이전 완료 후 제거 예정.
+  const [legacyPdfUrl, setLegacyPdfUrl] = useState(existing?.pdfUrl ?? '')
+  const [pdfPath, setPdfPath] = useState(existing?.pdfPath ?? '')
+  const [previewPdfUrl, setPreviewPdfUrl] = useState(existing?.previewPdfUrl ?? '')
+  // 현재 미리보기 PDF가 몇 쪽 기준으로 만들어졌는지 — 저장 시 쪽수가 바뀌었으면 다시 만든다
+  const [previewBuiltFor, setPreviewBuiltFor] = useState<number | null>(
+    existing?.previewPdfUrl ? existing.previewPages ?? 3 : null,
+  )
+  const [pdfFileName, setPdfFileName] = useState('')
   const [pdfUploading, setPdfUploading] = useState(false)
   const [highlights, setHighlights] = useState<string[]>(
     existing?.highlights?.length ? existing.highlights : [''],
@@ -122,22 +138,61 @@ function EditorForm({ existing, isEdit }: { existing?: Ebook; isEdit: boolean })
     setUploading(false)
   }
 
+  // 원본은 비공개 ebook-files 버킷에, 앞 N쪽 미리보기는 공개 covers 버킷에 올린다.
   async function handlePdfUpload(file: File) {
-    if (!supabase) return
-    setError(null)
-    setPdfUploading(true)
-    const path = `ebook-pdfs/${crypto.randomUUID()}.pdf`
-    const { error: upErr } = await supabase.storage
-      .from('covers')
-      .upload(path, file, { upsert: true, contentType: 'application/pdf' })
-    if (upErr) {
-      setPdfUploading(false)
-      setError('PDF 업로드 실패: ' + upErr.message)
+    if (!targetExpertId) {
+      setError('전문가 권한이 없습니다.')
       return
     }
-    const { data } = supabase.storage.from('covers').getPublicUrl(path)
-    setPdfUrl(data.publicUrl)
+    setError(null)
+    setPdfUploading(true)
+    const { path, error: upErr } = await uploadPrivatePdf('ebook-files', targetExpertId, ebookId, file)
+    if (upErr || !path) {
+      setPdfUploading(false)
+      setError('PDF 업로드 실패: ' + upErr)
+      return
+    }
+    setPdfPath(path)
+    setPdfFileName(file.name)
+    setLegacyPdfUrl('')
+    const pages = Number(previewPages) || 0
+    const pv = await buildAndUploadPreview(ebookId, file, pages)
     setPdfUploading(false)
+    if (pv.totalPages && !Number(pageCount)) setPageCount(String(pv.totalPages))
+    if (pv.error || !pv.url) {
+      setPreviewPdfUrl('')
+      setPreviewBuiltFor(null)
+      setError('미리보기 생성 실패(원본 업로드는 완료): ' + pv.error)
+      return
+    }
+    setPreviewPdfUrl(pv.url)
+    setPreviewBuiltFor(pages)
+  }
+
+  // 편집 화면에서 원본 확인 — 소유 전문가·관리자는 RLS상 서명 URL 발급 가능
+  async function openPdf() {
+    const win = window.open('', '_blank')
+    const { url, error: e } = await getSignedPdfUrl('ebook-files', pdfPath)
+    if (e || !url) {
+      win?.close()
+      setError('PDF를 열 수 없습니다: ' + e)
+      return
+    }
+    if (win) win.location.href = url
+  }
+
+  // 미리보기 쪽수가 바뀌었거나 미리보기가 없으면 원본에서 다시 만든다
+  async function ensurePreview(): Promise<{ url: string; error: string | null }> {
+    const pages = Number(previewPages) || 0
+    if (!pdfPath) return { url: previewPdfUrl, error: null }
+    if (previewPdfUrl && previewBuiltFor === pages) return { url: previewPdfUrl, error: null }
+    const { data, error: dlErr } = await downloadPrivatePdf('ebook-files', pdfPath)
+    if (dlErr || !data) return { url: previewPdfUrl, error: '원본 PDF를 불러오지 못했습니다: ' + dlErr }
+    const pv = await buildAndUploadPreview(ebookId, data, pages)
+    if (pv.error || !pv.url) return { url: previewPdfUrl, error: '미리보기 생성 실패: ' + pv.error }
+    setPreviewPdfUrl(pv.url)
+    setPreviewBuiltFor(pages)
+    return { url: pv.url, error: null }
   }
 
   function addBlock(type: BlockType) {
@@ -176,7 +231,15 @@ function EditorForm({ existing, isEdit }: { existing?: Ebook; isEdit: boolean })
       setError('제목을 입력해 주세요.')
       return
     }
+    setSaving(true)
+    const preview = await ensurePreview()
+    if (preview.error) {
+      setSaving(false)
+      setError(preview.error)
+      return
+    }
     const input: EbookInput = {
+      id: ebookId,
       expertId: targetExpertId,
       title: title.trim(),
       subtitle: subtitle.trim(),
@@ -192,11 +255,12 @@ function EditorForm({ existing, isEdit }: { existing?: Ebook; isEdit: boolean })
       emoji,
       summary: summary.trim(),
       highlights: highlights.map((h) => h.trim()).filter(Boolean),
-      pdfUrl: pdfUrl.trim() || null,
+      pdfUrl: legacyPdfUrl || null,
+      pdfPath: pdfPath || null,
+      previewPdfUrl: preview.url || null,
       useLandingPage: useLanding,
       detailBlocks: blocks,
     }
-    setSaving(true)
     const res = isEdit ? await updateEbook(existing!.id, input) : await createEbook(input)
     setSaving(false)
     if (res.error) {
@@ -428,17 +492,25 @@ function EditorForm({ existing, isEdit }: { existing?: Ebook; isEdit: boolean })
               📄
             </div>
             <div className="min-w-0 flex-1 text-sm">
-              {pdfUrl ? (
-                <a
-                  href={pdfUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="block truncate font-medium text-brand-600 hover:underline"
+              {pdfPath ? (
+                <button
+                  type="button"
+                  onClick={openPdf}
+                  className="block max-w-full truncate text-left font-medium text-brand-600 hover:underline"
                 >
-                  {pdfUrl.split('/').pop()}
-                </a>
+                  {pdfFileName || pdfPath.split('/').pop()}
+                </button>
+              ) : legacyPdfUrl ? (
+                <span className="text-amber-700">
+                  이전 방식으로 등록된 PDF예요. 보안을 위해 PDF를 다시 업로드해 주세요.
+                </span>
               ) : (
                 <span className="text-stone-400">등록된 PDF가 없습니다.</span>
+              )}
+              {pdfPath && (
+                <div className="mt-0.5 text-xs text-stone-400">
+                  {previewPdfUrl ? '미리보기 준비됨' : '미리보기 없음'} · 구매자만 열람할 수 있어요
+                </div>
               )}
             </div>
             <label className="cursor-pointer rounded-lg border border-stone-300 bg-white px-4 py-2 text-sm font-semibold text-stone-600 hover:bg-stone-50">
@@ -451,18 +523,15 @@ function EditorForm({ existing, isEdit }: { existing?: Ebook; isEdit: boolean })
                 onChange={(e) => {
                   const f = e.target.files?.[0]
                   if (f) handlePdfUpload(f)
+                  e.target.value = ''
                 }}
               />
             </label>
           </div>
-          <Field label="또는 PDF URL 직접 입력">
-            <input
-              value={pdfUrl}
-              onChange={(e) => setPdfUrl(e.target.value)}
-              placeholder="https://…"
-              className="w-full rounded-xl border border-stone-300 px-4 py-2.5 text-sm outline-none focus:border-amber-400"
-            />
-          </Field>
+          <p className="mt-2 text-xs text-stone-500">
+            원본은 구매자만 볼 수 있게 비공개로 저장되고, 상세 페이지에는 앞{' '}
+            {Number(previewPages) || 0}페이지만 잘라낸 미리보기가 공개됩니다.
+          </p>
         </Section>
 
         <Section title="상세페이지 (랜딩)">

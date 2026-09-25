@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { formatPrice } from '../../../data/mock'
 import { useBizData } from '../../../lib/useBizData'
 import { deleteCourse, deleteEbook } from '../../../lib/expertApi'
+import PdfMigrationPanel from './PdfMigrationPanel'
 
 // 콘텐츠 관리 — 전 전문가의 강의/전자책 조회·편집·삭제.
 // 편집은 기존 에디터를 재사용한다(관리자는 requireExpert 가드를 통과, 소유권 유지).
@@ -24,6 +25,7 @@ export default function ContentTab() {
 
   return (
     <div className="space-y-4">
+      <PdfMigrationPanel />
       <div className="flex gap-2">
         {(['강의', '전자책'] as const).map((k) => (
           <button
