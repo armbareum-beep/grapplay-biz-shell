@@ -29,6 +29,7 @@
 | 13~22 | `20260617`~`20260624` 시리즈 | 강의 할인, 배너, 전문가 카테고리/아바타/삭제/자격, 전자책 리뷰, 리뷰 별점, 리뷰 관리자 삭제, 레슨 진도, 리뷰 작성자 트리거 (각 파일명 참조 — 이 표에 상세 미반영) |
 | 23 | `20260805000000_page_views.sql` | page_views 테이블 + `track_page_view()`/`page_view_counts()` RPC (RLS 정책 없음 = RPC로만 접근) |
 | 24 | `20260805100000_page_view_daily.sql` | `page_view_daily()` RPC — KST 일별 조회수 집계 |
+| — | `20260925000000_enrollments_update_columns.sql` | 보안: enrollments update 권한을 `progress`·`lesson_progress` 컬럼으로 제한 (수강 권한 바꿔치기 차단) |
 
 ---
 
@@ -120,6 +121,7 @@
 **enrollments** — 수강/열람 권한
 | id uuid PK | user_id uuid | item_type | item_id text | order_id uuid FK→orders | progress int | created_at | **UNIQUE(user_id,item_type,item_id)** |
 - 무료 콘텐츠는 self-insert 허용(가격 0 확인), 유료는 Edge Function이 부여.
+- 클라이언트 update는 **`progress`·`lesson_progress` 컬럼만** 허용(컬럼 단위 grant). `item_type`/`item_id`/`order_id`/`user_id` 변경 불가.
 
 **wishlist** — 찜
 | user_id uuid | item_type | item_id text | created_at | **PK(user_id,item_type,item_id)** |
