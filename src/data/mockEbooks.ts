@@ -35,7 +35,9 @@ export interface Ebook {
   buyerCount: number
   summary: string
   highlights: string[]
-  pdfUrl: string
+  pdfUrl?: string // [구방식·공개] 전체 PDF 주소 — 이전 완료 후 제거
+  pdfPath?: string // 비공개 ebook-files 버킷 경로 (구매자만 서명 URL로 열람)
+  previewPdfUrl?: string // 앞 N쪽만 담은 공개 미리보기 PDF
   isNew?: boolean
   useLandingPage?: boolean
   detailBlocks?: DetailBlock[]

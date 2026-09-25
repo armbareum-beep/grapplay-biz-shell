@@ -7,7 +7,6 @@ import ExpertAvatar from '../../components/ExpertAvatar'
 import ExpertProfileEditor from '../../components/ExpertProfileEditor'
 import {
   setReviewHidden,
-  incrementPdfSent,
   getExpertRevenue,
   getPageViewCounts,
   getPageViewDaily,
@@ -352,17 +351,6 @@ function ReviewsTab({ expertId }: { expertId: string }) {
     invalidateBizData() // 다른 페이지 다녀와도 변경이 유지되도록 캐시 갱신
   }
 
-  const onSendPdf = async (r: CourseReview) => {
-    setBusyId(r.id)
-    const { error } = await incrementPdfSent(r.id, r.pdfSentCount)
-    setBusyId(null)
-    if (error) return alert('발송 실패: ' + error)
-    setReviews((rs) =>
-      rs.map((x) => (x.id === r.id ? { ...x, pdfSentCount: x.pdfSentCount + 1 } : x)),
-    )
-    invalidateBizData()
-  }
-
   if (reviews.length === 0) {
     return (
       <div className="rounded-2xl border border-dashed border-stone-300 bg-white py-16 text-center">
@@ -375,7 +363,7 @@ function ReviewsTab({ expertId }: { expertId: string }) {
   return (
     <div className="space-y-3">
       <p className="text-sm text-stone-500">
-        리뷰를 확인하고 작성자에게 강의 PDF를 보내거나, 부적절한 리뷰는 숨길 수 있어요.
+        후기 작성자는 강의 페이지에서 리워드 PDF를 바로 받아요. 부적절한 리뷰는 숨기면 리워드도 받을 수 없어요.
       </p>
       {reviews.map((r) => {
         const course = getCourse(r.courseId)
@@ -402,16 +390,11 @@ function ReviewsTab({ expertId }: { expertId: string }) {
             <div className="mt-1 text-xs font-medium text-amber-600">{course?.title}</div>
             <p className="mt-2 leading-relaxed text-stone-600">{r.content}</p>
             <div className="mt-4 flex flex-wrap items-center gap-2">
-              <button
-                onClick={() => onSendPdf(r)}
-                disabled={busy}
-                className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
-              >
-                📄 PDF 보내기
-                {r.pdfSentCount > 0 && (
-                  <span className="ml-1 text-indigo-200">({r.pdfSentCount}회 발송됨)</span>
-                )}
-              </button>
+              {(course?.rewardPdfPath || course?.reviewRewardPdfUrl) && !r.hidden && (
+                <span className="rounded-lg bg-indigo-50 px-3 py-2 text-sm font-semibold text-indigo-700">
+                  🎁 리워드 PDF 자동 제공 중
+                </span>
+              )}
               <button
                 onClick={() => onToggleHidden(r)}
                 disabled={busy}

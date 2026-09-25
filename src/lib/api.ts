@@ -92,6 +92,7 @@ function mapCourse(r: any): Course {
     useLandingPage: r.use_landing_page ?? false,
     detailBlocks: r.detail_blocks ?? [],
     reviewRewardPdfUrl: r.review_reward_pdf_url ?? undefined,
+    rewardPdfPath: r.reward_pdf_path ?? undefined,
   }
 }
 
@@ -140,7 +141,9 @@ function mapEbook(r: any): Ebook {
     buyerCount: r.buyer_count,
     summary: r.summary,
     highlights: r.highlights ?? [],
-    pdfUrl: r.pdf_url,
+    pdfUrl: r.pdf_url ?? undefined,
+    pdfPath: r.pdf_path ?? undefined,
+    previewPdfUrl: r.preview_pdf_url ?? undefined,
     isNew: r.is_new,
     useLandingPage: r.use_landing_page ?? false,
     detailBlocks: r.detail_blocks ?? [],
