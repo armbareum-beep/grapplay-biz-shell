@@ -5,33 +5,25 @@ import { getSignedPdfUrl } from '../lib/privatePdf'
 // 실제 열람 자격(숨김 안 된 후기 작성자)은 reward-files 스토리지 RLS가 다시 확인한다.
 export default function RewardPdfBox({
   rewardPdfPath,
-  legacyUrl,
   enrolled,
   alreadyWrote,
 }: {
   rewardPdfPath?: string
-  legacyUrl?: string
   enrolled: boolean
   alreadyWrote: boolean
 }) {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  if (!rewardPdfPath && !legacyUrl) return null
+  if (!rewardPdfPath) return null
   if (!enrolled && !alreadyWrote) return null
 
   const open = async () => {
     setError(null)
     // 팝업 차단을 피하려고 클릭 시점에 창을 먼저 연다
     const win = window.open('', '_blank')
-    let url: string | null = null
-    if (rewardPdfPath) {
-      setBusy(true)
-      const res = await getSignedPdfUrl('reward-files', rewardPdfPath)
-      setBusy(false)
-      url = res.url
-    } else {
-      url = legacyUrl ?? null
-    }
+    setBusy(true)
+    const { url } = await getSignedPdfUrl('reward-files', rewardPdfPath)
+    setBusy(false)
     if (!url) {
       win?.close()
       setError('PDF를 열 수 없어요. 잠시 후 다시 시도해 주세요.')

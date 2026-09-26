@@ -29,6 +29,7 @@
 | 13~22 | `20260617`~`20260624` 시리즈 | 강의 할인, 배너, 전문가 카테고리/아바타/삭제/자격, 전자책 리뷰, 리뷰 별점, 리뷰 관리자 삭제, 레슨 진도, 리뷰 작성자 트리거 (각 파일명 참조 — 이 표에 상세 미반영) |
 | 23 | `20260805000000_page_views.sql` | page_views 테이블 + `track_page_view()`/`page_view_counts()` RPC (RLS 정책 없음 = RPC로만 접근) |
 | 24 | `20260805100000_page_view_daily.sql` | `page_view_daily()` RPC — KST 일별 조회수 집계 |
+| — | `20260927000000_drop_public_pdf_urls.sql` | 보안: 공개 URL 컬럼 `ebooks.pdf_url`, `courses.review_reward_pdf_url` 제거 (PDF 비공개 3단계) |
 | — | `20260926000000_private_pdfs.sql` | 보안: 비공개 버킷 `ebook-files`·`reward-files` + 스토리지 RLS, `ebooks.pdf_path`/`preview_pdf_url`, `courses.reward_pdf_path` (PDF 비공개 1단계) |
 | — | `20260925000000_enrollments_update_columns.sql` | 보안: enrollments update 권한을 `progress`·`lesson_progress` 컬럼으로 제한 (수강 권한 바꿔치기 차단) |
 
@@ -73,7 +74,6 @@
 | **curriculum** | jsonb | `{ title, durationMin, videoUrl?, preview? }[]` ← 레슨 영상/미리보기 |
 | use_landing_page | bool | 리치 상세 사용 여부 |
 | detail_blocks | jsonb | `{ id, type:'heading'\|'text'\|'image', value }[]` |
-| review_reward_pdf_url | text | ⚠️ 구방식(공개 URL) — 이전 완료 후 제거 예정 |
 | **reward_pdf_path** | text | 리뷰 리워드 PDF — 비공개 `reward-files` 버킷 경로. 숨김 안 된 후기 작성자만 열람 |
 | sort_order | int | |
 | created_at | timestamptz | |
@@ -95,7 +95,6 @@
 | rating | numeric(2,1) | |
 | buyer_count | int | |
 | highlights | jsonb | `string[]` |
-| pdf_url | text | ⚠️ 구방식(공개 URL) — 이전 완료 후 제거 예정 |
 | **pdf_path** | text | 원본 PDF — 비공개 `ebook-files` 버킷 경로. 구매자·소유 전문가·관리자만 서명 URL로 열람 |
 | **preview_pdf_url** | text | 앞 N쪽만 잘라낸 공개 미리보기 PDF (covers/ebook-previews/) |
 | is_new | bool | |
@@ -225,4 +224,5 @@ enrollments.item_id ──> courses.id 또는 ebooks.id (item_type로 구분, FK
 | `reward-files` (비공개) | `{expert_id}/{course_id}/{uuid}.pdf` | 해당 강의 후기 작성자(숨김 제외, 이메일 매칭) · 소유 전문가 · 관리자 | 동일 |
 - 클라이언트는 `createSignedUrl`(1시간)로만 연다 — `src/lib/privatePdf.ts`.
 - 판단 헬퍼: `can_read_ebook_file(ebook_id)`, `can_read_reward_file(course_id)` (security definer).
-- 기존 공개 PDF는 관리자 › 콘텐츠 탭의 "기존 PDF 이전"으로 복사. 구 컬럼·파일 정리는 3단계.
+- 구방식 공개 URL 컬럼(`pdf_url`, `review_reward_pdf_url`)은 3단계(2026-09-27)에서 제거됨.
+  제거 시점에 비공개로 옮기지 않은 행의 주소는 `legacy_pdf_urls`(item_type, item_id, url) 백업 테이블에 보관 — RLS 정책 없음, SQL Editor에서만 조회.

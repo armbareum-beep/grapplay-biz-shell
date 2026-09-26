@@ -106,8 +106,6 @@ function EditorForm({ existing, isEdit }: { existing?: Course; isEdit: boolean }
 
   // 신규 강의도 리워드 업로드 경로({expertId}/{courseId}/…)에 쓰도록 ID를 저장 전에 확정
   const [courseId] = useState(() => existing?.id ?? genCourseId())
-  // 구방식(공개 URL) — 새 PDF를 올리거나 제거하면 비운다. 이전 완료 후 제거 예정.
-  const [legacyPdfUrl, setLegacyPdfUrl] = useState<string>(existing?.reviewRewardPdfUrl ?? '')
   const [rewardPath, setRewardPath] = useState<string>(existing?.rewardPdfPath ?? '')
   const [rewardFileName, setRewardFileName] = useState('')
   const [pdfUploading, setPdfUploading] = useState(false)
@@ -171,7 +169,6 @@ function EditorForm({ existing, isEdit }: { existing?: Course; isEdit: boolean }
     }
     setRewardPath(path)
     setRewardFileName(file.name)
-    setLegacyPdfUrl('')
   }
 
   async function openRewardPdf() {
@@ -259,7 +256,6 @@ function EditorForm({ existing, isEdit }: { existing?: Course; isEdit: boolean }
       whatYouLearn: learn.map((t) => t.trim()).filter(Boolean),
       useLandingPage: useLanding,
       detailBlocks: blocks,
-      rewardPdfUrl: legacyPdfUrl || null,
       rewardPdfPath: rewardPath || null,
     }
 
@@ -695,20 +691,15 @@ function EditorForm({ existing, isEdit }: { existing?: Course; isEdit: boolean }
                 >
                   {rewardFileName || rewardPath.split('/').pop()}
                 </button>
-              ) : legacyPdfUrl ? (
-                <span className="text-amber-700">
-                  이전 방식으로 등록된 PDF예요. 보안을 위해 PDF를 다시 업로드해 주세요.
-                </span>
               ) : (
                 <span className="text-stone-400">등록된 PDF가 없습니다.</span>
               )}
             </div>
-            {(rewardPath || legacyPdfUrl) && (
+            {rewardPath && (
               <button
                 onClick={() => {
                   setRewardPath('')
                   setRewardFileName('')
-                  setLegacyPdfUrl('')
                 }}
                 className="text-xs text-rose-500 hover:underline"
               >

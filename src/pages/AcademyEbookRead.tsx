@@ -54,11 +54,9 @@ export default function AcademyEbookRead() {
   }, [user, id])
 
   // 비공개 원본은 서명 URL(1시간)로 연다 — 스토리지 RLS가 구매 여부를 다시 확인한다.
-  // 구방식(공개 URL)은 이전 완료 전까지만 폴백.
   const [pdfSrc, setPdfSrc] = useState<string | null>(null)
   const [pdfError, setPdfError] = useState(false)
   const pdfPath = ebook?.pdfPath
-  const legacyUrl = ebook?.pdfUrl
   useEffect(() => {
     if (!enrolled) return
     let active = true
@@ -69,15 +67,13 @@ export default function AcademyEbookRead() {
         if (url) setPdfSrc(url)
         else setPdfError(true)
       })
-    } else if (legacyUrl) {
-      setPdfSrc(legacyUrl)
     } else {
       setPdfError(true)
     }
     return () => {
       active = false
     }
-  }, [enrolled, pdfPath, legacyUrl])
+  }, [enrolled, pdfPath])
 
   // 페이지 이동 시 호출 — 최고 진도 갱신 + 1.5초 디바운스 저장
   const handleProgress = (pct: number) => {
