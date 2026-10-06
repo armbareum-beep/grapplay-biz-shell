@@ -73,6 +73,7 @@ function app(role, path) {
     pretendToBeVisual: true,
   })
   const w = dom.window
+  w.courseFetches = 0
   w.addEventListener('error', (e) => errors.push(e.message))
   w.Response = Response
   w.Request = Request
@@ -96,6 +97,7 @@ function app(role, path) {
         avatar_url: null,
       }
     else if (table === 'courses') {
+      if (method === 'GET') w.courseFetches++
       if (method === 'PATCH') Object.assign(course, p)
       data = [course]
     } else if (table === 'experts')
@@ -220,6 +222,15 @@ const doms = []
     .find((b) => b.textContent.includes('새 질문이 등록되었습니다'))
     .click()
   await wait(() => notifications[0].read_at, 'notification read')
+  const courseFetches = w.courseFetches
+  textButton(w, '리뷰 관리').click()
+  await wait(() => w.document.body.textContent.includes('설명이 쉬웠어요'), 'reviews tab')
+  await new Promise((r) => setTimeout(r, 50))
+  assert.equal(w.courseFetches, courseFetches, 'ordinary reviews tab does not refetch biz data')
+  w.history.pushState({}, '', '/expert/dashboard?tab=reviews&review=r1')
+  w.dispatchEvent(new w.PopStateEvent('popstate'))
+  await wait(() => w.courseFetches > courseFetches, 'review notification refreshes data')
+  console.log('PASS DOM: ordinary reviews use cache; review notification refreshes data')
   textButton(w, '내 강의').click()
   await wait(
     () => [...w.document.querySelectorAll('a')].some((a) => a.textContent === '편집'),

@@ -23,7 +23,7 @@ async function denied(name, query) {
   assert.ok(error, `${name}: unexpectedly permitted`)
   assert.match(
     error.message,
-    /permission denied|row-level security|질문|답변|회차|check constraint/,
+    /permission denied|row-level security|로그인|질문|답변|회차|check constraint/,
   )
   passed++
   console.log(`PASS ${name}`)
@@ -39,6 +39,10 @@ async function adminSql(query) {
 }
 const migration = await readFile(
   new URL('../supabase/migrations/20261006025002_course_qna_notifications.sql', import.meta.url),
+  'utf8',
+)
+const authorDeletionMigration = await readFile(
+  new URL('../supabase/migrations/20261006055858_qna_answer_author_deletion.sql', import.meta.url),
   'utf8',
 )
 try {
@@ -287,6 +291,47 @@ try {
     (await rows('select id from instructor_notifications')).length,
     0,
   )
+  await as(4)
+  // Upgrade with existing answers, then verify the correction is repeatable.
+  await adminSql(authorDeletionMigration)
+  await adminSql(authorDeletionMigration)
+  await as(4)
+  await denied(
+    'instructor cannot clear answer attribution directly',
+    `update course_answers set author_id=null where question_id='${q1.id}'`,
+  )
+  await as(0)
+  await sql('reset role')
+  const beforeDeletion = (await rows(`select * from course_answers where question_id='${q1.id}'`))[0]
+  const answeredAt = (await rows(`select answered_at from course_questions where id='${q1.id}'`))[0].answered_at
+  await sql(`delete from auth.users where id='${uid(3)}'`)
+  check(
+    'deleting instructor without JWT preserves answer except attribution',
+    (await rows(`select * from course_answers where question_id='${q1.id}'`))[0],
+    { ...beforeDeletion, author_id: null },
+  )
+  check('deleted instructor notifications are removed',
+    (await rows(`select id from instructor_notifications where recipient_id='${uid(3)}'`)).length, 0)
+  check('account deletion preserves answered state',
+    (await rows(`select answered_at from course_questions where id='${q1.id}'`))[0].answered_at, answeredAt)
+  await denied('SQL Editor answer edits without JWT remain blocked',
+    `update course_answers set content='운영 수정' where question_id='${q1.id}'`)
+  await denied('SQL Editor question edits without JWT remain blocked',
+    `update course_questions set content='운영 수정' where id='${q1.id}'`)
+  await sql('set role service_role')
+  await denied('service role cannot edit answer without a user',
+    `update course_answers set content='운영 수정' where question_id='${q1.id}'`)
+  await as(4)
+  await adminSql(`delete from auth.users where id='${uid(5)}'`)
+  check('deletion with another JWT does not reattribute answer',
+    (await rows(`select author_id from course_answers where question_id='${q2.id}'`))[0].author_id, null)
+  await as(4)
+  await sql(`update course_answers set content='새 지도자 답변' where question_id='${q1.id}'`)
+  check('current instructor can edit preserved answer',
+    (await rows(`select author_id from course_answers where question_id='${q1.id}'`))[0].author_id, uid(4))
+  await as(1)
+  check('student can still read answer after original author deletion',
+    (await rows(`select content from course_answers where question_id='${q1.id}'`))[0].content, '새 지도자 답변')
   console.log(`\n${passed} permission and notification checks passed.`)
 } catch (e) {
   console.error(e.message, e.detail ?? '', e.where ?? '')

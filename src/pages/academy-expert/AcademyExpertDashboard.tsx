@@ -358,7 +358,11 @@ function ReviewsTab({ expertId }: { expertId: string }) {
   const [params, setParams] = useSearchParams()
   const focusedReview = params.get('review')
   const { courseReviews, getCoursesByExpert, getCourse, refetch } = useBizData()
-  useEffect(() => { refetch() }, [focusedReview])
+  useEffect(() => {
+    if (focusedReview) refetch()
+    // refetch is not stable; refresh only when the notification target changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [focusedReview])
   const [reviews, setReviews] = useState<CourseReview[]>([])
   const [busyId, setBusyId] = useState<string | null>(null)
 

@@ -25,7 +25,7 @@ const TABS: { id: Tab; label: string; icon: string }[] = [
   { id: '내용', label: '내용', icon: '📖' },
   { id: '목차', label: '목차', icon: '☰' },
   { id: '공지', label: '공지', icon: '🔔' },
-  { id: '질문과 답변', label: '질문과 답변', icon: '' },
+  { id: '질문과 답변', label: '질문과 답변', icon: '💬' },
 ]
 
 const NOTICES = [
