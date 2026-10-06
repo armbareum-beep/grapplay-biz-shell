@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
+import ExpertQnATab from './ExpertQnATab'
+import { pendingQuestionCount } from '../../lib/qnaApi'
 import { formatPrice, type CourseReview } from '../../data/mock'
 import { useBizData, invalidateBizData } from '../../lib/useBizData'
 import { useAuth } from '../../lib/auth'
@@ -25,23 +27,44 @@ import {
   type PayoutAccount,
 } from '../../lib/expertApi'
 
-type Tab = '내 강의' | '내 전자책' | '리뷰 관리' | '수익 분석' | '정산' | '프로필'
-const TABS: Tab[] = ['내 강의', '내 전자책', '리뷰 관리', '수익 분석', '정산', '프로필']
+type Tab = '내 강의' | '내 전자책' | '리뷰 관리' | 'Q&A 관리' | '수익 분석' | '정산' | '프로필'
+const TABS: Tab[] = ['내 강의', '내 전자책', '리뷰 관리', 'Q&A 관리', '수익 분석', '정산', '프로필']
 
 export default function AcademyExpertDashboard() {
   const { getExpert, getExpertStats, refetch, loading, experts } = useBizData()
   const { profile } = useAuth()
+  const [params, setParams] = useSearchParams()
   const isAdmin = profile?.role === 'admin'
-  const [tab, setTab] = useState<Tab>('내 강의')
+  const initialTab = params.get('tab') === 'qna' ? 'Q&A 관리' : params.get('tab') === 'reviews' ? '리뷰 관리' : '내 강의'
+  const [tab, setTab] = useState<Tab>(initialTab)
+  const [pending, setPending] = useState<number | null>(null)
+  const [qnaRefresh, setQnaRefresh] = useState(0)
   const [revenue, setRevenue] = useState<ExpertRevenue | null>(null)
   // 관리자는 자신의 expert_id가 없으므로, 관리할 지도자를 직접 선택한다.
   const [adminExpertId, setAdminExpertId] = useState('')
   const expertId = isAdmin ? adminExpertId : (profile?.expert_id ?? '')
 
+  useEffect(() => {
+    setTab(params.get('tab') === 'qna' ? 'Q&A 관리' : params.get('tab') === 'reviews' ? '리뷰 관리' : TABS.includes(params.get('tab') as Tab) ? params.get('tab') as Tab : '내 강의')
+    const requested = params.get('expert')
+    if (isAdmin && requested && experts.some(e => e.id === requested)) setAdminExpertId(requested)
+  }, [params, isAdmin, experts])
+  useEffect(() => {
+    if (!expertId) return
+    let active = true; setPending(null)
+    const load = () => pendingQuestionCount(expertId).then(n => { if (active) setPending(n) }).catch(() => { if (active) setPending(null) })
+    void load()
+    const timer = window.setInterval(load, 30000)
+    return () => { active = false; window.clearInterval(timer) }
+  }, [expertId, qnaRefresh])
+
   // 관리자: 지도자 목록이 로드되면 첫 지도자를 기본 선택
   useEffect(() => {
-    if (isAdmin && !adminExpertId && experts.length) setAdminExpertId(experts[0].id)
-  }, [isAdmin, adminExpertId, experts])
+    if (isAdmin && !adminExpertId && experts.length) {
+      const requested = params.get('expert')
+      setAdminExpertId(experts.some(e => e.id === requested) ? requested! : experts[0].id)
+    }
+  }, [isAdmin, adminExpertId, experts, params])
 
   const expert = getExpert(expertId)
   const stats = getExpertStats(expertId)
@@ -81,7 +104,7 @@ export default function AcademyExpertDashboard() {
           <span className="text-sm font-semibold text-indigo-700">관리자 모드 · 지도자 선택</span>
           <select
             value={adminExpertId}
-            onChange={(e) => setAdminExpertId(e.target.value)}
+            onChange={(e) => { setAdminExpertId(e.target.value); const next = new URLSearchParams(params); next.set('expert', e.target.value); next.delete('question'); next.delete('review'); setParams(next) }}
             className="rounded-lg border border-indigo-300 bg-white px-3 py-1.5 text-sm font-medium text-stone-800 outline-none focus:border-indigo-500"
           >
             {experts.map((e) => (
@@ -142,14 +165,14 @@ export default function AcademyExpertDashboard() {
         {TABS.map((t) => (
           <button
             key={t}
-            onClick={() => setTab(t)}
+            onClick={() => { setTab(t); const next = new URLSearchParams(params); next.delete('question'); next.delete('review'); next.set('tab', t === 'Q&A 관리' ? 'qna' : t === '리뷰 관리' ? 'reviews' : t); setParams(next) }}
             className={`-mb-px whitespace-nowrap border-b-2 px-4 py-3 text-sm font-semibold transition ${
               tab === t
                 ? 'border-amber-500 text-amber-600'
                 : 'border-transparent text-stone-500 hover:text-stone-800'
             }`}
           >
-            {t}
+            {t}{t === 'Q&A 관리' && pending !== null && pending > 0 && <span className="ml-1 rounded-full bg-brand-100 px-2 py-0.5 text-xs text-brand-700">{pending}</span>}
           </button>
         ))}
       </div>
@@ -159,7 +182,8 @@ export default function AcademyExpertDashboard() {
           <MyCoursesTab expertId={expertId} buyersByItem={revenue?.buyersByItem ?? {}} />
         )}
         {tab === '내 전자책' && <MyEbooksTab expertId={expertId} />}
-        {tab === '리뷰 관리' && <ReviewsTab expertId={expertId} />}
+        {tab === 'Q&A 관리' && <ExpertQnATab key={expertId} expertId={expertId} onAnswered={() => setQnaRefresh(v => v + 1)} />}
+        {tab === '리뷰 관리' && <ReviewsTab key={expertId} expertId={expertId} />}
         {tab === '수익 분석' && <RevenueTab revenue={revenue} expertId={expertId} />}
         {tab === '정산' && <PayoutTab expertId={expertId} expertName={expert.name} />}
         {tab === '프로필' && (
@@ -331,7 +355,10 @@ function MyEbooksTab({ expertId }: { expertId: string }) {
 
 /* ── 리뷰 관리 탭 (course_reviews, 숨김/PDF 발송) ── */
 function ReviewsTab({ expertId }: { expertId: string }) {
-  const { courseReviews, getCoursesByExpert, getCourse } = useBizData()
+  const [params, setParams] = useSearchParams()
+  const focusedReview = params.get('review')
+  const { courseReviews, getCoursesByExpert, getCourse, refetch } = useBizData()
+  useEffect(() => { refetch() }, [focusedReview])
   const [reviews, setReviews] = useState<CourseReview[]>([])
   const [busyId, setBusyId] = useState<string | null>(null)
 
@@ -365,7 +392,9 @@ function ReviewsTab({ expertId }: { expertId: string }) {
       <p className="text-sm text-stone-500">
         후기 작성자는 강의 페이지에서 리워드 PDF를 바로 받아요. 부적절한 리뷰는 숨기면 리워드도 받을 수 없어요.
       </p>
-      {reviews.map((r) => {
+      {focusedReview && <button className="rounded-lg border px-3 py-2 text-sm" onClick={() => { const next = new URLSearchParams(params); next.delete('review'); setParams(next) }}>전체 리뷰 보기</button>}
+      {focusedReview && !reviews.some(r => r.id === focusedReview) && <p className="text-sm text-stone-500">리뷰가 삭제되었거나 접근 권한이 없습니다.</p>}
+      {reviews.filter(r => !focusedReview || r.id === focusedReview).map((r) => {
         const course = getCourse(r.courseId)
         const busy = busyId === r.id
         return (

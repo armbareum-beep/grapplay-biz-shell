@@ -50,6 +50,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null)
   const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
+  const [profileUserId, setProfileUserId] = useState<string | null>(null)
 
   // 세션 초기화 + 변경 구독
   useEffect(() => {
@@ -71,11 +72,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!supabase || !session) {
       setProfile(null)
+      setProfileUserId(null)
       return
     }
     let cancelled = false
     fetchProfile(session.user.id).then((p) => {
-      if (!cancelled) setProfile(p)
+      if (!cancelled) {
+        setProfile(p)
+        setProfileUserId(session.user.id)
+      }
     })
     return () => {
       cancelled = true
@@ -122,7 +127,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     session,
     user: session?.user ?? null,
     profile,
-    loading,
+    loading: loading || (!!session && profileUserId !== session.user.id),
     configured: isSupabaseConfigured,
     signInWithPassword,
     signUp,

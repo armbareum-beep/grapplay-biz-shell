@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import Icon, { type IconName } from './Icon'
 import BrandLogo from './BrandLogo'
+import InstructorNotifications from './InstructorNotifications'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
 import { useBizData } from '../lib/useBizData'
@@ -212,6 +213,7 @@ function HeaderUtil() {
 
   return (
     <div className="relative ml-auto flex items-center gap-1 text-sm">
+      {(profile?.role === 'expert' || profile?.role === 'admin') && <InstructorNotifications key={session.user.id} />}
       <button
         onClick={() => setOpen((v) => !v)}
         className="flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-slate-100"

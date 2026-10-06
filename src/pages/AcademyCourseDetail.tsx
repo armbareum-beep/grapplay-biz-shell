@@ -329,6 +329,11 @@ export default function AcademyCourseDetail() {
         </section>
 
         {/* 7. 후기 — 실제 별점+후기 */}
+        {enrolled && <div className="mb-6 rounded-xl border border-stone-200 p-5">
+          <h2 className="font-bold">질문과 답변</h2>
+          <p className="mt-1 text-sm text-stone-500">{course.qnaEnabled ? '강의에서 궁금했던 점을 지도자에게 질문하세요.' : '새 질문 접수는 중단되었습니다. 기존 질문과 답변은 수강 화면에서 확인하세요.'}</p>
+          <Link to={`/learn/${course.id}?tab=qna`} className="mt-3 inline-block text-sm font-semibold text-brand-700">질문과 답변 보기 →</Link>
+        </div>}
         <ReviewSection
           title="수강생 후기"
           items={reviews}

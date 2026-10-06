@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
-import { useParams, useNavigate, Navigate, Link } from 'react-router-dom'
+import { useParams, useNavigate, Navigate, Link, useSearchParams } from 'react-router-dom'
 import { useBizData } from '../lib/useBizData'
 import { useAuth } from '../lib/auth'
 import { supabase } from '../lib/supabase'
 import { toEmbedUrl, fetchVimeoPortrait } from '../lib/video'
 import VimeoPlayer from '../components/VimeoPlayer'
+import CourseQnA from '../components/CourseQnA'
 import { getCourseProgress, saveCourseProgress, type LessonProgress } from '../lib/userData'
 
 // 전체 진도(%) = 영상 있는 회차들의 시청 비율 평균. 90% 이상 본 회차는 1로 간주.
@@ -19,11 +20,12 @@ function calcPct(ls: LessonProgress, curriculum: { videoUrl?: string }[]): numbe
   return Math.round((watched / vids.length) * 100)
 }
 
-type Tab = '내용' | '목차' | '공지'
+type Tab = '내용' | '목차' | '공지' | '질문과 답변'
 const TABS: { id: Tab; label: string; icon: string }[] = [
   { id: '내용', label: '내용', icon: '📖' },
   { id: '목차', label: '목차', icon: '☰' },
   { id: '공지', label: '공지', icon: '🔔' },
+  { id: '질문과 답변', label: '질문과 답변', icon: '' },
 ]
 
 const NOTICES = [
@@ -34,13 +36,15 @@ const NOTICES = [
 
 export default function AcademyCourseLearn() {
   const { id } = useParams()
+  const [searchParams] = useSearchParams()
   const { getCourse, getExpert, loading } = useBizData()
   const { user } = useAuth()
   const course = getCourse(id ?? '')
 
   const [enrolled, setEnrolled] = useState<boolean | null>(null)
   const [idx, setIdx] = useState(0)
-  const [tab, setTab] = useState<Tab>('내용')
+  const [tab, setTab] = useState<Tab>(searchParams.get('tab') === 'qna' ? '질문과 답변' : '내용')
+  useEffect(() => { if (searchParams.get('tab') === 'qna') setTab('질문과 답변') }, [searchParams])
   const [portrait, setPortrait] = useState(false)
   // 회차별 재생 위치(진도) — lessonProg, 저장/언마운트용 ref
   const [lessonProg, setLessonProg] = useState<LessonProgress>({})
@@ -259,6 +263,7 @@ export default function AcademyCourseLearn() {
       {/* 탭 내용 (밝은 배경) */}
       <div className="min-h-[40vh] bg-white text-slate-900">
         <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
+          {tab === '질문과 답변' && <CourseQnA key={`${course.id}:${user?.id}`} courseId={course.id} enabled={!!course.qnaEnabled} lessonIndex={current ? idx : null} lessonTitle={current?.title} />}
           {tab === '내용' && (
             <div>
               <h2 className="text-xl font-black">{current?.title}</h2>
