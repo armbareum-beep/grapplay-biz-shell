@@ -18,6 +18,7 @@ export interface CourseInput {
   whatYouLearn: string[]
   useLandingPage: boolean
   detailBlocks: unknown[]
+  qnaEnabled: boolean
   rewardPdfPath?: string | null
 }
 
@@ -88,6 +89,7 @@ export async function createCourse(input: CourseInput) {
     use_landing_page: input.useLandingPage,
     detail_blocks: input.detailBlocks,
     reward_pdf_path: input.rewardPdfPath ?? null,
+    qna_enabled: input.qnaEnabled,
   }
   const { data, error } = await supabase.from('courses').insert(row).select().single()
   return { data, error: error?.message ?? null }
@@ -110,6 +112,7 @@ export async function updateCourse(id: string, input: CourseInput) {
     use_landing_page: input.useLandingPage,
     detail_blocks: input.detailBlocks,
     reward_pdf_path: input.rewardPdfPath ?? null,
+    qna_enabled: input.qnaEnabled,
   }
   const { data, error } = await supabase.from('courses').update(patch).eq('id', id).select().single()
   return { data, error: error?.message ?? null }

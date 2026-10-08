@@ -25,7 +25,7 @@ export default function ProtectedRoute({
   }
 
   if (!session) {
-    return <Navigate to={`/auth?returnTo=${encodeURIComponent(loc.pathname)}`} replace />
+    return <Navigate to={`/auth?returnTo=${encodeURIComponent(loc.pathname + loc.search + loc.hash)}`} replace />
   }
 
   const isAdmin = profile?.role === 'admin'

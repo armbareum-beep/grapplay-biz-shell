@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:qna": "node tests/qna-permissions.test.mjs",
+    "test:qna-ui": "node tests/qna-ui.test.cjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.107.0",
@@ -20,10 +22,12 @@
     "tus-js-client": "^4.3.1"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "0.5.8",
     "@tailwindcss/vite": "^4.0.0",
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
+    "jsdom": "26.1.0",
     "tailwindcss": "^4.0.0",
     "typescript": "^5.5.4",
     "vite": "^5.4.6"

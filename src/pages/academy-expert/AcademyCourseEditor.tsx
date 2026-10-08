@@ -72,6 +72,7 @@ function EditorForm({ existing, isEdit }: { existing?: Course; isEdit: boolean }
   const backTo = isAdmin && !profile?.expert_id ? '/admin' : '/expert/dashboard'
 
   // 기본 정보
+  const [qnaEnabled, setQnaEnabled] = useState(existing?.qnaEnabled ?? false)
   const [title, setTitle] = useState(existing?.title ?? '')
   const [subtitle, setSubtitle] = useState(existing?.subtitle ?? '')
   const [category, setCategory] = useState<Category>(existing?.category ?? '마케팅')
@@ -257,6 +258,7 @@ function EditorForm({ existing, isEdit }: { existing?: Course; isEdit: boolean }
       useLandingPage: useLanding,
       detailBlocks: blocks,
       rewardPdfPath: rewardPath || null,
+      qnaEnabled,
     }
 
     const res = isEdit ? await updateCourse(existing!.id, input) : await createCourse(input)
@@ -299,6 +301,13 @@ function EditorForm({ existing, isEdit }: { existing?: Course; isEdit: boolean }
       )}
 
       <div className="mt-8 space-y-8">
+        <Section title="수강생 질문과 답변">
+          <label className="flex cursor-pointer items-center gap-3 text-sm font-semibold text-stone-800">
+            <input type="checkbox" checked={qnaEnabled} onChange={(e) => setQnaEnabled(e.target.checked)} className="h-5 w-5 accent-brand-600" />
+            이 강의에서 Q&A 사용하기
+          </label>
+          <p className="text-sm leading-relaxed text-stone-500">수강생의 질문을 받고 지도자 대시보드에서 답변합니다. 끄면 새 질문 접수를 중단하며 기존 질문과 답변은 보존됩니다.</p>
+        </Section>
         {/* 기본 정보 */}
         <Section title="기본 정보">
           <Field label="강의 제목">

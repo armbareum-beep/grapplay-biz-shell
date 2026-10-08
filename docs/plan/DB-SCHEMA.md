@@ -226,3 +226,15 @@ enrollments.item_id ──> courses.id 또는 ebooks.id (item_type로 구분, FK
 - 판단 헬퍼: `can_read_ebook_file(ebook_id)`, `can_read_reward_file(course_id)` (security definer).
 - 구방식 공개 URL 컬럼(`pdf_url`, `review_reward_pdf_url`)은 3단계(2026-09-27)에서 제거됨.
   제거 시점에 비공개로 옮기지 않은 행의 주소는 `legacy_pdf_urls`(item_type, item_id, url) 백업 테이블에 보관 — RLS 정책 없음, SQL Editor에서만 조회.
+
+### 강의 Q&A / 지도자 사이트 알림 (2026-10-06)
+- Migration: `20261006025002_course_qna_notifications.sql` 및 `20261006055858_qna_answer_author_deletion.sql`. 2026-10-06 운영 적용 확인. MCP 이력 버전은 각각 `20261006060139`, `20261006060157` (적용 기록은 작업 문서 참조).
+- `courses.qna_enabled`: boolean NOT NULL DEFAULT false. OFF일 때 새 질문 접수만 차단.
+- `course_questions`: id uuid PK, course_id text FK, user_id uuid FK, author_name text, content text(1~5000자), is_public boolean DEFAULT false, lesson_index int, lesson_title text, answered_at/created_at/updated_at timestamptz.
+- `course_answers`: question_id uuid PK/FK, author_id nullable uuid FK(계정 삭제 시 SET NULL), content text(1~10000자), created_at/updated_at timestamptz. 질문 하나에 답변 하나. 계정 삭제 시 답변 보존은 `20261006055858_qna_answer_author_deletion.sql`에서 보완.
+- `instructor_notifications`: id uuid PK, recipient_id uuid FK, expert_id/course_id text FK, question_id uuid FK 또는 review_id text FK, kind(question/review), read_at/created_at timestamptz. 수신자·원본별 UNIQUE.
+- 질문 RLS: 본인/담당 지도자/관리자, 공개일 때 동일 강의 수강생. 쓰기는 수강생 본인, 답변 전 수정만. 컬럼 grant로 작성자/강의/답변 상태 변조 불가.
+- 답변 RLS: 질문 조회 권한을 따르며, 작성/수정은 담당 지도자·관리자만.
+- 알림 RLS: 수신자 본인 + 현재 강의 담당 권한. 클라이언트는 read_at만 수정.
+- `qna_private` 비노출 스키마의 권한 헬퍼와 트리거로 작성자·회차 스냅샷/답변 상태/새 글 알림 생성. 외부 이메일 발송 없음.
+- 자세한 규칙·적용 순서: `docs/tasks/course-qna-notifications.md`.

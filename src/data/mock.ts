@@ -73,6 +73,7 @@ export interface Course {
   whatYouLearn: string[]
   useLandingPage?: boolean
   detailBlocks?: DetailBlock[]
+  qnaEnabled?: boolean // 강의별 신규 질문 접수 여부 (기본 OFF)
   rewardPdfPath?: string // 리뷰 리워드 PDF (비공개 reward-files 버킷 경로, 리뷰 작성자만 열람)
 }
 
