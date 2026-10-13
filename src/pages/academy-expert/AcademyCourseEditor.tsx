@@ -73,6 +73,9 @@ function EditorForm({ existing, isEdit }: { existing?: Course; isEdit: boolean }
 
   // 기본 정보
   const [qnaEnabled, setQnaEnabled] = useState(existing?.qnaEnabled ?? false)
+  const { getEbooksByExpert } = useBizData()
+  const expertEbooks = targetExpertId ? getEbooksByExpert(targetExpertId) : []
+  const [bundledEbookId, setBundledEbookId] = useState<string>(existing?.bundledEbookId ?? '')
   const [title, setTitle] = useState(existing?.title ?? '')
   const [subtitle, setSubtitle] = useState(existing?.subtitle ?? '')
   const [category, setCategory] = useState<Category>(existing?.category ?? '마케팅')
@@ -259,6 +262,7 @@ function EditorForm({ existing, isEdit }: { existing?: Course; isEdit: boolean }
       detailBlocks: blocks,
       rewardPdfPath: rewardPath || null,
       qnaEnabled,
+      bundledEbookId: bundledEbookId || null,
     }
 
     const res = isEdit ? await updateCourse(existing!.id, input) : await createCourse(input)
@@ -307,6 +311,21 @@ function EditorForm({ existing, isEdit }: { existing?: Course; isEdit: boolean }
             이 강의에서 Q&A 사용하기
           </label>
           <p className="text-sm leading-relaxed text-stone-500">수강생의 질문을 받고 지도자 대시보드에서 답변합니다. 끄면 새 질문 접수를 중단하며 기존 질문과 답변은 보존됩니다.</p>
+        </Section>
+        <Section title="함께 드리는 전자책">
+          <select
+            value={bundledEbookId}
+            onChange={(e) => setBundledEbookId(e.target.value)}
+            className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm"
+          >
+            <option value="">없음</option>
+            {expertEbooks.map((eb) => (
+              <option key={eb.id} value={eb.id}>
+                {eb.title}
+              </option>
+            ))}
+          </select>
+          <p className="text-sm leading-relaxed text-stone-500">이 강의를 결제한 수강생에게 선택한 전자책을 자동으로 지급합니다. 무료 강의에는 적용되지 않습니다.</p>
         </Section>
         {/* 기본 정보 */}
         <Section title="기본 정보">

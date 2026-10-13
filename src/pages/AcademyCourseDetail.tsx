@@ -407,7 +407,8 @@ function PurchaseCard({
 }) {
   const { user } = useAuth()
   const { isWished, toggle } = useWishlist()
-  const { getCourseRating } = useBizData()
+  const { getCourseRating, getEbook } = useBizData()
+  const bundledEbook = course.bundledEbookId ? getEbook(course.bundledEbookId) : undefined
   const navigate = useNavigate()
   const [busy, setBusy] = useState(false)
 
@@ -495,6 +496,12 @@ function PurchaseCard({
           {formatPrice(course.price)}
         </span>
       </div>
+
+      {isPaid && bundledEbook && (
+        <p className="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-800">
+          구매하면 전자책 「{bundledEbook.title}」을 함께 드려요
+        </p>
+      )}
 
       <button
         onClick={onPrimary}

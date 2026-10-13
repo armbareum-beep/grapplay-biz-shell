@@ -19,6 +19,7 @@ export interface CourseInput {
   useLandingPage: boolean
   detailBlocks: unknown[]
   qnaEnabled: boolean
+  bundledEbookId?: string | null
   rewardPdfPath?: string | null
 }
 
@@ -90,6 +91,7 @@ export async function createCourse(input: CourseInput) {
     detail_blocks: input.detailBlocks,
     reward_pdf_path: input.rewardPdfPath ?? null,
     qna_enabled: input.qnaEnabled,
+    bundled_ebook_id: input.bundledEbookId ?? null,
   }
   const { data, error } = await supabase.from('courses').insert(row).select().single()
   return { data, error: error?.message ?? null }
@@ -113,6 +115,8 @@ export async function updateCourse(id: string, input: CourseInput) {
     detail_blocks: input.detailBlocks,
     reward_pdf_path: input.rewardPdfPath ?? null,
     qna_enabled: input.qnaEnabled,
+    // 넘겨받지 않은 경우 기존 값을 유지한다
+    ...(input.bundledEbookId !== undefined ? { bundled_ebook_id: input.bundledEbookId } : {}),
   }
   const { data, error } = await supabase.from('courses').update(patch).eq('id', id).select().single()
   return { data, error: error?.message ?? null }
