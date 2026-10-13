@@ -74,6 +74,7 @@ export interface Course {
   useLandingPage?: boolean
   detailBlocks?: DetailBlock[]
   qnaEnabled?: boolean // 강의별 신규 질문 접수 여부 (기본 OFF)
+  bundledEbookId?: string // 강의 구매 시 함께 지급하는 전자책 id
   rewardPdfPath?: string // 리뷰 리워드 PDF (비공개 reward-files 버킷 경로, 리뷰 작성자만 열람)
 }
 

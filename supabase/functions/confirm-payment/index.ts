@@ -71,7 +71,7 @@ Deno.serve(async (req) => {
     const table = itemType === 'course' ? 'courses' : 'ebooks'
     const { data: itemRow } = await admin
       .from(table)
-      .select('price, title')
+      .select(itemType === 'course' ? 'price, title, bundled_ebook_id' : 'price, title')
       .eq('id', itemId)
       .maybeSingle()
     if (!itemRow) return json({ ok: false, message: '상품을 찾을 수 없습니다.' }, 404)
@@ -135,11 +135,26 @@ Deno.serve(async (req) => {
       { onConflict: 'user_id,item_type,item_id' },
     )
 
+    // 6-1) 강의에 묶인 전자책이 있으면 함께 지급 (멱등)
+    const bundledEbookId = itemType === 'course' ? (itemRow as { bundled_ebook_id?: string | null }).bundled_ebook_id : null
+    if (bundledEbookId) {
+      await admin.from('enrollments').upsert(
+        {
+          user_id: user.id,
+          item_type: 'ebook',
+          item_id: bundledEbookId,
+          order_id: order?.id ?? null,
+        },
+        { onConflict: 'user_id,item_type,item_id', ignoreDuplicates: true },
+      )
+    }
+
     await notifyTelegram(
       [
         '💰 결제 완료',
         `상품: [${itemType === 'course' ? '강의' : '전자책'}] ${itemRow.title}`,
         `금액: ${Number(amount).toLocaleString('ko-KR')}원`,
+        ...(bundledEbookId ? [`함께 지급: 전자책 ${bundledEbookId}`] : []),
         `구매자: ${user.email ?? user.id}`,
         `결제수단: ${pay.method ?? '-'}`,
       ].join('\n'),

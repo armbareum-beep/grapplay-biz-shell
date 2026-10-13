@@ -92,6 +92,7 @@ function mapCourse(r: any): Course {
     useLandingPage: r.use_landing_page ?? false,
     detailBlocks: r.detail_blocks ?? [],
     rewardPdfPath: r.reward_pdf_path ?? undefined,
+    bundledEbookId: r.bundled_ebook_id ?? undefined,
     qnaEnabled: r.qna_enabled === true,
   }
 }
